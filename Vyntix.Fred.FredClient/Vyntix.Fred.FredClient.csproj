@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Authors>Leader Analytics</Authors>
+    <Company>Leader Analytics</Company>
+    <Product>Vyntix.Fred.FredClient</Product>
+    <Description>Fred data downloader</Description>
+    <Copyright>2021 Leader Analytics</Copyright>
+    <PackageProjectUrl>https://github.com/leaderanalytics/</PackageProjectUrl>
+    <PackageIcon>VyntixLogo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/leaderanalytics/</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Leader Analytics LeaderAnalytics Vyntix FRED client FredClient</PackageTags>
+    <PackageReleaseNotes>See Repository</PackageReleaseNotes>
+    <Version>1.0.0-beta.1</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageId>LeaderAnalytics.Vyntix.Fred.FredClient</PackageId>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LeaderAnalytics.Core" Version="2.0.83" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.2-beta.1" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.3-beta.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\VyntixLogo.png" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
