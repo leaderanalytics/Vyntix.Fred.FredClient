@@ -20,7 +20,12 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
+By using this product you agree to be bound by the FRED® API Terms of Use found here: https://fred.stlouisfed.org/legal/.
+
 */
+
 using System;
 using System.IO;
 using System.Collections.Generic;
