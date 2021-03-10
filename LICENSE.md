@@ -1,6 +1,14 @@
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
+---
+
+This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
+
+By using this product you agree to be bound by the [FRED® API Terms of Use](https://fred.stlouisfed.org/legal/).
+
+---
+
  Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
