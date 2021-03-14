@@ -39,7 +39,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                     using (JsonDocument document = JsonDocument.Parse(stream))
                     {
                         string json = document.RootElement.GetProperty(root).GetRawText();
-                        return JsonSerializer.Deserialize<T>(json, );
+                        return JsonSerializer.Deserialize<T>(json);
                     }
                 }
             }
