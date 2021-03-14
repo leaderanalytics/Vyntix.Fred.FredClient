@@ -34,7 +34,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             if(CurrentFileType == FredFileType.XML)
                 FredClient = new XMLFredClient(apiKey, new FredClientConfig(), new VintageComposer(), httpClient);
             else
-                FredClient = new JSONFredClient(apiKey, new FredClientConfig(), new VintageComposer(), httpClient);
+                FredClient = new JsonFredClient(apiKey, new FredClientConfig(), new VintageComposer(), httpClient);
         }
     }
 }

@@ -11,46 +11,47 @@ using System.Text.Json.Serialization;
 using System.Dynamic;
 using LeaderAnalytics.Vyntix.Fred.Model;
 
+// https://github.com/dotnet/runtime/issues/40452
+
 namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
-    public class JSONFredClient : BaseFredClient
+    public class JsonFredClient : BaseFredClient
     {
-        private readonly JsonSerializerOptions jsonSerializerOptions;
 
-        public JSONFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient) : base(apiKey, config, composer, httpClient) 
+        public JsonFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient) : base(apiKey, config, composer, httpClient) 
         {
-            jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
+     
         }
 
         protected override async Task<T> Parse<T>(string uri, string root)
         {
             try
             {
-                uri = uri + (uri.Contains("?") ? "&" : "?") + "file_type=json" ;
-                Stream stream = await Download(uri);
+                uri = uri + (uri.Contains("?") ? "&" : "?") + "file_type=json";
 
-                if (stream is null)
-                    return default(T);
+                using (Stream stream = await Download(uri))
+                {
 
-                var document = JsonDocument.Parse(stream, new JsonDocumentOptions { AllowTrailingCommas = true });
-                string json = document.RootElement.GetProperty(root).GetRawText();
-                return JsonSerializer.Deserialize<T>(json);
+                    if (stream is null)
+                        return default(T);
+
+                    using (JsonDocument document = JsonDocument.Parse(stream))
+                    {
+                        string json = document.RootElement.GetProperty(root).GetRawText();
+                        return JsonSerializer.Deserialize<T>(json);
+                    }
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception($"JSONFredClient encountered an error. URI is {uri}, type is {typeof(T).FullName}, root is {root}.  See the inner exception for more detail.", ex);
             }
         }
-
         
 
         public override async Task<List<Vintage>> GetVintgeDates(string symbol, DateTime? RTStart)
         {
-            string uri = config.BaseURL + "series/vintagedates?series_id=" + symbol;
+            string uri = "series/vintagedates?series_id=" + symbol;
 
             if (RTStart != null)
                 uri += "&realtime_start=" + RTStart.Value.Date.ToString(FRED_DATE_FORMAT);

@@ -15,9 +15,9 @@ Before using this product you must [request an API key from FRED®](https://fred.
 ---
 
 
-##### This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
+##### This software uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
 
-##### By using this product you agree to be bound by the [FRED® API Terms of Use](https://fred.stlouisfed.org/legal/).
+##### By using this software you agree to be bound by the [FRED® API Terms of Use](https://fred.stlouisfed.org/legal/).
 
 
  ---

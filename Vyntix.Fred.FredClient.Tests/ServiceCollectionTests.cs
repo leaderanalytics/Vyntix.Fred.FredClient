@@ -34,7 +34,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             container.AddFredClient().UseAPIKey(apiKey);
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
-            Assert.IsTrue(fredClient is JSONFredClient);
+            Assert.IsTrue(fredClient is JsonFredClient);
             
         }
 
@@ -58,7 +58,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             container.AddFredClient().UseAPIKey(apiKey).UseConfig(x => new FredClientConfig { BaseURL = localhost });
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
-            Assert.IsTrue(fredClient is JSONFredClient);
+            Assert.IsTrue(fredClient is JsonFredClient);
             Func<IServiceProvider, HttpClient> httpClientFactory = services.GetService<Func<IServiceProvider, HttpClient>>();
             HttpClient httpClient = httpClientFactory(services);
             Assert.AreEqual(localhost, httpClient.BaseAddress.AbsoluteUri);
@@ -73,7 +73,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             container.AddFredClient().UseAPIKey(apiKey).UseVintageComposer(x => composerMock);
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
-            Assert.IsTrue(fredClient is JSONFredClient);
+            Assert.IsTrue(fredClient is JsonFredClient);
             Func<IServiceProvider, IVintageComposer> composerFactory = services.GetService<Func<IServiceProvider, IVintageComposer>>();
             IVintageComposer composer = composerFactory(services);
             Assert.IsTrue(composer.GetType().FullName == "Castle.Proxies.IVintageComposerProxy");

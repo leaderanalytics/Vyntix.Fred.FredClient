@@ -14,7 +14,6 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         [Test]
         public void VerifyStaticDataTest()
         {
-            
             List<Vintage> testData = CreateTestData();
             Assert.AreEqual(3, testData.Count);
             Assert.AreEqual(3, testData[0].Observations.Count);
@@ -54,26 +53,26 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             vintages.Add(new Vintage { Symbol = "1", VintageDate = new DateTime(2000, 3, 1), Observations = new List<IObservation>() });
 
             Vintage v1 = vintages[0];
-            v1.Observations.Add(new Observation { Vintage = v1, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
-            v1.Observations.Add(new Observation { Vintage = v1, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
-            v1.Observations.Add(new Observation { Vintage = v1, ObsDate = new DateTime(1999, 3, 1), Value = "3" });
+            v1.Observations.Add(new Observation { VintageDate = v1.VintageDate, Vintage = v1, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
+            v1.Observations.Add(new Observation { VintageDate = v1.VintageDate, Vintage = v1, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
+            v1.Observations.Add(new Observation { VintageDate = v1.VintageDate, Vintage = v1, ObsDate = new DateTime(1999, 3, 1), Value = "3" });
 
 
             Vintage v2 = vintages[1];
-            v2.Observations.Add(new Observation { Vintage = v2, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
-            v2.Observations.Add(new Observation { Vintage = v2, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
-            v2.Observations.Add(new Observation { Vintage = v2, ObsDate = new DateTime(1999, 2, 2), Value = "2.2" }); //Missing in Vintage 1
-            v2.Observations.Add(new Observation { Vintage = v2, ObsDate = new DateTime(1999, 3, 1), Value = "3.5" });
-            v2.Observations.Add(new Observation { Vintage = v2, ObsDate = new DateTime(1999, 4, 1), Value = "4" });
+            v2.Observations.Add(new Observation { VintageDate = v2.VintageDate, Vintage = v2, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
+            v2.Observations.Add(new Observation { VintageDate = v2.VintageDate, Vintage = v2, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
+            v2.Observations.Add(new Observation { VintageDate = v2.VintageDate, Vintage = v2, ObsDate = new DateTime(1999, 2, 2), Value = "2.2" }); //Missing in Vintage 1
+            v2.Observations.Add(new Observation { VintageDate = v2.VintageDate, Vintage = v2, ObsDate = new DateTime(1999, 3, 1), Value = "3.5" });
+            v2.Observations.Add(new Observation { VintageDate = v2.VintageDate, Vintage = v2, ObsDate = new DateTime(1999, 4, 1), Value = "4" });
 
 
             Vintage v3 = vintages[2];
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 2, 2), Value = "2.2" }); // must exist here as it cannot be removed
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 3, 1), Value = "3" });
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 4, 1), Value = "4" });
-            v3.Observations.Add(new Observation { Vintage = v3, ObsDate = new DateTime(1999, 5, 1), Value = "5" });
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 1, 1), Value = "1" });
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 2, 1), Value = "2" });
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 2, 2), Value = "2.2" }); // must exist here as it cannot be removed
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 3, 1), Value = "3" });
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 4, 1), Value = "4" });
+            v3.Observations.Add(new Observation { VintageDate = v3.VintageDate, Vintage = v3, ObsDate = new DateTime(1999, 5, 1), Value = "5" });
             return vintages;
         }
     }

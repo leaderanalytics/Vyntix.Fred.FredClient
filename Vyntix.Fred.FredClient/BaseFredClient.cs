@@ -21,8 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-This product uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
-By using this product you agree to be bound by the FRED® API Terms of Use found here: https://fred.stlouisfed.org/legal/.
+This software uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
+By using this software you agree to be bound by the FRED® API Terms of Use found here: https://fred.stlouisfed.org/legal/.
 
 */
 
@@ -35,10 +35,10 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 using Serilog;
-using LeaderAnalytics.Core;
+using LeaderAnalytics.Core.Threading;
 using LeaderAnalytics.Vyntix.Fred.Domain;
 using LeaderAnalytics.Vyntix.Fred.Model;
-
+using System.Text;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
@@ -49,16 +49,14 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         protected readonly string API_key;
         protected const string FRED_DATE_FORMAT = "yyyy-MM-dd";
         protected readonly FredClientConfig config;
-        
         private HttpClient httpClient;
         private IVintageComposer composer;
         private SemaphoreSlim concurrentRequestThrottle;
         private BatchThrottleAsync batchThrottle;
-        
 
         public BaseFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient)
         {
-            API_key = apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") ");
+            API_key = "api_key=" + apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") ");
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.composer = composer ?? throw new ArgumentNullException(nameof(composer));
@@ -66,13 +64,16 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             if (httpClient.BaseAddress is null)
                 throw new Exception($"{nameof(httpClient)} BaseAddress must be set.  The default value is {FredClientConfig.BaseAPIURL}");
             
+            if(! httpClient.BaseAddress.OriginalString.EndsWith("/"))
+                httpClient.BaseAddress = new Uri(httpClient.BaseAddress.ToString() + "/");
+            
             concurrentRequestThrottle = new SemaphoreSlim(config.MaxConcurrentDownloads, config.MaxConcurrentDownloads);
             batchThrottle = new BatchThrottleAsync(120, 60000); // block when we reach the per-minute request limit.
         }
 
         protected virtual async Task<Stream> Download(string uri)
         {
-            uri = uri + (uri.Contains("?") ? "&" : "?") + "api_key=" + API_key;
+            uri = uri + (uri.Contains("?") ? "&" : "?") + API_key;
             Stream stream = null;
             bool success = false;
 
@@ -132,6 +133,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
             return stream;
         }
+        
 
         protected abstract Task<T> Parse<T>(string uri, string root) where T : class, new();
 
@@ -139,19 +141,19 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<Category> GetCategory(string categoryID)
         {
-            string uri = config.BaseURL + "category?category_id=" + categoryID;
+            string uri = "category?category_id=" + categoryID;
             return (await Parse<List<Category>>(uri, "categories"))?.FirstOrDefault();
         }
 
         public async Task<List<Category>> GetCategoryChildren(string parentID)
         {
-            string uri = config.BaseURL + "category/children?category_id=" + parentID;
+            string uri = "category/children?category_id=" + parentID;
             return (await Parse<List<Category>>(uri, "categories")).ToList();
         }
 
         public async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
         {
-            string uri = config.BaseURL + "category/related?category_id=" + parentID;
+            string uri = "category/related?category_id=" + parentID;
             List<RelatedCategory> related = await Parse<List<RelatedCategory>>(uri, "categories");
 
             if (related != null && related.Any())
@@ -162,13 +164,13 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<List<Category>> GetCategoriesForSeries(string symbol)
         {
-            string uri = config.BaseURL + "series/categories?series_id=" + symbol;
+            string uri = "series/categories?series_id=" + symbol;
             return (await Parse<List<Category>>(uri, "categories")).ToList();
         }
 
         public async Task<List<CategoryTag>> GetCategoryTags(string categoryID)
         {
-            string uri = config.BaseURL + "category/tags?category_id=" + categoryID;
+            string uri = "category/tags?category_id=" + categoryID;
             List<CategoryTag> tags = (await Parse<List<CategoryTag>>(uri, "tags"));
 
             if (tags != null)
@@ -183,7 +185,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<List<SeriesCategory>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
         {
-            string uri = config.BaseURL + "category/series?category_id=" + categoryID;
+            string uri = "category/series?category_id=" + categoryID;
             bool doIt = true;
             int offset = -1000;
             List<SeriesCategory> results = new List<SeriesCategory>(5000);
@@ -207,13 +209,13 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<Series> GetSeries(string symbol)
         {
-            string uri = config.BaseURL + "series?series_id=" + symbol;
+            string uri = "series?series_id=" + symbol;
             return (await Parse<List<Series>>(uri, "seriess"))?.FirstOrDefault();
         }
 
         public async Task<List<SeriesTag>> GetSeriesTags(string symbol)
         {
-            string uri = config.BaseURL + "series/tags?series_id=" + symbol;
+            string uri = "series/tags?series_id=" + symbol;
             List<SeriesTag> tags = (await Parse<List<SeriesTag>>(uri, "tags"));
 
             if (tags != null)
@@ -228,7 +230,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<List<Release>> GetReleasesForSource(string nativeSourceID)
         {
-            string uri = config.BaseURL + "source/releases?source_id=" + nativeSourceID.ToString();
+            string uri = "source/releases?source_id=" + nativeSourceID.ToString();
             List<Release> releases = await Parse<List<Release>>(uri, "releases");
             return UpdateSourceNativeID(releases, nativeSourceID);
         }
@@ -237,14 +239,14 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         {
             string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
             string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
-            string uri = config.BaseURL + "source/releases?source_id=" + nativeSourceID.ToString() + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
+            string uri = "source/releases?source_id=" + nativeSourceID.ToString() + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
             List<Release> releases = await Parse<List<Release>>(uri, "releases");
             return UpdateSourceNativeID(releases, nativeSourceID);
         }
 
         public virtual async Task<List<ReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
         {
-            string uri = config.BaseURL + $"release/dates?release_id={nativeReleaseID}&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
+            string uri = $"release/dates?release_id={nativeReleaseID}&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
             List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
             return releaseDates.ToList();
         }
@@ -257,7 +259,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
             while (true)
             {
-                string uri = config.BaseURL + $"release/series?release_id={releaseNativeID}&offset={skip}&limit={take}";
+                string uri = $"release/series?release_id={releaseNativeID}&offset={skip}&limit={take}";
                 List<Series> page = await Parse<List<Series>>(uri, "seriess");
 
                 if (page?.Any() ?? false)
@@ -285,7 +287,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<List<Observation>> GetObservations(string symbol)
         {
-            string uri = config.BaseURL + "series/observations?series_id=" + symbol;
+            string uri = "series/observations?series_id=" + symbol;
             return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
         }
 
@@ -306,7 +308,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             {
                 string[] dates = vintageDates.Skip(skip).Take(take).Select(x => x.ToString(FRED_DATE_FORMAT)).ToArray();
                 string sdates = String.Join(",", dates);
-                string uri = config.BaseURL + "series/observations?series_id=" + symbol + "&vintage_dates=" + sdates;
+                string uri = "series/observations?series_id=" + symbol + "&vintage_dates=" + sdates;
                 List<Observation> obs = (await Parse<List<Observation>>(uri, "observations"))?.Where(x => x.Value != ".").ToList(); // Remove this where clause when Observation.Value becomes nullable.;
 
                 if (obs != null)
@@ -338,13 +340,13 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         {
             string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
             string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
-            string uri = config.BaseURL + "series/observations?series_id=" + symbol + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
+            string uri = "series/observations?series_id=" + symbol + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
             return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
         }
 
         public async Task<List<Observation>> GetObservationUpdates(string symbol, DateTime? ObsStart, DateTime? ObsEnd)
         {
-            string uri = config.BaseURL + "series/observations?series_id=" + symbol;
+            string uri = "series/observations?series_id=" + symbol;
 
             if (ObsStart.HasValue)
                 uri += "&observation_start=" + ObsStart.Value.ToString(FRED_DATE_FORMAT);
@@ -371,7 +373,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public virtual async Task<List<Vintage>> GetVintgeDates(string symbol, DateTime? RTStart)
         {
-            string uri = config.BaseURL + "series/vintagedates?series_id=" + symbol;
+            string uri = "series/vintagedates?series_id=" + symbol;
 
             if (RTStart != null)
                 uri += "&realtime_start=" + RTStart.Value.Date.ToString(FRED_DATE_FORMAT);
@@ -404,7 +406,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public async Task<List<Source>> GetSources()
         {
-            string uri = config.BaseURL + "sources";
+            string uri = "sources";
             return (await Parse<List<Source>>(uri, "sources")).ToList();
         }
 
@@ -412,7 +414,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         {
             string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
             string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
-            string uri = config.BaseURL + "sources" + "?realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
+            string uri = "sources" + "?realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
             return (await Parse<List<Source>>(uri, "sources")).ToList();
         }
 

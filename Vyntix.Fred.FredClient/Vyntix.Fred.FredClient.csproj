@@ -23,10 +23,16 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RootNamespace>LeaderAnalytics.Vyntix.Fred.FredClient</RootNamespace>
+    <AssemblyName>LeaderAnalytics.Vyntix.Fred.FredClient</AssemblyName>
+  </PropertyGroup>
+  
   <ItemGroup>
-    <PackageReference Include="LeaderAnalytics.Core" Version="2.0.83" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.2-beta.1" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.3-beta.1" />
+    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="1.0.2" />
+    <PackageReference Include="LeaderAnalytics.Core.Threading" Version="1.0.0" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.4-beta.1" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.7-beta.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />

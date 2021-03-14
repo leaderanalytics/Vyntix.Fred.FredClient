@@ -1,12 +1,7 @@
 ﻿using LeaderAnalytics.Vyntix.Fred.Domain;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
@@ -47,19 +42,19 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public RegistrationValues UseVintageComposer(Func<IServiceProvider,IVintageComposer> composerFactory)
         {
-            services.AddTransient<Func<IServiceProvider, IVintageComposer>>(x => composerFactory);
+            services.AddSingleton<Func<IServiceProvider, IVintageComposer>>(x => composerFactory);
             return this;
         }
 
         public RegistrationValues UseHttpClient(Func<IServiceProvider, HttpClient> httpClientFactory)
         {
-            services.AddTransient<Func<IServiceProvider, HttpClient>>(x => httpClientFactory);
+            services.AddSingleton<Func<IServiceProvider, HttpClient>>(x => httpClientFactory);
             return this;
         }
 
         public RegistrationValues UseConfig(Func<IServiceProvider, FredClientConfig> configFactory)
         {
-            services.AddTransient<Func<IServiceProvider, FredClientConfig>>(x => configFactory);
+            services.AddSingleton<Func<IServiceProvider, FredClientConfig>>(x => configFactory);
             return this;
         }
 
@@ -72,7 +67,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             UseHttpClient(x => {
                 Func<IServiceProvider, FredClientConfig> configFactory = x.GetService<Func<IServiceProvider, FredClientConfig>>();
                 FredClientConfig config = configFactory(x);
-                HttpClient httpClient = HttpClientFactory.Create();
+                HttpClient httpClient = new HttpClient();
                 httpClient.BaseAddress = new Uri(config.BaseURL);
                 return httpClient;
             });
@@ -86,7 +81,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 Func<IServiceProvider, IVintageComposer> composerFactory = x.GetService<Func<IServiceProvider, IVintageComposer>>();
                 Func<IServiceProvider, HttpClient> httpClientFactory = x.GetService<Func<IServiceProvider, HttpClient>>();
                 IFredClient fredClient = this.fileType == FredFileType.JSON ? 
-                    new JSONFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x)) :
+                    new JsonFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x)) :
                     new XMLFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x));
                 return fredClient;
             });

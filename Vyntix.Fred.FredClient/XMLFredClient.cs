@@ -1,4 +1,5 @@
-﻿using LeaderAnalytics.Vyntix.Fred.Domain;
+﻿using LeaderAnalytics.Core.Serialization.XML;
+using LeaderAnalytics.Vyntix.Fred.Domain;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,12 +17,15 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         protected override async Task<T> Parse<T>(string uri, string root)
         {
-            Stream stream = await Download(uri);
-         
-            if (stream is null)
-                return default(T);
-            
-            return (T)new XmlSerializer(typeof(T), new XmlRootAttribute(root)).Deserialize(stream);
+            try
+            {
+                using (Stream stream = await Download(uri))
+                    return stream == null ? default(T) : SerializationHelper<T>.DeSerialize(stream, root);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"XMLFredClient encountered an error. URI is {uri}, type is {typeof(T).FullName}, root is {root}.  See the inner exception for more detail.", ex);
+            }
         }
     }
 }
