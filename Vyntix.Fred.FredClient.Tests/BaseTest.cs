@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using LeaderAnalytics.Vyntix.Fred.Domain;
 using LeaderAnalytics.Vyntix.Fred.FredClient;
 using NUnit.Framework;
+using Serilog;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
 {
@@ -22,6 +23,13 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             CurrentFileType = fileType;
             string path = "C:\\Users\\sam\\OneDrive\\LeaderAnalytics\\Config\\Vyntix.Fred.FredClient\\apiKey.txt";
             apiKey = System.IO.File.ReadAllText(path);
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Debug()
+                .CreateLogger();
+
+            Log.Information("Logging has been configured.");
         }
 
 

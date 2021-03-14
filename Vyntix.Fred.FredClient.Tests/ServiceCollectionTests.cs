@@ -15,7 +15,6 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
     [TestFixture]
     public class ServiceCollectionTests
     {
-        
         private readonly IServiceProvider services;
 
         public ServiceCollectionTests()
@@ -27,7 +26,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
 
 
         [Test]
-        public void Can_resolve_default_FredClient_test()
+        public void Can_resolve_default_FredClient()
         {
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
@@ -35,11 +34,10 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
             Assert.IsTrue(fredClient is JsonFredClient);
-            
         }
 
         [Test]
-        public void Can_use_XML_filetype_FredClient_test()
+        public void Can_use_XML_filetype_FredClient()
         {
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
@@ -50,7 +48,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         }
 
         [Test]
-        public void Can_use_custom_config_FredClient_test()
+        public void Can_use_custom_config_FredClient()
         {
             string localhost = "https://localhost/";
             string apiKey = "secret";
@@ -65,7 +63,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         }
 
         [Test]
-        public void Can_use_custom_composer_FredClient_test()
+        public void Can_use_custom_composer_FredClient()
         {
             IVintageComposer composerMock = new Mock<IVintageComposer>().Object;
             string apiKey = "secret";
@@ -77,6 +75,18 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             Func<IServiceProvider, IVintageComposer> composerFactory = services.GetService<Func<IServiceProvider, IVintageComposer>>();
             IVintageComposer composer = composerFactory(services);
             Assert.IsTrue(composer.GetType().FullName == "Castle.Proxies.IVintageComposerProxy");
+        }
+
+        [Test]
+        public void Can_resolve_multiple_instances_of_FredClient()
+        {
+            string apiKey = "secret";
+            IServiceCollection container = new ServiceCollection();
+            container.AddFredClient().UseAPIKey(apiKey);
+            IServiceProvider services = container.BuildServiceProvider();
+            IFredClient fredClient_1 = services.GetService<IFredClient>();
+            IFredClient fredClient_2 = services.GetService<IFredClient>();
+            Assert.AreNotEqual(fredClient_1, fredClient_2);
         }
     }
 }

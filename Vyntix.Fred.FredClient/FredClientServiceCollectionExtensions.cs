@@ -74,9 +74,6 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             UseConfig(x => x.GetService<FredClientConfig>());
 
             services.AddTransient<IFredClient>(x => {
-                FredClientConfig junk = new FredClientConfig { BaseURL = "zzzzzz" };
-
-
                 Func<IServiceProvider, FredClientConfig> configFactory = x.GetService<Func<IServiceProvider, FredClientConfig>>();
                 Func<IServiceProvider, IVintageComposer> composerFactory = x.GetService<Func<IServiceProvider, IVintageComposer>>();
                 Func<IServiceProvider, HttpClient> httpClientFactory = x.GetService<Func<IServiceProvider, HttpClient>>();

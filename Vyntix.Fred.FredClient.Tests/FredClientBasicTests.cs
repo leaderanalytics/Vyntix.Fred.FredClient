@@ -11,10 +11,10 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
 {
     [TestFixture(FredFileType.JSON)]
     [TestFixture(FredFileType.XML)]
-    public class FredClientTests : BaseTest
+    public class FredClientBasicTests : BaseTest
     {
 
-        public FredClientTests(FredFileType fileType) : base(fileType)
+        public FredClientBasicTests(FredFileType fileType) : base(fileType)
         {
 
         }
