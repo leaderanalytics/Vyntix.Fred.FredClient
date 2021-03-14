@@ -12,6 +12,7 @@ using System.Dynamic;
 using LeaderAnalytics.Vyntix.Fred.Model;
 
 // https://github.com/dotnet/runtime/issues/40452
+// https://github.com/dotnet/runtime/issues/49598
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
@@ -38,7 +39,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                     using (JsonDocument document = JsonDocument.Parse(stream))
                     {
                         string json = document.RootElement.GetProperty(root).GetRawText();
-                        return JsonSerializer.Deserialize<T>(json);
+                        return JsonSerializer.Deserialize<T>(json, );
                     }
                 }
             }
