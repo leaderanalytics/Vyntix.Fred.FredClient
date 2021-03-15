@@ -23,7 +23,6 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         [Test()]
         public async Task Download_five_symbols()
         {
-            
             string[] symbols = new string[] { "LEU0252881600Q", "CPIAUCSL", "GDP", "M2V", "BAA10Y" };
             DateTime startDate = new DateTime(2000, 1, 1);
             DateTime endDate = new DateTime(2000, 12, 31);

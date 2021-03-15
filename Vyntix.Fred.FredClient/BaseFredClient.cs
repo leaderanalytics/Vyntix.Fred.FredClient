@@ -139,41 +139,41 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region Categories ------------------------
 
-        public async Task<Category> GetCategory(string categoryID)
+        public virtual async Task<Category> GetCategory(string categoryID)
         {
             string uri = "category?category_id=" + categoryID;
             return (await Parse<List<Category>>(uri, "categories"))?.FirstOrDefault();
         }
 
-        public async Task<List<Category>> GetCategoryChildren(string parentID)
+        public virtual async Task<List<Category>> GetCategoryChildren(string parentID)
         {
-            string uri = "category/children?category_id=" + parentID;
+            string uri = "category/children?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
             return (await Parse<List<Category>>(uri, "categories")).ToList();
         }
 
-        public async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
+        public virtual async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
         {
-            string uri = "category/related?category_id=" + parentID;
+            string uri = "category/related?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
             List<RelatedCategory> related = await Parse<List<RelatedCategory>>(uri, "categories");
 
-            if (related != null && related.Any())
+            if (related?.Any() ?? false)
                 related.ForEach(x => x.CategoryID = parentID);
 
-            return related.ToList();
+            return related;
         }
 
-        public async Task<List<Category>> GetCategoriesForSeries(string symbol)
+        public virtual async Task<List<Category>> GetCategoriesForSeries(string symbol)
         {
-            string uri = "series/categories?series_id=" + symbol;
-            return (await Parse<List<Category>>(uri, "categories")).ToList();
+            string uri = "series/categories?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
+            return (await Parse<List<Category>>(uri, "categories"));
         }
 
-        public async Task<List<CategoryTag>> GetCategoryTags(string categoryID)
+        public virtual async Task<List<CategoryTag>> GetCategoryTags(string categoryID)
         {
-            string uri = "category/tags?category_id=" + categoryID;
+            string uri = "category/tags?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
             List<CategoryTag> tags = (await Parse<List<CategoryTag>>(uri, "tags"));
 
-            if (tags != null)
+            if (tags?.Any() ?? false)
                 tags.ForEach(x => x.CategoryID = categoryID);
 
             return tags;
@@ -183,9 +183,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region Series -----------------------------------
 
-        public async Task<List<SeriesCategory>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
+        public virtual async Task<List<SeriesCategory>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
         {
-            string uri = "category/series?category_id=" + categoryID;
+            string uri = "category/series?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
             bool doIt = true;
             int offset = -1000;
             List<SeriesCategory> results = new List<SeriesCategory>(5000);
@@ -201,21 +201,21 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 if (list != null)
                     results.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)).Select(x => new SeriesCategory { CategoryID = categoryID, Symbol = x.Symbol }));
 
-                if (list == null || list.Count < 1000)
+                if ((list?.Count ?? 0) < 1000)
                     doIt = false;
             }
             return results;
         }
 
-        public async Task<Series> GetSeries(string symbol)
+        public virtual async Task<Series> GetSeries(string symbol)
         {
-            string uri = "series?series_id=" + symbol;
+            string uri = "series?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
             return (await Parse<List<Series>>(uri, "seriess"))?.FirstOrDefault();
         }
 
-        public async Task<List<SeriesTag>> GetSeriesTags(string symbol)
+        public virtual async Task<List<SeriesTag>> GetSeriesTags(string symbol)
         {
-            string uri = "series/tags?series_id=" + symbol;
+            string uri = "series/tags?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
             List<SeriesTag> tags = (await Parse<List<SeriesTag>>(uri, "tags"));
 
             if (tags != null)
@@ -228,31 +228,35 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region Releases ----------------------------
 
-        public async Task<List<Release>> GetReleasesForSource(string nativeSourceID)
+        public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID)
         {
-            string uri = "source/releases?source_id=" + nativeSourceID.ToString();
+            string uri = "source/releases?source_id=" + (nativeSourceID ?? throw new ArgumentNullException(nameof(nativeSourceID)));
             List<Release> releases = await Parse<List<Release>>(uri, "releases");
             return UpdateSourceNativeID(releases, nativeSourceID);
         }
 
-        public async Task<List<Release>> GetReleasesForSource(string nativeSourceID, DateTime RTStart, DateTime RTEnd)
+        public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID, DateTime RTStart, DateTime RTEnd)
         {
-            string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
-            string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
-            string uri = "source/releases?source_id=" + nativeSourceID.ToString() + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
+            string uri = "source/releases?source_id=" 
+                + (nativeSourceID ?? throw new ArgumentNullException(nameof(nativeSourceID))) 
+                + "&realtime_start=" + RTStart.Date.ToString(FRED_DATE_FORMAT)
+                + "&realtime_end=" + RTEnd.Date.ToString(FRED_DATE_FORMAT);
             List<Release> releases = await Parse<List<Release>>(uri, "releases");
             return UpdateSourceNativeID(releases, nativeSourceID);
         }
 
         public virtual async Task<List<ReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
         {
-            string uri = $"release/dates?release_id={nativeReleaseID}&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
+            string uri = $"release/dates?release_id={ (nativeReleaseID ?? throw new ArgumentNullException(nameof(nativeReleaseID))) }&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
             List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
             return releaseDates.ToList();
         }
 
-        public async Task<List<Series>> GetSeriesForRelease(string releaseNativeID)
+        public virtual async Task<List<Series>> GetSeriesForRelease(string releaseNativeID)
         {
+            if (string.IsNullOrEmpty(releaseNativeID))
+                throw new ArgumentException(nameof(releaseNativeID));
+
             int skip = 0;
             int take = 1000;
             List<Series> result = new List<Series>(5000);
@@ -285,19 +289,19 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region Observations -------------------------------------------------
 
-        public async Task<List<Observation>> GetObservations(string symbol)
+        public virtual async Task<List<Observation>> GetObservations(string symbol)
         {
-            string uri = "series/observations?series_id=" + symbol;
+            string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
             return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
         }
 
-        public async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates)
+        public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates)
         {
             if (string.IsNullOrEmpty(symbol))
-                throw new ArgumentNullException("symbol");
+                throw new ArgumentNullException(nameof(symbol));
 
             if (vintageDates == null)
-                throw new ArgumentNullException("vintageDates");
+                throw new ArgumentNullException(nameof(vintageDates));
 
             List<Observation> result = new List<Observation>(10000);
             List<IObservation> denseResult = new List<IObservation>(10000);
@@ -336,17 +340,18 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         }
 
 
-        public async Task<List<Observation>> GetObservations(string symbol, DateTime RTStart, DateTime RTEnd)
+        public virtual async Task<List<Observation>> GetObservations(string symbol, DateTime RTStart, DateTime RTEnd)
         {
-            string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
-            string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
-            string uri = "series/observations?series_id=" + symbol + "&realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
+            string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)))
+                + "&realtime_start=" + RTStart.Date.ToString(FRED_DATE_FORMAT)
+                + "&realtime_end=" + RTEnd.Date.ToString(FRED_DATE_FORMAT);
+
             return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
         }
 
-        public async Task<List<Observation>> GetObservationUpdates(string symbol, DateTime? ObsStart, DateTime? ObsEnd)
+        public virtual async Task<List<Observation>> GetObservationUpdates(string symbol, DateTime? ObsStart, DateTime? ObsEnd)
         {
-            string uri = "series/observations?series_id=" + symbol;
+            string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
             if (ObsStart.HasValue)
                 uri += "&observation_start=" + ObsStart.Value.ToString(FRED_DATE_FORMAT);
@@ -359,6 +364,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         private IEnumerable<Observation> UpdateSymbol(IEnumerable<Observation> obs, string symbol)
         {
+            if (string.IsNullOrEmpty(symbol))
+                throw new ArgumentNullException(nameof(symbol));
+
             if (obs == null)
                 return null;
 
@@ -373,7 +381,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         public virtual async Task<List<Vintage>> GetVintgeDates(string symbol, DateTime? RTStart)
         {
-            string uri = "series/vintagedates?series_id=" + symbol;
+            string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
             if (RTStart != null)
                 uri += "&realtime_start=" + RTStart.Value.Date.ToString(FRED_DATE_FORMAT);
@@ -404,13 +412,13 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region Sources ----------------------------------------------------------------------
 
-        public async Task<List<Source>> GetSources()
+        public virtual async Task<List<Source>> GetSources()
         {
             string uri = "sources";
             return (await Parse<List<Source>>(uri, "sources")).ToList();
         }
 
-        public async Task<List<Source>> GetSources(DateTime RTStart, DateTime RTEnd)
+        public virtual async Task<List<Source>> GetSources(DateTime RTStart, DateTime RTEnd)
         {
             string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
             string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
