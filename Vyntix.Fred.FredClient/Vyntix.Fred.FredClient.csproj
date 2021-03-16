@@ -8,13 +8,13 @@
     <Authors>Leader Analytics</Authors>
     <Company>Leader Analytics</Company>
     <Product>Vyntix.Fred.FredClient</Product>
-    <Description>Fred data downloader</Description>
+    <Description>Easy-to-use client for downloading data from the Federal Reserve Bank of St.Louis FRED® API</Description>
     <Copyright>2021 Leader Analytics</Copyright>
-    <PackageProjectUrl>https://github.com/leaderanalytics/</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/leaderanalytics/Vyntix.Fred.FredClient</PackageProjectUrl>
     <PackageIcon>VyntixLogo.png</PackageIcon>
-    <RepositoryUrl>https://github.com/leaderanalytics/</RepositoryUrl>
+    <RepositoryUrl>https://github.com/leaderanalytics/Vyntix.Fred.FredClient</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Leader Analytics LeaderAnalytics Vyntix FRED client FredClient</PackageTags>
+    <PackageTags>Leader Analytics LeaderAnalytics Vyntix FRED ALFRED vintage client FredClient economic economic-data economicdata</PackageTags>
     <PackageReleaseNotes>See Repository</PackageReleaseNotes>
     <Version>1.0.0-beta.1</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
