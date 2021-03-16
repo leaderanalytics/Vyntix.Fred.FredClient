@@ -53,3 +53,9 @@ steps:
     feedsToUse: 'select'
     vstsFeed: 'LeaderAnalyticsFeed'
     publishVstsFeed: 'LeaderAnalyticsFeed'
+
+- task: PowerShell@2
+  displayName: "Push package to nuget.org"
+  inputs:
+    targetType: 'inline'
+    script: 'nuget push $(Build.ArtifactStagingDirectory)\*.nupkg -ApiKey $(nuget.org_apikey) -Source https://api.nuget.org/v3/index.json'    
