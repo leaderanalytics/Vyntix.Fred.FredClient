@@ -21,7 +21,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             string symbol = "NROU";
             DateTime endDate = new DateTime(2021, 3, 6);
-            List<Vintage> vintages = (await FredClient.GetVintgeDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
+            List<Vintage> vintages = (await FredClient.GetVintageDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
             List<Observation> obs = (await FredClient.GetObservations(symbol, vintages.Select(x => x.VintageDate).ToList()))
                 .Where(x => x.ObsDate <= endDate).ToList();
 
@@ -34,7 +34,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             string symbol = "CPIAUCSL";
             DateTime endDate = new DateTime(2021, 3, 6);
-            List<Vintage> vintageDates = (await FredClient.GetVintgeDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
+            List<Vintage> vintageDates = (await FredClient.GetVintageDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
             List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList()))
                 .Where(x => x.ObsDate <= endDate).ToList();
 

@@ -114,7 +114,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         [Test]
         public async Task VintageTest()
         {
-            Vintage data = (await FredClient.GetVintgeDates("GNPCA", new DateTime(2020, 1, 1))).FirstOrDefault();
+            Vintage data = (await FredClient.GetVintageDates("GNPCA", new DateTime(2020, 1, 1))).FirstOrDefault();
             Assert.IsNotNull(data);
             Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
             Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);

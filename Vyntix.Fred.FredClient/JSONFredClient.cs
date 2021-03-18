@@ -51,7 +51,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         }
         
 
-        public override async Task<List<Vintage>> GetVintgeDates(string symbol, DateTime? RTStart)
+        public override async Task<List<Vintage>> GetVintageDates(string symbol, DateTime? RTStart)
         {
             string uri = "series/vintagedates?series_id=" + symbol;
 

@@ -385,7 +385,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
         #region VintageDates -----------------------------------------
 
-        public virtual async Task<List<Vintage>> GetVintgeDates(string symbol, DateTime? RTStart)
+        public virtual async Task<List<Vintage>> GetVintageDates(string symbol, DateTime? RTStart)
         {
             string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 

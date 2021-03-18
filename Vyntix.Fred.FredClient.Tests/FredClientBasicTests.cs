@@ -215,10 +215,10 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         [Test()]
         public async Task GetVintgeDatesTest()
         {
-            List<Vintage> data = await FredClient.GetVintgeDates("GNPCA", new DateTime(2020,1,1));
+            List<Vintage> data = await FredClient.GetVintageDates("GNPCA", new DateTime(2020,1,1));
             Assert.IsNotNull(data);
 
-            data = await FredClient.GetVintgeDates(DOES_NOT_EXIST, new DateTime(2020, 1, 1));
+            data = await FredClient.GetVintageDates(DOES_NOT_EXIST, new DateTime(2020, 1, 1));
             Assert.IsNull(data);
         }
     }
