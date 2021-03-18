@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LeaderAnalytics.Vyntix.Fred.Domain;
 using LeaderAnalytics.Vyntix.Fred.FredClient;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Serilog;
 
@@ -38,11 +39,14 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         public void Setup()
         {
             HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
+            FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 1 };
+            ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog();
+            ILogger<IFredClient> logger = loggerFactory.CreateLogger<IFredClient>();
 
             if(CurrentFileType == FredFileType.XML)
-                FredClient = new XMLFredClient(apiKey, new FredClientConfig(), new VintageComposer(), httpClient);
+                FredClient = new XMLFredClient(apiKey, config, new VintageComposer(), httpClient, logger);
             else
-                FredClient = new JsonFredClient(apiKey, new FredClientConfig(), new VintageComposer(), httpClient);
+                FredClient = new JsonFredClient(apiKey, config, new VintageComposer(), httpClient, logger);
         }
     }
 }

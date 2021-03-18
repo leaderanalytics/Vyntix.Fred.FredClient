@@ -6,7 +6,7 @@
 
 Easily acquire economic data from the St.Louis Federal Reserve [FRED® API](https://fred.stlouisfed.org/docs/api/fred/).
 
-Before using this product you must [request an API key from FRED®](https://fred.stlouisfed.org/docs/api/api_key.html).
+Before using this software you must [request an API key from FRED®](https://fred.stlouisfed.org/docs/api/api_key.html).
 
 ----
 

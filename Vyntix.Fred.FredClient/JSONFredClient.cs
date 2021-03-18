@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Dynamic;
 using LeaderAnalytics.Vyntix.Fred.Model;
+using Microsoft.Extensions.Logging;
 
 // https://github.com/dotnet/runtime/issues/40452
 // https://github.com/dotnet/runtime/issues/49598
@@ -19,7 +20,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
     public class JsonFredClient : BaseFredClient
     {
 
-        public JsonFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient) : base(apiKey, config, composer, httpClient) 
+        public JsonFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient, ILogger<IFredClient> logger) : base(apiKey, config, composer, httpClient, logger) 
         {
      
         }
@@ -59,7 +60,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
             int offset = -10000;
             bool doIt = true;
-            List<Vintage> results = new List<Vintage>(1500);
+            List<Vintage> result = new List<Vintage>(1500);
             List<DateTime> vintages = null;
 
             while (doIt)
@@ -67,17 +68,17 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 string newUri;
                 offset += 10000;
                 newUri = uri + "&offset=" + offset.ToString();
-                vintages = (await Parse<List<DateTime>>(newUri, "vintage_dates")).ToList();
+                vintages = (await Parse<List<DateTime>>(newUri, "vintage_dates"))?.ToList();
 
                 if (vintages != null)
-                    results.AddRange(vintages.Select(x => new Vintage { VintageDate = x }));
+                    result.AddRange(vintages.Select(x => new Vintage { VintageDate = x }));
                 else
                     break;
 
                 doIt = vintages.Count == 10000;
             }
-            results.ForEach(x => x.Symbol = symbol);
-            return results;
+            result.ForEach(x => x.Symbol = symbol);
+            return result.Any() ? result : null;
         }
     }
 }

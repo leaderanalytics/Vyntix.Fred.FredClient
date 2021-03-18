@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         public ServiceCollectionTests()
         {
             IServiceCollection container = new ServiceCollection();
+            container.AddLogging(builder => builder.AddSerilog());
             container.AddFredClient();
             services = container.BuildServiceProvider();
         }
@@ -30,6 +32,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
+            container.AddLogging(builder => builder.AddSerilog());
             container.AddFredClient().UseAPIKey(apiKey);
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
@@ -42,6 +45,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
             container.AddFredClient().UseAPIKey(apiKey).UseFileType(FredFileType.XML);
+            container.AddLogging(builder => builder.AddSerilog());
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
             Assert.IsTrue(fredClient is XMLFredClient);
@@ -53,6 +57,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             string localhost = "https://localhost/";
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
+            container.AddLogging(builder => builder.AddSerilog());
             container.AddFredClient().UseAPIKey(apiKey).UseConfig(x => new FredClientConfig { BaseURL = localhost });
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
@@ -68,6 +73,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
             IVintageComposer composerMock = new Mock<IVintageComposer>().Object;
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
+            container.AddLogging(builder => builder.AddSerilog());
             container.AddFredClient().UseAPIKey(apiKey).UseVintageComposer(x => composerMock);
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient = services.GetService<IFredClient>();
@@ -82,6 +88,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             string apiKey = "secret";
             IServiceCollection container = new ServiceCollection();
+            container.AddLogging(builder => builder.AddSerilog());
             container.AddFredClient().UseAPIKey(apiKey);
             IServiceProvider services = container.BuildServiceProvider();
             IFredClient fredClient_1 = services.GetService<IFredClient>();

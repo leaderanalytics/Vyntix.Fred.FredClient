@@ -13,6 +13,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
     [TestFixture(FredFileType.XML)]
     public class FredClientBasicTests : BaseTest
     {
+        private const string DOES_NOT_EXIST = "DOES_NOT_EXIST"; // Arbitrary invalid identifier
 
         public FredClientBasicTests(FredFileType fileType) : base(fileType)
         {
@@ -24,6 +25,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Category> data = await FredClient.GetCategoriesForSeries("EXJPUS");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetCategoriesForSeries(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -31,6 +35,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             Category data = await FredClient.GetCategory("125");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetCategory(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -38,6 +45,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Category> data = await FredClient.GetCategoryChildren("13");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetCategoryChildren(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -45,6 +55,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<CategoryTag> data = await FredClient.GetCategoryTags("125");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetCategoryTags(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -52,6 +65,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Observation> data = await FredClient.GetObservations("GNPCA");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetObservations(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -59,6 +75,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -77,8 +96,12 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
                 new DateTime(2020, 1, 1),
                 new DateTime(2020, 1, 1)
             };
-            List<Observation> data = await FredClient.GetObservations("GNPCA");
+            List<Observation> data = await FredClient.GetObservations("GNPCA", vintateDates);
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetObservations(DOES_NOT_EXIST, vintateDates);
+            Assert.IsNull(data);
+
         }
 
         [Test()]
@@ -86,6 +109,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Observation> data = await FredClient.GetObservationUpdates("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetObservationUpdates(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+            Assert.IsNull(data);
         }
 
 
@@ -94,6 +120,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<RelatedCategory> data = await FredClient.GetRelatedCategories("32073");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetRelatedCategories(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
 
@@ -102,6 +131,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<ReleaseDate> data = await FredClient.GetReleaseDates("82", 0);
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetReleaseDates(DOES_NOT_EXIST, 0);
+            Assert.IsNull(data);
         }
 
 
@@ -110,6 +142,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Release> data = await FredClient.GetReleasesForSource("1");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetReleasesForSource(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -117,6 +152,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Release> data = await FredClient.GetReleasesForSource("1", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetReleasesForSource(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+            Assert.IsNull(data);
         }
 
 
@@ -125,6 +163,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             Series data = await FredClient.GetSeries("GNPCA");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetSeries(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -132,6 +173,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<SeriesCategory> data = await FredClient.GetSeriesForCategory("125", false);
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetSeriesForCategory(DOES_NOT_EXIST, false);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -139,6 +183,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Series> data = await FredClient.GetSeriesForRelease("51");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetSeriesForRelease(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -146,6 +193,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<SeriesTag> data = await FredClient.GetSeriesTags("STLFSI");
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetSeriesTags(DOES_NOT_EXIST);
+            Assert.IsNull(data);
         }
 
         [Test()]
@@ -167,6 +217,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests
         {
             List<Vintage> data = await FredClient.GetVintgeDates("GNPCA", new DateTime(2020,1,1));
             Assert.IsNotNull(data);
+
+            data = await FredClient.GetVintgeDates(DOES_NOT_EXIST, new DateTime(2020, 1, 1));
+            Assert.IsNull(data);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LeaderAnalytics.Vyntix.Fred.Domain;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 
@@ -77,9 +78,10 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 Func<IServiceProvider, FredClientConfig> configFactory = x.GetService<Func<IServiceProvider, FredClientConfig>>();
                 Func<IServiceProvider, IVintageComposer> composerFactory = x.GetService<Func<IServiceProvider, IVintageComposer>>();
                 Func<IServiceProvider, HttpClient> httpClientFactory = x.GetService<Func<IServiceProvider, HttpClient>>();
+                ILogger<IFredClient> logger = x.GetService<ILogger<IFredClient>>() ?? throw new Exception("A Logger could not resolved.  You must call AddLogging() when configuring IServiceCollection.  For example:  services.AddLogging(builder => builder.AddSerilog());");
                 IFredClient fredClient = this.fileType == FredFileType.JSON ? 
-                    new JsonFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x)) :
-                    new XMLFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x));
+                    new JsonFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x), logger) :
+                    new XMLFredClient(this.apiKey, configFactory(x), composerFactory(x), httpClientFactory(x), logger);
                 return fredClient;
             });
 

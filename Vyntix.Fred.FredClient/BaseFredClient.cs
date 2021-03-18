@@ -34,11 +34,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
-using Serilog;
 using LeaderAnalytics.Core.Threading;
 using LeaderAnalytics.Vyntix.Fred.Domain;
 using LeaderAnalytics.Vyntix.Fred.Model;
-using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
@@ -46,6 +45,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
     {
         public IDownloadJobStatistics JobStatistics { get; set; }               // Set by Autofac property injection
         public int RemainingLimitRequests { get; protected set; }               // Remaining requests since LastLimitReset
+        protected ILogger<IFredClient> Logger { get; set; }
         protected readonly string API_key;
         protected const string FRED_DATE_FORMAT = "yyyy-MM-dd";
         protected readonly FredClientConfig config;
@@ -54,8 +54,9 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         private SemaphoreSlim concurrentRequestThrottle;
         private BatchThrottleAsync batchThrottle;
 
-        public BaseFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient)
+        public BaseFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient, ILogger<IFredClient> logger)
         {
+            
             API_key = "api_key=" + apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") ");
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -67,6 +68,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             if(! httpClient.BaseAddress.OriginalString.EndsWith("/"))
                 httpClient.BaseAddress = new Uri(httpClient.BaseAddress.ToString() + "/");
             
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             concurrentRequestThrottle = new SemaphoreSlim(config.MaxConcurrentDownloads, config.MaxConcurrentDownloads);
             batchThrottle = new BatchThrottleAsync(120, 60000); // block when we reach the per-minute request limit.
         }
@@ -97,7 +99,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                     }
                     else if (response.StatusCode == HttpStatusCode.NotFound)
                     {
-                        Log.Error("HttpStatusCode 404 received when accessing url: {uri}", uri);
+                        Logger.LogError("HttpStatusCode 404 received when accessing url: {uri}", uri);
                         break;
                     }
                     else
@@ -108,14 +110,14 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                             batchThrottle.BlockNow();
                         else
                         {
-                            Log.Error("HttpStatusCode {code} received when accessing url: {uri}", intCode, uri);
+                            Logger.LogError("HttpStatusCode {code} received when accessing url: {uri}", intCode, uri);
                             wait = true;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "Exception while downloading url: {uri}", uri);
+                    Logger.LogError(ex, "Exception while downloading url: {uri}", uri);
                     wait = true;
                 }
                 finally
@@ -129,7 +131,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             }
 
             if (!success)
-                Log.Error("Max retry count exceeded when attempting to download url: {uri}", uri);
+                Logger.LogError("Max retry count exceeded when attempting to download url: {uri}", uri);
 
             return stream;
         }
@@ -148,7 +150,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         public virtual async Task<List<Category>> GetCategoryChildren(string parentID)
         {
             string uri = "category/children?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
-            return (await Parse<List<Category>>(uri, "categories")).ToList();
+            return (await Parse<List<Category>>(uri, "categories"))?.ToList();
         }
 
         public virtual async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
@@ -188,7 +190,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             string uri = "category/series?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
             bool doIt = true;
             int offset = -1000;
-            List<SeriesCategory> results = new List<SeriesCategory>(5000);
+            List<SeriesCategory> result = new List<SeriesCategory>(5000);
             
             while (doIt)
             {
@@ -199,12 +201,12 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 List<Series> list = await Parse<List<Series>>(newUri, "seriess");
 
                 if (list != null)
-                    results.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)).Select(x => new SeriesCategory { CategoryID = categoryID, Symbol = x.Symbol }));
+                    result.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)).Select(x => new SeriesCategory { CategoryID = categoryID, Symbol = x.Symbol }));
 
                 if ((list?.Count ?? 0) < 1000)
                     doIt = false;
             }
-            return results;
+            return result.Any() ? result : null;
         }
 
         public virtual async Task<Series> GetSeries(string symbol)
@@ -249,7 +251,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         {
             string uri = $"release/dates?release_id={ (nativeReleaseID ?? throw new ArgumentNullException(nameof(nativeReleaseID))) }&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
             List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
-            return releaseDates.ToList();
+            return releaseDates?.ToList();
         }
 
         public virtual async Task<List<Series>> GetSeriesForRelease(string releaseNativeID)
@@ -276,7 +278,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
             }
             result.ForEach(x => x.ReleaseID = releaseNativeID);
-            return result;
+            return result.Any() ? result : null;
         }
 
         private List<Release> UpdateSourceNativeID(List<Release> releases, string nativeSourceID)
@@ -292,7 +294,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
         public virtual async Task<List<Observation>> GetObservations(string symbol)
         {
             string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
+            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
         }
 
         public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates)
@@ -328,7 +330,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                      vintage are new.
                     */
 
-                    if (vintageDates.Count <= take)
+                    if (vintageDates.Count <= take) // We will have at most one chunk
                         result.AddRange(UpdateSymbol(obs, symbol));
                     else
                         denseResult.AddRange(composer.MakeDense(obs.Cast<IObservation>().ToList()));
@@ -336,7 +338,11 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
                 skip += take;
             }
-            return vintageDates.Count <= take ? result : UpdateSymbol(composer.MakeSparse(denseResult).Cast<Observation>().ToList(), symbol).ToList();
+
+            if (vintageDates.Count < take)
+                return result.Any() ? result : null;
+            
+            return denseResult.Any() ? UpdateSymbol(composer.MakeSparse(denseResult).Cast<Observation>().ToList(), symbol)?.ToList() : null;
         }
 
 
@@ -346,7 +352,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 + "&realtime_start=" + RTStart.Date.ToString(FRED_DATE_FORMAT)
                 + "&realtime_end=" + RTEnd.Date.ToString(FRED_DATE_FORMAT);
 
-            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
+            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
         }
 
         public virtual async Task<List<Observation>> GetObservationUpdates(string symbol, DateTime? ObsStart, DateTime? ObsEnd)
@@ -359,7 +365,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
             if (ObsEnd.HasValue)
                 uri += "&observation_end=" + ObsEnd.Value.ToString(FRED_DATE_FORMAT);
 
-            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol).ToList();
+            return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
         }
 
         private IEnumerable<Observation> UpdateSymbol(IEnumerable<Observation> obs, string symbol)
@@ -388,7 +394,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 
             int offset = -10000;
             bool doIt = true;
-            List<Vintage> results = new List<Vintage>(1500);
+            List<Vintage> result = new List<Vintage>(1500);
             List<Vintage> vintages = null;
 
             while (doIt)
@@ -396,17 +402,17 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
                 string newUri;
                 offset += 10000;
                 newUri = uri + "&offset=" + offset.ToString();
-                vintages = (await Parse<List<Vintage>>(newUri, "vintage_dates")).ToList();
+                vintages = (await Parse<List<Vintage>>(newUri, "vintage_dates"))?.ToList();
 
                 if (vintages != null)
-                    results.AddRange(vintages);
+                    result.AddRange(vintages);
                 else
                     break;
 
                 doIt = vintages.Count == 10000;
             }
-            results.ForEach(x => x.Symbol = symbol);
-            return results;
+            result.ForEach(x => x.Symbol = symbol);
+            return result.Any() ? result : null;
         }
         #endregion
 

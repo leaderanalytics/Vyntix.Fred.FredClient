@@ -1,5 +1,6 @@
 ﻿using LeaderAnalytics.Core.Serialization.XML;
 using LeaderAnalytics.Vyntix.Fred.Domain;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace LeaderAnalytics.Vyntix.Fred.FredClient
 {
     public class XMLFredClient : BaseFredClient
     {
-        public XMLFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient) : base(apiKey, config, composer, httpClient) { }
+        public XMLFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient, ILogger<IFredClient> logger) : base(apiKey, config, composer, httpClient, logger) { }
 
         protected override async Task<T> Parse<T>(string uri, string root)
         {
