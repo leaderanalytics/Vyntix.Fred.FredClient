@@ -29,7 +29,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="1.0.31" />
+    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="1.0.32" />
     <PackageReference Include="LeaderAnalytics.Core.Threading" Version="1.0.3" />
     <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.8-beta.1" />
     <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.10-beta.1" />
