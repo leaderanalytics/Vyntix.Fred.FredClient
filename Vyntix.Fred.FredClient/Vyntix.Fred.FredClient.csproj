@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+	<ImplicitUsings>enable</ImplicitUsings>  
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -29,13 +30,13 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="1.0.32" />
-    <PackageReference Include="LeaderAnalytics.Core.Threading" Version="1.0.3" />
+    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="2.0.34" />
+    <PackageReference Include="LeaderAnalytics.Core.Threading" Version="2.0.5" />
     <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.8-beta.1" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.10-beta.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.13-beta.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

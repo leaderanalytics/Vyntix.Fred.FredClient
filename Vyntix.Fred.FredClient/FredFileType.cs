@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
-namespace LeaderAnalytics.Vyntix.Fred.FredClient
+public enum FredFileType
 {
-    public enum FredFileType
-    {
-        JSON,
-        XML
-    }
+    JSON,
+    XML
 }
