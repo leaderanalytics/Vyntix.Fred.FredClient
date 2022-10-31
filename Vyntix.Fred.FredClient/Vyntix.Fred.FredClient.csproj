@@ -32,11 +32,11 @@
   <ItemGroup>
     <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="2.0.34" />
     <PackageReference Include="LeaderAnalytics.Core.Threading" Version="2.0.5" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.8-beta.1" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.13-beta.2" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.0.11-beta.3" />
+    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.17-beta.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>

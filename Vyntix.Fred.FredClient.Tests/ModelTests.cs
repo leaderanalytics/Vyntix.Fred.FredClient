@@ -8,7 +8,7 @@ public class ModelTests : BaseTest
     {
     }
 
-    private bool IsZeroString(string s) => String.IsNullOrEmpty(s) || s == "0";
+    
 
     [Test]
     public async Task CategoryTest()
@@ -40,24 +40,7 @@ public class ModelTests : BaseTest
         Assert.IsFalse(IsZeroString(data.RelatedCategoryID));
     }
 
-    [Test]
-    public async Task ReleaseTest()
-    {
-        Release data = (await FredClient.GetReleasesForSource("1")).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(IsZeroString(data.NativeID));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Name));
-        Assert.AreNotEqual(DateTime.MinValue, data.RTStart);
-    }
-
-    [Test]
-    public async Task ReleaseDateTest()
-    {
-        ReleaseDate data = (await FredClient.GetReleaseDates("82", 0)).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(IsZeroString(data.ReleaseID));
-        Assert.AreNotEqual(DateTime.MinValue, data.DateReleased);
-    }
+    
 
     [Test]
     public async Task SeriesTest()
@@ -74,10 +57,9 @@ public class ModelTests : BaseTest
     [Test]
     public async Task SeriesCategoryTest()
     {
-        SeriesCategory data = (await FredClient.GetSeriesForCategory("125", false)).FirstOrDefault();
+        Series data = (await FredClient.GetSeriesForCategory("125", false)).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.IsFalse(IsZeroString(data.CategoryID));
     }
 
     [Test]

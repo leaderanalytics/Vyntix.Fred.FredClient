@@ -162,7 +162,7 @@ public class FredClientBasicTests : BaseTest
     [Test()]
     public async Task GetSeriesForCategoryTest()
     {
-        List<SeriesCategory> data = await FredClient.GetSeriesForCategory("125", false);
+        List<Series> data = await FredClient.GetSeriesForCategory("125", false);
         Assert.IsNotNull(data);
 
         data = await FredClient.GetSeriesForCategory(DOES_NOT_EXIST, false);
@@ -176,7 +176,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNotNull(data);
 
         data = await FredClient.GetSeriesForRelease(DOES_NOT_EXIST);
-        Assert.IsNull(data);
+        Assert.IsFalse(data.Any());
     }
 
     [Test()]
