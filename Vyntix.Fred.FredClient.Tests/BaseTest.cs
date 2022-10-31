@@ -6,6 +6,7 @@ public abstract class BaseTest
     protected const string BaseURL = "https://api.stlouisfed.org/fred/";
     protected IFredClient FredClient;
     protected readonly FredFileType CurrentFileType;
+    protected bool IsZeroString(string s) => String.IsNullOrEmpty(s) || s == "0";
 
     public BaseTest(FredFileType fileType)
     {
