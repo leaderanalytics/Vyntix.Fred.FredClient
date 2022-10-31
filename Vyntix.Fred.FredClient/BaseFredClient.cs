@@ -35,7 +35,7 @@ public abstract class BaseFredClient : IFredClient
     public int RemainingLimitRequests { get; protected set; }               // Remaining requests since LastLimitReset
     protected ILogger<IFredClient> Logger { get; set; }
     protected readonly string API_key;
-    protected const string FRED_DATE_FORMAT = "yyyy-MM-dd";
+    public const string FRED_DATE_FORMAT = "yyyy-MM-dd";
     protected readonly FredClientConfig config;
     private HttpClient httpClient;
     private IVintageComposer composer;
@@ -127,6 +127,29 @@ public abstract class BaseFredClient : IFredClient
 
     protected abstract Task<T> Parse<T>(string uri, string root) where T : class, new();
 
+    protected async Task<List<T>> Take<T>(string uriPrefix, string root) where T : class, new()
+    {
+        int skip = 0;
+        int take = 1000;
+        List<T> result = new List<T>(5000);
+
+        while (true)
+        {
+            string uri = $"{uriPrefix}{(uriPrefix.Contains("?") ? "&" : "?")}offset={skip}&limit={take}";
+            List<T> page = await Parse<List<T>>(uri, root);
+
+            if (page?.Any() ?? false)
+                result.AddRange(page);
+
+            if ((page?.Count ?? 0) < take)
+                break;
+
+            skip += take;
+
+        }
+        return result;
+    }
+
     #region Categories ------------------------
 
     public virtual async Task<Category> GetCategory(string categoryID)
@@ -173,12 +196,13 @@ public abstract class BaseFredClient : IFredClient
 
     #region Series -----------------------------------
 
-    public virtual async Task<List<SeriesCategory>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
+
+    public virtual async Task<List<Series>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
     {
         string uri = "category/series?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
         bool doIt = true;
         int offset = -1000;
-        List<SeriesCategory> result = new List<SeriesCategory>(5000);
+        List<Series> result = new List<Series>(5000);
 
         while (doIt)
         {
@@ -189,7 +213,7 @@ public abstract class BaseFredClient : IFredClient
             List<Series> list = await Parse<List<Series>>(newUri, "seriess");
 
             if (list != null)
-                result.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)).Select(x => new SeriesCategory { CategoryID = categoryID, Symbol = x.Symbol }));
+                result.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)));
 
             if ((list?.Count ?? 0) < 1000)
                 doIt = false;
@@ -218,11 +242,68 @@ public abstract class BaseFredClient : IFredClient
 
     #region Releases ----------------------------
 
+    public virtual async Task<List<Release>> GetAllReleases()
+    {
+        string uri = "releases";
+        List<Release> releases = await Take<Release>(uri, "releases");
+        return releases;
+    }
+
+    public virtual async Task<List<ReleaseDate>> GetAllReleaseDates(DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
+    {
+        string uri = $"releases/dates?{(realtimeStart.HasValue ? "realtime_start=" + realtimeStart.Value.ToString(FRED_DATE_FORMAT) + "&" : null)}include_release_dates_with_no_data={(includeReleaseDatesWithNoData ? "true" : "false")}";
+        List<ReleaseDate> releases = await Take<ReleaseDate>(uri, "release_dates");
+        return releases;
+    }
+
+    public virtual async Task<Release> GetRelease(string nativeID)
+    {
+        ArgumentNullException.ThrowIfNull(nativeID);
+        string uri = $"release?release_id={nativeID}";
+        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        return releases?.FirstOrDefault();
+    }
+
+    public virtual async Task<List<ReleaseDate>> GetReleaseDatesForRelease(string releaseNativeID, DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
+    {
+        ArgumentNullException.ThrowIfNull(releaseNativeID);
+        string uri = $"release/dates?release_id={releaseNativeID}&{(realtimeStart.HasValue ? "realtime_start=" + realtimeStart.Value.ToString(FRED_DATE_FORMAT) + "&" : null)}include_release_dates_with_no_data={(includeReleaseDatesWithNoData ? "true" : "false")}";
+        List<ReleaseDate> releases = await Take<ReleaseDate>(uri, "release_dates");
+        return releases;
+    }
+
+    public virtual async Task<List<ReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
+    {
+        string uri = $"release/dates?release_id={(nativeReleaseID ?? throw new ArgumentNullException(nameof(nativeReleaseID)))}&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
+        List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
+        return releaseDates?.ToList();
+    }
+
+    public virtual async Task<List<Source>> GetSourcesForRelease(string releaseNativeID)
+    {
+        ArgumentNullException.ThrowIfNull(releaseNativeID);
+        string uri = $"release/sources?release_id={releaseNativeID}";
+        List<Source> sources = await Take<Source>(uri, "sources");
+
+        if (sources?.Any() ?? false)
+            foreach (Source source in sources)
+                source.SourceReleases = new List<SourceRelease> { new SourceRelease { SourceNativeID = source.NativeID, ReleaseNativeID = releaseNativeID } };
+        
+        return sources;
+    }
+
     public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID)
     {
         string uri = "source/releases?source_id=" + (nativeSourceID ?? throw new ArgumentNullException(nameof(nativeSourceID)));
         List<Release> releases = await Parse<List<Release>>(uri, "releases");
         return UpdateSourceNativeID(releases, nativeSourceID);
+    }
+
+    public virtual async Task<Release> GetReleaseForSeries(string symbol)
+    {
+        string uri = "series/release?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
+        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        return releases.FirstOrDefault();
     }
 
     public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID, DateTime RTStart, DateTime RTEnd)
@@ -234,44 +315,23 @@ public abstract class BaseFredClient : IFredClient
         List<Release> releases = await Parse<List<Release>>(uri, "releases");
         return UpdateSourceNativeID(releases, nativeSourceID);
     }
-
-    public virtual async Task<List<ReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
-    {
-        string uri = $"release/dates?release_id={ (nativeReleaseID ?? throw new ArgumentNullException(nameof(nativeReleaseID))) }&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
-        List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
-        return releaseDates?.ToList();
-    }
-
+    
     public virtual async Task<List<Series>> GetSeriesForRelease(string releaseNativeID)
     {
-        if (string.IsNullOrEmpty(releaseNativeID))
-            throw new ArgumentException(nameof(releaseNativeID));
-
-        int skip = 0;
-        int take = 1000;
-        List<Series> result = new List<Series>(5000);
-
-        while (true)
-        {
-            string uri = $"release/series?release_id={releaseNativeID}&offset={skip}&limit={take}";
-            List<Series> page = await Parse<List<Series>>(uri, "seriess");
-
-            if (page?.Any() ?? false)
-                result.AddRange(page);
-
-            if ((page?.Count ?? 0) < take)
-                break;
-
-            skip += take;
-
-        }
-        result.ForEach(x => x.ReleaseID = releaseNativeID);
-        return result.Any() ? result : null;
+        ArgumentNullException.ThrowIfNull(releaseNativeID);
+        string uri = $"release/series?release_id={releaseNativeID}";
+        List<Series> result = await Take<Series>(uri, "seriess");
+        
+        result?.ForEach(x => x.ReleaseID = releaseNativeID);
+        return result;
     }
 
     private List<Release> UpdateSourceNativeID(List<Release> releases, string nativeSourceID)
     {
-        releases?.ForEach(x => x.SourceNativeID = nativeSourceID);
+        if (releases?.Any() ?? false)
+            foreach (Release release in releases)
+                release.SourceReleases = new List<SourceRelease> { new SourceRelease { SourceNativeID = nativeSourceID, ReleaseNativeID = release.NativeID } };
+        
         return releases;
     }
 
@@ -405,6 +465,13 @@ public abstract class BaseFredClient : IFredClient
     #endregion
 
     #region Sources ----------------------------------------------------------------------
+
+    public virtual async Task<Source> GetSource(string sourceID)
+    { 
+        ArgumentNullException.ThrowIfNull(nameof(sourceID));
+        string uri = $"source?source_id={sourceID}";
+        return (await Parse<List<Source>>(uri, "sources")).FirstOrDefault();
+    }
 
     public virtual async Task<List<Source>> GetSources()
     {
