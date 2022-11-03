@@ -1,4 +1,7 @@
-﻿namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
+﻿using LeaderAnalytics.Vyntix.Fred.Domain;
+using LeaderAnalytics.Vyntix.Fred.Model;
+
+namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
 
 [TestFixture(FredFileType.JSON)]
 [TestFixture(FredFileType.XML)]
@@ -27,5 +30,30 @@ public class FredClientThrottlingTests : BaseTest
         await result;
         Assert.IsFalse(result.IsFaulted);
         Assert.AreEqual(5, observations.GroupBy(x => x.Symbol).Count());
+    }
+
+
+    [Test()]
+    public async Task EnduranceTest()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            List<ReleaseDate> dates = await FredClient.GetAllReleaseDates(null, true);
+
+            if (dates is null)
+                throw new Exception("dates is null");
+
+
+            if (dates?.Any() ?? false)
+            {
+                foreach (var grp in dates.GroupBy(x => x.ReleaseID))
+                {
+                    Release? release = await FredClient.GetRelease(grp.Key);
+
+                    if (release is null)
+                        throw new Exception("release is null");
+                }
+            }
+        }
     }
 }

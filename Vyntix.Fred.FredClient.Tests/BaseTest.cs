@@ -28,7 +28,7 @@ public abstract class BaseTest
     public void Setup()
     {
         HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
-        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 1 };
+        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 3 }; // MaxDownloadRetries should be greater than 1
         ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog();
         ILogger<IFredClient> logger = loggerFactory.CreateLogger<IFredClient>();
 
