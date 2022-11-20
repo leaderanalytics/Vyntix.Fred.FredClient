@@ -14,6 +14,9 @@ Before using this software you must [request an API key from FRED®](https://fred
 
 ---
 
+[Get the Vyntix.Fred.FredClient Nuget package](https://www.nuget.org/packages/LeaderAnalytics.Vyntix.Fred.FredClient)
+
+---
 
 ##### This software uses the FRED® API but is not endorsed or certified by the Federal Reserve Bank of St. Louis.
 
