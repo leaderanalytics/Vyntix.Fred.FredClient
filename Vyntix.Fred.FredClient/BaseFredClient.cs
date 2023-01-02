@@ -26,6 +26,7 @@ By using this software you agree to be bound by the FRED® API Terms of Use foun
 
 */
 
+// https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
@@ -370,7 +371,7 @@ public abstract class BaseFredClient : IFredClient
                 /*
                  Why we have to call MakeDense here:
                  When downloading a chunk of vintage dates that is less than the full count of vintage dates, FRED will return sparse data
-                 for THAT CHUNK.  This means that for EACH CHUNK the first vintage will be dense and every subsequent vintage will be sparse.
+                 for THAT CHUNK.  This means that for EACH CHUNK the first vintage in that chunk will be dense and every subsequent vintage will be sparse.
                  In order for MakeSparse to work, it must have dense data across all vintages - not a chunk that begins with
                  a dense vintage followed by sparse vintages.  The reason for this is that MakeSparse compares each vintage with
                  it's immediate predecessor in time.  It must have dense data for all vintages to determine if a value has changed.
