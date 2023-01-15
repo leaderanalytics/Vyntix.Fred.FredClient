@@ -1,4 +1,5 @@
-﻿
+﻿using System.Globalization;
+using System.Xml;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
@@ -21,8 +22,37 @@ public class XMLFredClient : BaseFredClient
 
     protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
     {
-        return new List<Observation>();
-    }
+        List<Observation> observations = new(2000);
 
-    
+        try
+        {
+            using (Stream stream = await Download(uri))
+            {
+                XmlDocument doc = new();
+                doc.Load(stream);
+             
+                foreach(XmlNode node in doc.DocumentElement.ChildNodes)
+                {
+                    string stringVal = node.Attributes[1].Value;
+
+                    if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
+                    {
+                        observations.Add(new Observation
+                        {
+                            Symbol = symbol,
+                            ObsDate = DateTime.ParseExact(node.Attributes[0].Value, "yyyy-MM-dd", CultureInfo.InvariantCulture),
+                            VintageDate = DateTime.ParseExact(node.Attributes[1].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
+                            Value = stringVal
+
+                        });
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"XMLFredClient encountered an error parsing Observations. URI is {uri}.  See the inner exception for more detail.", ex);
+        }
+        return observations;
+    }
 }

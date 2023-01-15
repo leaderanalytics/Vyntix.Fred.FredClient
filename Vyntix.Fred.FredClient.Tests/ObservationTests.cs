@@ -1,11 +1,7 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-using static System.Net.WebRequestMethods;
-using System.Runtime.InteropServices;
-using System.Text.Unicode;
-
-namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
+﻿namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
 
 [TestFixture(FredFileType.JSON)]
+[TestFixture(FredFileType.XML)]
 public class ObservationTests : BaseTest
 {
     

@@ -30,7 +30,7 @@ public class JsonFredClient : BaseFredClient
     protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
     {
         // Raw data:  { "date":"2017-01-01","GDP_20220929":"19148.194"},
-        
+
         List<Observation> observations = new(2000);
         string json = await GetJson(uri, "observations");
         
@@ -45,6 +45,7 @@ public class JsonFredClient : BaseFredClient
                 {
                     observations.Add(new Observation
                     {
+                        Symbol = symbol,
                         ObsDate = properties[0].Value.GetDateTime(),
                         VintageDate = DateTime.ParseExact(properties[1].Name.Split("_")[1] ,"yyyyMMdd", CultureInfo.InvariantCulture),
                         Value = stringVal
