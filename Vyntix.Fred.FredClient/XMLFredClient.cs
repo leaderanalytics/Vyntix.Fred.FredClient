@@ -18,4 +18,11 @@ public class XMLFredClient : BaseFredClient
             throw new Exception($"XMLFredClient encountered an error. URI is {uri}, type is {typeof(T).FullName}, root is {root}.  See the inner exception for more detail.", ex);
         }
     }
+
+    protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
+    {
+        return new List<Observation>();
+    }
+
+    
 }

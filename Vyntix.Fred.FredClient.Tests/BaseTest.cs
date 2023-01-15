@@ -22,7 +22,7 @@ public abstract class BaseTest
         Log.Information("Logging has been configured.");
     }
 
-
+    
 
     [SetUp]
     public void Setup()

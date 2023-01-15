@@ -28,6 +28,8 @@ By using this software you agree to be bound by the FRED® API Terms of Use foun
 
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
+using LeaderAnalytics.Vyntix.Fred.Domain;
+
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
 public abstract class BaseFredClient : IFredClient
@@ -127,6 +129,7 @@ public abstract class BaseFredClient : IFredClient
 
 
     protected abstract Task<T> Parse<T>(string uri, string root) where T : class, new();
+    protected abstract Task<List<Observation>> ParseObservations(string symbol, string uri);
 
     protected async Task<List<T>> Take<T>(string uriPrefix, string root) where T : class, new()
     {
@@ -343,7 +346,7 @@ public abstract class BaseFredClient : IFredClient
     public virtual async Task<List<Observation>> GetObservations(string symbol)
     {
         string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
+         return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
     }
 
     public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates)
@@ -363,8 +366,9 @@ public abstract class BaseFredClient : IFredClient
         {
             string[] dates = vintageDates.Skip(skip).Take(take).Select(x => x.ToString(FRED_DATE_FORMAT)).ToArray();
             string sdates = String.Join(",", dates);
-            string uri = "series/observations?series_id=" + symbol + "&vintage_dates=" + sdates;
-            List<Observation> obs = (await Parse<List<Observation>>(uri, "observations"))?.Where(x => x.Value != ".").ToList(); // Remove this where clause when Observation.Value becomes nullable.;
+            string uri = $"series/observations?series_id={symbol}&vintage_dates={sdates}&output_type=3";
+            List<Observation> obs = (await ParseObservations(symbol, uri))?.Where(x => x.Value != ".").ToList(); // Remove this where clause when Observation.Value becomes nullable.;
+            
 
             if (obs != null)
             {
