@@ -23,7 +23,7 @@ public class FredClientThrottlingTests : BaseTest
         Task[] tasks = new Task[symbols.Length];
 
         for (int i = 0; i < symbols.Length; i++)
-            tasks[i] = FredClient.GetObservationUpdates(symbols[i], startDate, endDate)
+            tasks[i] = FredClient.GetObservations(symbols[i], startDate, endDate, DataDensity.Dense)
                 .ContinueWith(x => x.Result.ForEach(o => observations.Add(o)));
 
         Task result = Task.WhenAll(tasks);

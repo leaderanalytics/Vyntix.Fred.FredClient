@@ -19,9 +19,13 @@ public class JsonFredClient : BaseFredClient
         try
         {
             string json = await GetJson(uri, root);
+            
+            if(json is null)
+                return default(T);
+            
             return JsonSerializer.Deserialize<T>(json);
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             throw new Exception($"JSONFredClient encountered an error while deserializing objects of type {typeof(T).FullName}. URI is {uri},  root is {root}.  See the inner exception for more detail.", ex);
         }
@@ -33,21 +37,24 @@ public class JsonFredClient : BaseFredClient
 
         List<Observation> observations = new(2000);
         string json = await GetJson(uri, "observations");
-        
+
+        if (json is null)
+            return null;
+
         using (JsonDocument doc = JsonDocument.Parse(json))
         {
-            foreach(JsonElement obs in doc.RootElement.EnumerateArray()) 
+            foreach (JsonElement obs in doc.RootElement.EnumerateArray())
             {
                 JsonProperty[] properties = obs.EnumerateObject().ToArray();
                 string stringVal = properties[1].Value.GetString();
-                
+
                 if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
                 {
                     observations.Add(new Observation
                     {
                         Symbol = symbol,
                         ObsDate = properties[0].Value.GetDateTime(),
-                        VintageDate = DateTime.ParseExact(properties[1].Name.Split("_")[1] ,"yyyyMMdd", CultureInfo.InvariantCulture),
+                        VintageDate = DateTime.ParseExact(properties[1].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
                         Value = stringVal
                     });
                 }
@@ -56,35 +63,7 @@ public class JsonFredClient : BaseFredClient
         return observations;
     }
 
-    public override async Task<List<Vintage>> GetVintageDates(string symbol, DateTime? RTStart)
-    {
-        string uri = "series/vintagedates?series_id=" + symbol;
 
-        if (RTStart != null)
-            uri += "&realtime_start=" + RTStart.Value.Date.ToString(FRED_DATE_FORMAT);
-
-        int offset = -10000;
-        bool doIt = true;
-        List<Vintage> result = new List<Vintage>(1500);
-        List<DateTime> vintages = null;
-
-        while (doIt)
-        {
-            string newUri;
-            offset += 10000;
-            newUri = uri + "&offset=" + offset.ToString();
-            vintages = (await Parse<List<DateTime>>(newUri, "vintage_dates"))?.ToList();
-
-            if (vintages != null)
-                result.AddRange(vintages.Select(x => new Vintage { VintageDate = x }));
-            else
-                break;
-
-            doIt = vintages.Count == 10000;
-        }
-        result.ForEach(x => x.Symbol = symbol);
-        return result.Any() ? result : null;
-    }
 
     private async Task<string> GetJson(string uri, string root)
     {
@@ -109,4 +88,9 @@ public class JsonFredClient : BaseFredClient
             throw new Exception($"JSONFredClient encountered an error while downloading. URI is {uri}, root is {root}.  See the inner exception for more detail.", ex);
         }
     }
+
+    protected override async Task<List<DateTime>> ParseVintageDates(string uri, string root) => await Parse<List<DateTime>>(uri, root);
 }
+    
+        
+    

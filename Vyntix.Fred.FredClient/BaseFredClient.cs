@@ -28,7 +28,6 @@ By using this software you agree to be bound by the FRED® API Terms of Use foun
 
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
-using LeaderAnalytics.Vyntix.Fred.Domain;
 
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
@@ -127,9 +126,11 @@ public abstract class BaseFredClient : IFredClient
         return stream;
     }
 
-
     protected abstract Task<T> Parse<T>(string uri, string root) where T : class, new();
+    
     protected abstract Task<List<Observation>> ParseObservations(string symbol, string uri);
+
+    protected abstract Task<List<DateTime>> ParseVintageDates(string uri, string root);
 
     protected async Task<List<T>> Take<T>(string uriPrefix, string root) where T : class, new()
     {
@@ -343,82 +344,60 @@ public abstract class BaseFredClient : IFredClient
 
     #region Observations -------------------------------------------------
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol)
-    {
-        string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-         return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
-    }
+    public virtual async Task<List<Observation>> GetObservations(string symbol) =>
+        await GetObservations(symbol, DataDensity.Sparse);
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates)
+
+    public virtual async Task<List<Observation>> GetObservations(string symbol, DataDensity density) => 
+        await GetObservations(symbol, await GetVintageDates(symbol), density);
+    
+
+    public virtual async Task<List<Observation>> GetObservations(string symbol, DateTime? RTStart, DateTime? RTEnd, DataDensity density) =>
+        await GetObservations(symbol, await GetVintageDates(symbol, RTStart, RTEnd), density);
+
+
+    public async Task<List<Observation>> GetObservations(string symbol, DateTime? RTStart, DateTime? RTEnd, DateTime? obsStart, DateTime? obsEnd,  DataDensity density) =>
+        await GetObservations(symbol, await GetVintageDates(symbol, RTStart, RTEnd), obsStart, obsEnd, density);
+
+    public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
+        await GetObservations(symbol, vintageDates, null, null, density);
+
+
+    public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
         if (string.IsNullOrEmpty(symbol))
             throw new ArgumentNullException(nameof(symbol));
 
-        if (vintageDates == null)
-            throw new ArgumentNullException(nameof(vintageDates));
+        if (!(vintageDates?.Any()?? false))
+            throw new Exception("vintageDates argument can not be null and must contain at least one vintage date.  Make sure symbol is valid.");
 
         List<Observation> result = new List<Observation>(10000);
-        List<IObservation> denseResult = new List<IObservation>(10000);
+        List<Observation> obs;
         int skip = 0;
         int take = 50;
+        DataDensity tmpDensity = density;
 
         while (skip < vintageDates.Count)
         {
             string[] dates = vintageDates.Skip(skip).Take(take).Select(x => x.ToString(FRED_DATE_FORMAT)).ToArray();
             string sdates = String.Join(",", dates);
-            string uri = $"series/observations?series_id={symbol}&vintage_dates={sdates}&output_type=3";
-            List<Observation> obs = (await ParseObservations(symbol, uri))?.Where(x => x.Value != ".").ToList(); // Remove this where clause when Observation.Value becomes nullable.;
+            string uri = $"series/observations?series_id={symbol}&vintage_dates={sdates}&output_type={(density == DataDensity.Dense ? "2" : "3")}";
             
+            if (obsStart.HasValue)
+                uri += $"&observation_start={obsStart.Value.ToString(FRED_DATE_FORMAT)}";
 
-            if (obs != null)
-            {
-                /*
-                 Why we have to call MakeDense here:
-                 When downloading a chunk of vintage dates that is less than the full count of vintage dates, FRED will return sparse data
-                 for THAT CHUNK.  This means that for EACH CHUNK the first vintage in that chunk will be dense and every subsequent vintage will be sparse.
-                 In order for MakeSparse to work, it must have dense data across all vintages - not a chunk that begins with
-                 a dense vintage followed by sparse vintages.  The reason for this is that MakeSparse compares each vintage with
-                 it's immediate predecessor in time.  It must have dense data for all vintages to determine if a value has changed.
-                 If the preceding vintage is sparse and the current vintage is dense MakeSparse assumes observations for the current 
-                 vintage are new.
-                */
+            if (obsEnd.HasValue)
+                uri += $"&observation_end={obsEnd.Value.ToString(FRED_DATE_FORMAT)}";
 
-                if (vintageDates.Count <= take) // We will have at most one chunk
-                    result.AddRange(UpdateSymbol(obs, symbol));
-                else
-                    denseResult.AddRange(composer.MakeDense(obs.Cast<IObservation>().ToList()));
-            }
+            obs = (await ParseObservations(symbol, uri))?.Where(x => x.Value != ".").ToList(); 
 
+            if (obs is not null)
+                result.AddRange(obs);
+             
             skip += take;
         }
 
-        if (vintageDates.Count < take)
-            return result.Any() ? result : null;
-
-        return denseResult.Any() ? UpdateSymbol(composer.MakeSparse(denseResult).Cast<Observation>().ToList(), symbol)?.ToList() : null;
-    }
-
-
-    public virtual async Task<List<Observation>> GetObservations(string symbol, DateTime RTStart, DateTime RTEnd)
-    {
-        string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)))
-            + "&realtime_start=" + RTStart.Date.ToString(FRED_DATE_FORMAT)
-            + "&realtime_end=" + RTEnd.Date.ToString(FRED_DATE_FORMAT);
-
-        return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
-    }
-
-    public virtual async Task<List<Observation>> GetObservationUpdates(string symbol, DateTime? ObsStart, DateTime? ObsEnd)
-    {
-        string uri = "series/observations?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-
-        if (ObsStart.HasValue)
-            uri += "&observation_start=" + ObsStart.Value.ToString(FRED_DATE_FORMAT);
-
-        if (ObsEnd.HasValue)
-            uri += "&observation_end=" + ObsEnd.Value.ToString(FRED_DATE_FORMAT);
-
-        return UpdateSymbol((await Parse<List<Observation>>(uri, "observations")), symbol)?.ToList();
+        return result;
     }
 
     private IEnumerable<Observation> UpdateSymbol(IEnumerable<Observation> obs, string symbol)
@@ -436,36 +415,49 @@ public abstract class BaseFredClient : IFredClient
     }
     #endregion
 
-    #region VintageDates -----------------------------------------
+    #region Vintages -----------------------------------------
 
-    public virtual async Task<List<Vintage>> GetVintageDates(string symbol, DateTime? RTStart)
+
+    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    {
+        List<Vintage> result = new(150);
+
+        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTStart, RTEnd)))
+            result.Add(new Vintage { Symbol = symbol, VintageDate = vintageDate });
+
+        return result;
+    }
+
+    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
         string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
-        if (RTStart != null)
-            uri += "&realtime_start=" + RTStart.Value.Date.ToString(FRED_DATE_FORMAT);
+        if (RTStart.HasValue)
+            uri += $"&realtime_start={RTStart.Value.Date.ToString(FRED_DATE_FORMAT)}";
 
-        int offset = -10000;
+        if (RTEnd.HasValue)
+            uri += $"&realtime_end={RTEnd.Value.Date.ToString(FRED_DATE_FORMAT)}";
+
+        int offset = -5000;
         bool doIt = true;
-        List<Vintage> result = new List<Vintage>(1500);
-        List<Vintage> vintages = null;
+        List<DateTime> result = new(150);
+        List<DateTime> vintages = null;
 
         while (doIt)
         {
             string newUri;
-            offset += 10000;
+            offset += 5000;
             newUri = uri + "&offset=" + offset.ToString();
-            vintages = (await Parse<List<Vintage>>(newUri, "vintage_dates"))?.ToList();
+            vintages = (await ParseVintageDates(newUri, "vintage_dates"))?.ToList();
 
             if (vintages != null)
                 result.AddRange(vintages);
             else
                 break;
 
-            doIt = vintages.Count == 10000;
+            doIt = vintages.Count == 5000;
         }
-        result.ForEach(x => x.Symbol = symbol);
-        return result.Any() ? result : null;
+        return result;
     }
     #endregion
 

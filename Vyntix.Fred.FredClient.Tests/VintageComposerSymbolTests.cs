@@ -13,21 +13,21 @@ public class VintageComposerSymbolTests : BaseTest
     {
         string symbol = "NROU";
         DateTime endDate = new DateTime(2021, 3, 6);
-        List<Vintage> vintages = (await FredClient.GetVintageDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
-        List<Observation> obs = (await FredClient.GetObservations(symbol, vintages.Select(x => x.VintageDate).ToList()))
+        List<Vintage> vintages = (await FredClient.GetVintages(symbol, null, null)).Where(x => x.VintageDate <= endDate).ToList();
+        List<Observation> obs = (await FredClient.GetObservations(symbol, vintages.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
             .Where(x => x.ObsDate <= endDate).ToList();
 
         Assert.AreEqual(18, vintages.Count);
         Assert.AreEqual(2205, obs.Count);
     }
-
+     
     [Test]
     public async Task CPIAUCSL_Test()
     {
         string symbol = "CPIAUCSL";
         DateTime endDate = new DateTime(2021, 3, 6);
-        List<Vintage> vintageDates = (await FredClient.GetVintageDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
-        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList()))
+        List<Vintage> vintageDates = (await FredClient.GetVintages(symbol, null, null)).Where(x => x.VintageDate <= endDate).ToList();
+        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
             .Where(x => x.ObsDate <= endDate).ToList();
 
         Assert.AreEqual(600, vintageDates.Count);
@@ -46,13 +46,10 @@ public class VintageComposerSymbolTests : BaseTest
     [Test]
     public async Task DFII10_Test()
     {
-        //
-        // FAILS - runs out of threads
-        //
         string symbol = "DFII10";
         DateTime endDate = new DateTime(2020, 12, 31);
-        List<Vintage> vintageDates = (await FredClient.GetVintageDates(symbol, null)).Where(x => x.VintageDate <= endDate).ToList();
-        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList()))
+        List<Vintage> vintageDates = (await FredClient.GetVintages(symbol, null, null)).Where(x => x.VintageDate <= endDate).ToList();
+        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
             .Where(x => x.ObsDate <= endDate).ToList();
 
         Assert.AreEqual(1662, vintageDates.Count);

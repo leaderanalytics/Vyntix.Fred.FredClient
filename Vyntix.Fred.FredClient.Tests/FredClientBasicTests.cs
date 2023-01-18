@@ -11,7 +11,7 @@ public class FredClientBasicTests : BaseTest
 
     }
 
-    [Test()]
+    [Test]
     public async Task GetCategoriesForSeriesTest()
     {
         List<Category> data = await FredClient.GetCategoriesForSeries("EXJPUS");
@@ -21,7 +21,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetCategoryTest()
     {
         Category data = await FredClient.GetCategory("125");
@@ -31,7 +31,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetCategoryChildrenTest()
     {
         List<Category> data = await FredClient.GetCategoryChildren("13");
@@ -41,7 +41,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetCategoryTagsTest()
     {
         List<CategoryTag> data = await FredClient.GetCategoryTags("125");
@@ -51,27 +51,25 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetObservationsTest()
     {
         List<Observation> data = await FredClient.GetObservations("GNPCA");
         Assert.IsNotNull(data);
-
-        data = await FredClient.GetObservations(DOES_NOT_EXIST);
-        Assert.IsNull(data);
+        
+        Assert.ThrowsAsync<Exception>(()  =>  FredClient.GetObservations(DOES_NOT_EXIST));
     }
 
-    [Test()]
+    [Test]
     public async Task GetObservationsTest2()
     {
-        List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+        List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse);
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
-        Assert.IsNull(data);
+        Assert.ThrowsAsync<Exception>(() => FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse));
     }
 
-    [Test()]
+    [Test]
     public async Task GetObservationsTest3()
     {
         List<DateTime> vintateDates = new List<DateTime>(10)
@@ -87,26 +85,28 @@ public class FredClientBasicTests : BaseTest
                 new DateTime(2020, 1, 1),
                 new DateTime(2020, 1, 1)
             };
-        List<Observation> data = await FredClient.GetObservations("GNPCA", vintateDates);
+        List<Observation> data = await FredClient.GetObservations("GNPCA", vintateDates, DataDensity.Sparse);
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetObservations(DOES_NOT_EXIST, vintateDates);
-        Assert.IsNull(data);
-
+        // We don't throw on a bad symbol because we don't know when a symbol is bad.  We only throw if the symbol or vintage dates are null/empty.
+        var obs = await FredClient.GetObservations(DOES_NOT_EXIST, vintateDates, DataDensity.Sparse);
+        Assert.IsNotNull(obs);
     }
 
-    [Test()]
+    [Test]
     public async Task GetObservationUpdatesTest()
     {
-        List<Observation> data = await FredClient.GetObservationUpdates("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
+        List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse);
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetObservationUpdates(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
-        Assert.IsNull(data);
+
+        // Throws because we can't get vintage dates for bad symbol
+        Assert.ThrowsAsync<Exception>(() => FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse));
+        
     }
 
 
-    [Test()]
+    [Test]
     public async Task GetRelatedCategoriesTest()
     {
         List<RelatedCategory> data = await FredClient.GetRelatedCategories("32073");
@@ -117,7 +117,7 @@ public class FredClientBasicTests : BaseTest
     }
 
 
-    [Test()]
+    [Test]
     public async Task GetReleaseDatesTest()
     {
         List<ReleaseDate> data = await FredClient.GetReleaseDates("82", 0);
@@ -128,7 +128,7 @@ public class FredClientBasicTests : BaseTest
     }
 
 
-    [Test()]
+    [Test]
     public async Task GetReleasesForSourceTest()
     {
         List<Release> data = await FredClient.GetReleasesForSource("1");
@@ -138,7 +138,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetReleasesForSourceTest2()
     {
         List<Release> data = await FredClient.GetReleasesForSource("1", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
@@ -149,7 +149,7 @@ public class FredClientBasicTests : BaseTest
     }
 
 
-    [Test()]
+    [Test]
     public async Task GetSeriesTest()
     {
         Series data = await FredClient.GetSeries("GNPCA");
@@ -159,7 +159,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetSeriesForCategoryTest()
     {
         List<Series> data = await FredClient.GetSeriesForCategory("125", false);
@@ -169,7 +169,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetSeriesForReleaseTest()
     {
         List<Series> data = await FredClient.GetSeriesForRelease("51");
@@ -179,7 +179,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsFalse(data.Any());
     }
 
-    [Test()]
+    [Test]
     public async Task GetSeriesTagsTest()
     {
         List<SeriesTag> data = await FredClient.GetSeriesTags("STLFSI");
@@ -189,27 +189,27 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetSourcesTest()
     {
         List<Source> data = await FredClient.GetSources();
         Assert.IsNotNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetSourcesTest1()
     {
         List<Source> data = await FredClient.GetSources(new DateTime(2020, 1, 1), new DateTime(2020, 12, 31));
         Assert.IsNotNull(data);
     }
 
-    [Test()]
+    [Test]
     public async Task GetVintgeDatesTest()
     {
-        List<Vintage> data = await FredClient.GetVintageDates("GNPCA", new DateTime(2020, 1, 1));
+        List<Vintage> data = await FredClient.GetVintages("GNPCA", new DateTime(2020, 1, 1), null);
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetVintageDates(DOES_NOT_EXIST, new DateTime(2020, 1, 1));
-        Assert.IsNull(data);
+        data = await FredClient.GetVintages(DOES_NOT_EXIST, new DateTime(2020, 1, 1), null);
+        Assert.IsNotNull(data);
     }
 }
