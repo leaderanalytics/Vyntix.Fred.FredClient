@@ -1,0 +1,609 @@
+﻿https://api.stlouisfed.org/fred/series/observations?series_id=CPIAUCSL&vintage_dates=1993-05-13,1993-06-15,1993-07-14,1993-08-13,1993-09-14,1993-10-15,1993-11-10,1993-12-10,1994-01-13,1994-02-17,1994-03-16,1994-04-13,1994-05-13,1994-06-14,1994-07-13,1994-08-12,1994-09-13,1994-10-14,1994-11-16,1994-12-14,1995-01-11,1995-02-15,1995-03-16,1995-04-12,1995-05-12,1995-06-13,1995-07-14,1995-08-11,1995-09-13,1995-10-13,1995-11-15,1995-12-14,1996-02-01,1996-02-28,1996-03-15,1996-04-12,1996-05-14,1996-06-12,1996-07-16,1996-08-13,1996-09-13,1996-10-16,1996-11-14,1996-12-12,1997-01-14,1997-02-19,1997-03-19,1997-04-15,1997-05-15,1997-06-17&output_type=3&api_key=123
+
+<observations realtime_start="1993-05-13" realtime_end="1997-06-17" observation_start="1600-01-01" observation_end="9999-12-31" units="lin" output_type="3" file_type="xml" order_by="observation_date" sort_order="asc" count="605" offset="0" limit="100000">
+<observation date="1947-01-01" CPIAUCSL_19940217="21.48"/>
+<observation date="1947-02-01" CPIAUCSL_19940217="21.62"/>
+<observation date="1947-03-01" CPIAUCSL_19940217="22.0"/>
+<observation date="1947-04-01" CPIAUCSL_19940217="22.0"/>
+<observation date="1947-05-01" CPIAUCSL_19940217="21.95"/>
+<observation date="1947-06-01" CPIAUCSL_19940217="22.08"/>
+<observation date="1947-07-01" CPIAUCSL_19940217="22.23"/>
+<observation date="1947-08-01" CPIAUCSL_19940217="22.4"/>
+<observation date="1947-09-01" CPIAUCSL_19940217="22.84"/>
+<observation date="1947-10-01" CPIAUCSL_19940217="22.91"/>
+<observation date="1947-11-01" CPIAUCSL_19940217="23.06"/>
+<observation date="1947-12-01" CPIAUCSL_19940217="23.41"/>
+<observation date="1948-01-01" CPIAUCSL_19940217="23.68"/>
+<observation date="1948-02-01" CPIAUCSL_19940217="23.67"/>
+<observation date="1948-03-01" CPIAUCSL_19940217="23.5"/>
+<observation date="1948-04-01" CPIAUCSL_19940217="23.82"/>
+<observation date="1948-05-01" CPIAUCSL_19940217="24.01"/>
+<observation date="1948-06-01" CPIAUCSL_19940217="24.15"/>
+<observation date="1948-07-01" CPIAUCSL_19940217="24.4"/>
+<observation date="1948-08-01" CPIAUCSL_19940217="24.43"/>
+<observation date="1948-09-01" CPIAUCSL_19940217="24.36"/>
+<observation date="1948-10-01" CPIAUCSL_19940217="24.31"/>
+<observation date="1948-11-01" CPIAUCSL_19940217="24.16"/>
+<observation date="1948-12-01" CPIAUCSL_19940217="24.05"/>
+<observation date="1949-01-01" CPIAUCSL_19940217="24.01"/>
+<observation date="1949-02-01" CPIAUCSL_19940217="23.91"/>
+<observation date="1949-03-01" CPIAUCSL_19940217="23.91"/>
+<observation date="1949-04-01" CPIAUCSL_19940217="23.92"/>
+<observation date="1949-05-01" CPIAUCSL_19940217="23.91"/>
+<observation date="1949-06-01" CPIAUCSL_19940217="23.92"/>
+<observation date="1949-07-01" CPIAUCSL_19940217="23.7"/>
+<observation date="1949-08-01" CPIAUCSL_19940217="23.7"/>
+<observation date="1949-09-01" CPIAUCSL_19940217="23.75"/>
+<observation date="1949-10-01" CPIAUCSL_19940217="23.67"/>
+<observation date="1949-11-01" CPIAUCSL_19940217="23.7"/>
+<observation date="1949-12-01" CPIAUCSL_19940217="23.61"/>
+<observation date="1950-01-01" CPIAUCSL_19940217="23.51"/>
+<observation date="1950-02-01" CPIAUCSL_19940217="23.61"/>
+<observation date="1950-03-01" CPIAUCSL_19940217="23.64"/>
+<observation date="1950-04-01" CPIAUCSL_19940217="23.65"/>
+<observation date="1950-05-01" CPIAUCSL_19940217="23.77"/>
+<observation date="1950-06-01" CPIAUCSL_19940217="23.88"/>
+<observation date="1950-07-01" CPIAUCSL_19940217="24.07"/>
+<observation date="1950-08-01" CPIAUCSL_19940217="24.2"/>
+<observation date="1950-09-01" CPIAUCSL_19940217="24.34"/>
+<observation date="1950-10-01" CPIAUCSL_19940217="24.5"/>
+<observation date="1950-11-01" CPIAUCSL_19940217="24.6"/>
+<observation date="1950-12-01" CPIAUCSL_19940217="24.98"/>
+<observation date="1951-01-01" CPIAUCSL_19940217="25.38"/>
+<observation date="1951-02-01" CPIAUCSL_19940217="25.83"/>
+<observation date="1951-03-01" CPIAUCSL_19940217="25.88"/>
+<observation date="1951-04-01" CPIAUCSL_19940217="25.92"/>
+<observation date="1951-05-01" CPIAUCSL_19940217="25.99"/>
+<observation date="1951-06-01" CPIAUCSL_19940217="25.93"/>
+<observation date="1951-07-01" CPIAUCSL_19940217="25.91"/>
+<observation date="1951-08-01" CPIAUCSL_19940217="25.86"/>
+<observation date="1951-09-01" CPIAUCSL_19940217="26.03"/>
+<observation date="1951-10-01" CPIAUCSL_19940217="26.16"/>
+<observation date="1951-11-01" CPIAUCSL_19940217="26.32"/>
+<observation date="1951-12-01" CPIAUCSL_19940217="26.47"/>
+<observation date="1952-01-01" CPIAUCSL_19940217="26.45"/>
+<observation date="1952-02-01" CPIAUCSL_19940217="26.41"/>
+<observation date="1952-03-01" CPIAUCSL_19940217="26.39"/>
+<observation date="1952-04-01" CPIAUCSL_19940217="26.46"/>
+<observation date="1952-05-01" CPIAUCSL_19940217="26.47"/>
+<observation date="1952-06-01" CPIAUCSL_19940217="26.53"/>
+<observation date="1952-07-01" CPIAUCSL_19940217="26.68"/>
+<observation date="1952-08-01" CPIAUCSL_19940217="26.69"/>
+<observation date="1952-09-01" CPIAUCSL_19940217="26.63"/>
+<observation date="1952-10-01" CPIAUCSL_19940217="26.69"/>
+<observation date="1952-11-01" CPIAUCSL_19940217="26.69"/>
+<observation date="1952-12-01" CPIAUCSL_19940217="26.71"/>
+<observation date="1953-01-01" CPIAUCSL_19940217="26.64"/>
+<observation date="1953-02-01" CPIAUCSL_19940217="26.59"/>
+<observation date="1953-03-01" CPIAUCSL_19940217="26.63"/>
+<observation date="1953-04-01" CPIAUCSL_19940217="26.69"/>
+<observation date="1953-05-01" CPIAUCSL_19940217="26.7"/>
+<observation date="1953-06-01" CPIAUCSL_19940217="26.77"/>
+<observation date="1953-07-01" CPIAUCSL_19940217="26.79"/>
+<observation date="1953-08-01" CPIAUCSL_19940217="26.85"/>
+<observation date="1953-09-01" CPIAUCSL_19940217="26.89"/>
+<observation date="1953-10-01" CPIAUCSL_19940217="26.95"/>
+<observation date="1953-11-01" CPIAUCSL_19940217="26.85"/>
+<observation date="1953-12-01" CPIAUCSL_19940217="26.87"/>
+<observation date="1954-01-01" CPIAUCSL_19940217="26.94"/>
+<observation date="1954-02-01" CPIAUCSL_19940217="26.99"/>
+<observation date="1954-03-01" CPIAUCSL_19940217="26.93"/>
+<observation date="1954-04-01" CPIAUCSL_19940217="26.86"/>
+<observation date="1954-05-01" CPIAUCSL_19940217="26.93"/>
+<observation date="1954-06-01" CPIAUCSL_19940217="26.94"/>
+<observation date="1954-07-01" CPIAUCSL_19940217="26.86"/>
+<observation date="1954-08-01" CPIAUCSL_19940217="26.85"/>
+<observation date="1954-09-01" CPIAUCSL_19940217="26.81"/>
+<observation date="1954-10-01" CPIAUCSL_19940217="26.72"/>
+<observation date="1954-11-01" CPIAUCSL_19940217="26.78"/>
+<observation date="1954-12-01" CPIAUCSL_19940217="26.77"/>
+<observation date="1955-01-01" CPIAUCSL_19940217="26.77"/>
+<observation date="1955-02-01" CPIAUCSL_19940217="26.82"/>
+<observation date="1955-03-01" CPIAUCSL_19940217="26.79"/>
+<observation date="1955-04-01" CPIAUCSL_19940217="26.79"/>
+<observation date="1955-05-01" CPIAUCSL_19940217="26.77"/>
+<observation date="1955-06-01" CPIAUCSL_19940217="26.71"/>
+<observation date="1955-07-01" CPIAUCSL_19940217="26.76"/>
+<observation date="1955-08-01" CPIAUCSL_19940217="26.72"/>
+<observation date="1955-09-01" CPIAUCSL_19940217="26.85"/>
+<observation date="1955-10-01" CPIAUCSL_19940217="26.82"/>
+<observation date="1955-11-01" CPIAUCSL_19940217="26.88"/>
+<observation date="1955-12-01" CPIAUCSL_19940217="26.87"/>
+<observation date="1956-01-01" CPIAUCSL_19940217="26.83"/>
+<observation date="1956-02-01" CPIAUCSL_19940217="26.86"/>
+<observation date="1956-03-01" CPIAUCSL_19940217="26.89"/>
+<observation date="1956-04-01" CPIAUCSL_19940217="26.93"/>
+<observation date="1956-05-01" CPIAUCSL_19940217="27.03"/>
+<observation date="1956-06-01" CPIAUCSL_19940217="27.15"/>
+<observation date="1956-07-01" CPIAUCSL_19940217="27.29"/>
+<observation date="1956-08-01" CPIAUCSL_19940217="27.31"/>
+<observation date="1956-09-01" CPIAUCSL_19940217="27.35"/>
+<observation date="1956-10-01" CPIAUCSL_19940217="27.51"/>
+<observation date="1956-11-01" CPIAUCSL_19940217="27.51"/>
+<observation date="1956-12-01" CPIAUCSL_19940217="27.63"/>
+<observation date="1957-01-01" CPIAUCSL_19940217="27.67"/>
+<observation date="1957-02-01" CPIAUCSL_19940217="27.8"/>
+<observation date="1957-03-01" CPIAUCSL_19940217="27.86"/>
+<observation date="1957-04-01" CPIAUCSL_19940217="27.93"/>
+<observation date="1957-05-01" CPIAUCSL_19940217="28.0"/>
+<observation date="1957-06-01" CPIAUCSL_19940217="28.11"/>
+<observation date="1957-07-01" CPIAUCSL_19940217="28.19"/>
+<observation date="1957-08-01" CPIAUCSL_19940217="28.28"/>
+<observation date="1957-09-01" CPIAUCSL_19940217="28.32"/>
+<observation date="1957-10-01" CPIAUCSL_19940217="28.32"/>
+<observation date="1957-11-01" CPIAUCSL_19940217="28.41"/>
+<observation date="1957-12-01" CPIAUCSL_19940217="28.47"/>
+<observation date="1958-01-01" CPIAUCSL_19940217="28.64"/>
+<observation date="1958-02-01" CPIAUCSL_19940217="28.7"/>
+<observation date="1958-03-01" CPIAUCSL_19940217="28.87"/>
+<observation date="1958-04-01" CPIAUCSL_19940217="28.94"/>
+<observation date="1958-05-01" CPIAUCSL_19940217="28.94"/>
+<observation date="1958-06-01" CPIAUCSL_19940217="28.91"/>
+<observation date="1958-07-01" CPIAUCSL_19940217="28.89"/>
+<observation date="1958-08-01" CPIAUCSL_19940217="28.94"/>
+<observation date="1958-09-01" CPIAUCSL_19940217="28.91"/>
+<observation date="1958-10-01" CPIAUCSL_19940217="28.91"/>
+<observation date="1958-11-01" CPIAUCSL_19940217="28.95"/>
+<observation date="1958-12-01" CPIAUCSL_19940217="28.97"/>
+<observation date="1959-01-01" CPIAUCSL_19940217="29.01"/>
+<observation date="1959-02-01" CPIAUCSL_19940217="29.0"/>
+<observation date="1959-03-01" CPIAUCSL_19940217="28.97"/>
+<observation date="1959-04-01" CPIAUCSL_19940217="28.98"/>
+<observation date="1959-05-01" CPIAUCSL_19940217="29.04"/>
+<observation date="1959-06-01" CPIAUCSL_19940217="29.11"/>
+<observation date="1959-07-01" CPIAUCSL_19940217="29.15"/>
+<observation date="1959-08-01" CPIAUCSL_19940217="29.18"/>
+<observation date="1959-09-01" CPIAUCSL_19940217="29.25"/>
+<observation date="1959-10-01" CPIAUCSL_19940217="29.35"/>
+<observation date="1959-11-01" CPIAUCSL_19940217="29.35"/>
+<observation date="1959-12-01" CPIAUCSL_19940217="29.41"/>
+<observation date="1960-01-01" CPIAUCSL_19940217="29.37"/>
+<observation date="1960-02-01" CPIAUCSL_19940217="29.41"/>
+<observation date="1960-03-01" CPIAUCSL_19940217="29.41"/>
+<observation date="1960-04-01" CPIAUCSL_19940217="29.54"/>
+<observation date="1960-05-01" CPIAUCSL_19940217="29.57"/>
+<observation date="1960-06-01" CPIAUCSL_19940217="29.61"/>
+<observation date="1960-07-01" CPIAUCSL_19940217="29.55"/>
+<observation date="1960-08-01" CPIAUCSL_19940217="29.61"/>
+<observation date="1960-09-01" CPIAUCSL_19940217="29.61"/>
+<observation date="1960-10-01" CPIAUCSL_19940217="29.75"/>
+<observation date="1960-11-01" CPIAUCSL_19940217="29.78"/>
+<observation date="1960-12-01" CPIAUCSL_19940217="29.81"/>
+<observation date="1961-01-01" CPIAUCSL_19940217="29.84"/>
+<observation date="1961-02-01" CPIAUCSL_19940217="29.84"/>
+<observation date="1961-03-01" CPIAUCSL_19940217="29.84"/>
+<observation date="1961-04-01" CPIAUCSL_19940217="29.81"/>
+<observation date="1961-05-01" CPIAUCSL_19940217="29.84"/>
+<observation date="1961-06-01" CPIAUCSL_19940217="29.84"/>
+<observation date="1961-07-01" CPIAUCSL_19940217="29.92"/>
+<observation date="1961-08-01" CPIAUCSL_19940217="29.94"/>
+<observation date="1961-09-01" CPIAUCSL_19940217="29.98"/>
+<observation date="1961-10-01" CPIAUCSL_19940217="29.98"/>
+<observation date="1961-11-01" CPIAUCSL_19940217="29.98"/>
+<observation date="1961-12-01" CPIAUCSL_19940217="30.01"/>
+<observation date="1962-01-01" CPIAUCSL_19940217="30.04"/>
+<observation date="1962-02-01" CPIAUCSL_19940217="30.11"/>
+<observation date="1962-03-01" CPIAUCSL_19940217="30.17"/>
+<observation date="1962-04-01" CPIAUCSL_19940217="30.21"/>
+<observation date="1962-05-01" CPIAUCSL_19940217="30.24"/>
+<observation date="1962-06-01" CPIAUCSL_19940217="30.21"/>
+<observation date="1962-07-01" CPIAUCSL_19940217="30.22"/>
+<observation date="1962-08-01" CPIAUCSL_19940217="30.28"/>
+<observation date="1962-09-01" CPIAUCSL_19940217="30.42"/>
+<observation date="1962-10-01" CPIAUCSL_19940217="30.38"/>
+<observation date="1962-11-01" CPIAUCSL_19940217="30.38"/>
+<observation date="1962-12-01" CPIAUCSL_19940217="30.38"/>
+<observation date="1963-01-01" CPIAUCSL_19940217="30.44"/>
+<observation date="1963-02-01" CPIAUCSL_19940217="30.48"/>
+<observation date="1963-03-01" CPIAUCSL_19940217="30.51"/>
+<observation date="1963-04-01" CPIAUCSL_19940217="30.48"/>
+<observation date="1963-05-01" CPIAUCSL_19940217="30.51"/>
+<observation date="1963-06-01" CPIAUCSL_19940217="30.61"/>
+<observation date="1963-07-01" CPIAUCSL_19940217="30.69"/>
+<observation date="1963-08-01" CPIAUCSL_19940217="30.75"/>
+<observation date="1963-09-01" CPIAUCSL_19940217="30.72"/>
+<observation date="1963-10-01" CPIAUCSL_19940217="30.75"/>
+<observation date="1963-11-01" CPIAUCSL_19940217="30.78"/>
+<observation date="1963-12-01" CPIAUCSL_19940217="30.88"/>
+<observation date="1964-01-01" CPIAUCSL_19940217="30.94"/>
+<observation date="1964-02-01" CPIAUCSL_19940217="30.91"/>
+<observation date="1964-03-01" CPIAUCSL_19940217="30.94"/>
+<observation date="1964-04-01" CPIAUCSL_19940217="30.95"/>
+<observation date="1964-05-01" CPIAUCSL_19940217="30.98"/>
+<observation date="1964-06-01" CPIAUCSL_19940217="31.01"/>
+<observation date="1964-07-01" CPIAUCSL_19940217="31.02"/>
+<observation date="1964-08-01" CPIAUCSL_19940217="31.05"/>
+<observation date="1964-09-01" CPIAUCSL_19940217="31.08"/>
+<observation date="1964-10-01" CPIAUCSL_19940217="31.12"/>
+<observation date="1964-11-01" CPIAUCSL_19940217="31.21"/>
+<observation date="1964-12-01" CPIAUCSL_19940217="31.25"/>
+<observation date="1965-01-01" CPIAUCSL_19940217="31.28"/>
+<observation date="1965-02-01" CPIAUCSL_19940217="31.28"/>
+<observation date="1965-03-01" CPIAUCSL_19940217="31.31"/>
+<observation date="1965-04-01" CPIAUCSL_19940217="31.38"/>
+<observation date="1965-05-01" CPIAUCSL_19940217="31.48"/>
+<observation date="1965-06-01" CPIAUCSL_19940217="31.61"/>
+<observation date="1965-07-01" CPIAUCSL_19940217="31.58"/>
+<observation date="1965-08-01" CPIAUCSL_19940217="31.55"/>
+<observation date="1965-09-01" CPIAUCSL_19940217="31.62"/>
+<observation date="1965-10-01" CPIAUCSL_19940217="31.65"/>
+<observation date="1965-11-01" CPIAUCSL_19940217="31.75"/>
+<observation date="1965-12-01" CPIAUCSL_19940217="31.85"/>
+<observation date="1966-01-01" CPIAUCSL_19940217="31.88"/>
+<observation date="1966-02-01" CPIAUCSL_19940217="32.08"/>
+<observation date="1966-03-01" CPIAUCSL_19940217="32.18"/>
+<observation date="1966-04-01" CPIAUCSL_19940217="32.28"/>
+<observation date="1966-05-01" CPIAUCSL_19940217="32.35"/>
+<observation date="1966-06-01" CPIAUCSL_19940217="32.38"/>
+<observation date="1966-07-01" CPIAUCSL_19940217="32.45"/>
+<observation date="1966-08-01" CPIAUCSL_19940217="32.65"/>
+<observation date="1966-09-01" CPIAUCSL_19940217="32.75"/>
+<observation date="1966-10-01" CPIAUCSL_19940217="32.85"/>
+<observation date="1966-11-01" CPIAUCSL_19940217="32.88"/>
+<observation date="1966-12-01" CPIAUCSL_19940217="32.92"/>
+<observation date="1967-01-01" CPIAUCSL_19940217="32.9"/>
+<observation date="1967-02-01" CPIAUCSL_19940217="33.0"/>
+<observation date="1967-03-01" CPIAUCSL_19940217="33.0"/>
+<observation date="1967-04-01" CPIAUCSL_19940217="33.1"/>
+<observation date="1967-05-01" CPIAUCSL_19940217="33.1"/>
+<observation date="1967-06-01" CPIAUCSL_19940217="33.3"/>
+<observation date="1967-07-01" CPIAUCSL_19940217="33.4"/>
+<observation date="1967-08-01" CPIAUCSL_19940217="33.5"/>
+<observation date="1967-09-01" CPIAUCSL_19940217="33.6"/>
+<observation date="1967-10-01" CPIAUCSL_19940217="33.7"/>
+<observation date="1967-11-01" CPIAUCSL_19940217="33.9"/>
+<observation date="1967-12-01" CPIAUCSL_19940217="34.0"/>
+<observation date="1968-01-01" CPIAUCSL_19940217="34.1"/>
+<observation date="1968-02-01" CPIAUCSL_19940217="34.2"/>
+<observation date="1968-03-01" CPIAUCSL_19940217="34.3"/>
+<observation date="1968-04-01" CPIAUCSL_19940217="34.4"/>
+<observation date="1968-05-01" CPIAUCSL_19940217="34.5"/>
+<observation date="1968-06-01" CPIAUCSL_19940217="34.7"/>
+<observation date="1968-07-01" CPIAUCSL_19940217="34.9"/>
+<observation date="1968-08-01" CPIAUCSL_19940217="35.0"/>
+<observation date="1968-09-01" CPIAUCSL_19940217="35.1"/>
+<observation date="1968-10-01" CPIAUCSL_19940217="35.3"/>
+<observation date="1968-11-01" CPIAUCSL_19940217="35.4"/>
+<observation date="1968-12-01" CPIAUCSL_19940217="35.6"/>
+<observation date="1969-01-01" CPIAUCSL_19940217="35.7"/>
+<observation date="1969-02-01" CPIAUCSL_19940217="35.8"/>
+<observation date="1969-03-01" CPIAUCSL_19940217="36.1"/>
+<observation date="1969-04-01" CPIAUCSL_19940217="36.3"/>
+<observation date="1969-05-01" CPIAUCSL_19940217="36.4"/>
+<observation date="1969-06-01" CPIAUCSL_19940217="36.6"/>
+<observation date="1969-07-01" CPIAUCSL_19940217="36.8"/>
+<observation date="1969-08-01" CPIAUCSL_19940217="36.9"/>
+<observation date="1969-09-01" CPIAUCSL_19940217="37.1"/>
+<observation date="1969-10-01" CPIAUCSL_19940217="37.3"/>
+<observation date="1969-11-01" CPIAUCSL_19940217="37.5"/>
+<observation date="1969-12-01" CPIAUCSL_19940217="37.7"/>
+<observation date="1970-01-01" CPIAUCSL_19940217="37.9"/>
+<observation date="1970-02-01" CPIAUCSL_19940217="38.1"/>
+<observation date="1970-03-01" CPIAUCSL_19940217="38.3"/>
+<observation date="1970-04-01" CPIAUCSL_19940217="38.5"/>
+<observation date="1970-05-01" CPIAUCSL_19940217="38.6"/>
+<observation date="1970-06-01" CPIAUCSL_19940217="38.8"/>
+<observation date="1970-07-01" CPIAUCSL_19940217="38.9"/>
+<observation date="1970-08-01" CPIAUCSL_19940217="39.0"/>
+<observation date="1970-09-01" CPIAUCSL_19940217="39.2"/>
+<observation date="1970-10-01" CPIAUCSL_19940217="39.4"/>
+<observation date="1970-11-01" CPIAUCSL_19940217="39.6"/>
+<observation date="1970-12-01" CPIAUCSL_19940217="39.8"/>
+<observation date="1971-01-01" CPIAUCSL_19940217="39.9"/>
+<observation date="1971-02-01" CPIAUCSL_19940217="39.9"/>
+<observation date="1971-03-01" CPIAUCSL_19940217="40.0"/>
+<observation date="1971-04-01" CPIAUCSL_19940217="40.1"/>
+<observation date="1971-05-01" CPIAUCSL_19940217="40.3"/>
+<observation date="1971-06-01" CPIAUCSL_19940217="40.5"/>
+<observation date="1971-07-01" CPIAUCSL_19940217="40.6"/>
+<observation date="1971-08-01" CPIAUCSL_19940217="40.7"/>
+<observation date="1971-09-01" CPIAUCSL_19940217="40.8"/>
+<observation date="1971-10-01" CPIAUCSL_19940217="40.9"/>
+<observation date="1971-11-01" CPIAUCSL_19940217="41.0"/>
+<observation date="1971-12-01" CPIAUCSL_19940217="41.1"/>
+<observation date="1972-01-01" CPIAUCSL_19940217="41.2"/>
+<observation date="1972-02-01" CPIAUCSL_19940217="41.4"/>
+<observation date="1972-03-01" CPIAUCSL_19940217="41.4"/>
+<observation date="1972-04-01" CPIAUCSL_19940217="41.5"/>
+<observation date="1972-05-01" CPIAUCSL_19940217="41.6"/>
+<observation date="1972-06-01" CPIAUCSL_19940217="41.7"/>
+<observation date="1972-07-01" CPIAUCSL_19940217="41.8"/>
+<observation date="1972-08-01" CPIAUCSL_19940217="41.9"/>
+<observation date="1972-09-01" CPIAUCSL_19940217="42.1"/>
+<observation date="1972-10-01" CPIAUCSL_19940217="42.2"/>
+<observation date="1972-11-01" CPIAUCSL_19940217="42.4"/>
+<observation date="1972-12-01" CPIAUCSL_19940217="42.5"/>
+<observation date="1973-01-01" CPIAUCSL_19940217="42.7"/>
+<observation date="1973-02-01" CPIAUCSL_19940217="43.0"/>
+<observation date="1973-03-01" CPIAUCSL_19940217="43.4"/>
+<observation date="1973-04-01" CPIAUCSL_19940217="43.7"/>
+<observation date="1973-05-01" CPIAUCSL_19940217="43.9"/>
+<observation date="1973-06-01" CPIAUCSL_19940217="44.2"/>
+<observation date="1973-07-01" CPIAUCSL_19940217="44.2"/>
+<observation date="1973-08-01" CPIAUCSL_19940217="45.0"/>
+<observation date="1973-09-01" CPIAUCSL_19940217="45.2"/>
+<observation date="1973-10-01" CPIAUCSL_19940217="45.6"/>
+<observation date="1973-11-01" CPIAUCSL_19940217="45.9"/>
+<observation date="1973-12-01" CPIAUCSL_19940217="46.3"/>
+<observation date="1974-01-01" CPIAUCSL_19940217="46.8"/>
+<observation date="1974-02-01" CPIAUCSL_19940217="47.3"/>
+<observation date="1974-03-01" CPIAUCSL_19940217="47.8"/>
+<observation date="1974-04-01" CPIAUCSL_19940217="48.1"/>
+<observation date="1974-05-01" CPIAUCSL_19940217="48.6"/>
+<observation date="1974-06-01" CPIAUCSL_19940217="49.0"/>
+<observation date="1974-07-01" CPIAUCSL_19940217="49.3"/>
+<observation date="1974-08-01" CPIAUCSL_19940217="49.9"/>
+<observation date="1974-09-01" CPIAUCSL_19940217="50.6"/>
+<observation date="1974-10-01" CPIAUCSL_19940217="51.0"/>
+<observation date="1974-11-01" CPIAUCSL_19940217="51.5"/>
+<observation date="1974-12-01" CPIAUCSL_19940217="51.9"/>
+<observation date="1975-01-01" CPIAUCSL_19940217="52.3"/>
+<observation date="1975-02-01" CPIAUCSL_19940217="52.6"/>
+<observation date="1975-03-01" CPIAUCSL_19940217="52.8"/>
+<observation date="1975-04-01" CPIAUCSL_19940217="53.0"/>
+<observation date="1975-05-01" CPIAUCSL_19940217="53.1"/>
+<observation date="1975-06-01" CPIAUCSL_19940217="53.5"/>
+<observation date="1975-07-01" CPIAUCSL_19940217="54.0"/>
+<observation date="1975-08-01" CPIAUCSL_19940217="54.2"/>
+<observation date="1975-09-01" CPIAUCSL_19940217="54.6"/>
+<observation date="1975-10-01" CPIAUCSL_19940217="54.9"/>
+<observation date="1975-11-01" CPIAUCSL_19940217="55.3"/>
+<observation date="1975-12-01" CPIAUCSL_19940217="55.6"/>
+<observation date="1976-01-01" CPIAUCSL_19940217="55.8"/>
+<observation date="1976-02-01" CPIAUCSL_19940217="55.9"/>
+<observation date="1976-03-01" CPIAUCSL_19940217="56.0"/>
+<observation date="1976-04-01" CPIAUCSL_19940217="56.1"/>
+<observation date="1976-05-01" CPIAUCSL_19940217="56.4"/>
+<observation date="1976-06-01" CPIAUCSL_19940217="56.7"/>
+<observation date="1976-07-01" CPIAUCSL_19940217="57.0"/>
+<observation date="1976-08-01" CPIAUCSL_19940217="57.3"/>
+<observation date="1976-09-01" CPIAUCSL_19940217="57.6"/>
+<observation date="1976-10-01" CPIAUCSL_19940217="57.9"/>
+<observation date="1976-11-01" CPIAUCSL_19940217="58.1"/>
+<observation date="1976-12-01" CPIAUCSL_19940217="58.4"/>
+<observation date="1977-01-01" CPIAUCSL_19940217="58.7"/>
+<observation date="1977-02-01" CPIAUCSL_19940217="59.3"/>
+<observation date="1977-03-01" CPIAUCSL_19940217="59.6"/>
+<observation date="1977-04-01" CPIAUCSL_19940217="60.0"/>
+<observation date="1977-05-01" CPIAUCSL_19940217="60.2"/>
+<observation date="1977-06-01" CPIAUCSL_19940217="60.5"/>
+<observation date="1977-07-01" CPIAUCSL_19940217="60.8"/>
+<observation date="1977-08-01" CPIAUCSL_19940217="61.1"/>
+<observation date="1977-09-01" CPIAUCSL_19940217="61.3"/>
+<observation date="1977-10-01" CPIAUCSL_19940217="61.6"/>
+<observation date="1977-11-01" CPIAUCSL_19940217="62.0"/>
+<observation date="1977-12-01" CPIAUCSL_19940217="62.3"/>
+<observation date="1978-01-01" CPIAUCSL_19940217="62.7"/>
+<observation date="1978-02-01" CPIAUCSL_19940217="63.0"/>
+<observation date="1978-03-01" CPIAUCSL_19940217="63.4"/>
+<observation date="1978-04-01" CPIAUCSL_19940217="63.9"/>
+<observation date="1978-05-01" CPIAUCSL_19940217="64.5"/>
+<observation date="1978-06-01" CPIAUCSL_19940217="65.0"/>
+<observation date="1978-07-01" CPIAUCSL_19940217="65.5"/>
+<observation date="1978-08-01" CPIAUCSL_19940217="65.9"/>
+<observation date="1978-09-01" CPIAUCSL_19940217="66.5"/>
+<observation date="1978-10-01" CPIAUCSL_19940217="67.1"/>
+<observation date="1978-11-01" CPIAUCSL_19940217="67.5"/>
+<observation date="1978-12-01" CPIAUCSL_19940217="67.9"/>
+<observation date="1979-01-01" CPIAUCSL_19940217="68.5"/>
+<observation date="1979-02-01" CPIAUCSL_19940217="69.2"/>
+<observation date="1979-03-01" CPIAUCSL_19940217="69.9"/>
+<observation date="1979-04-01" CPIAUCSL_19940217="70.6"/>
+<observation date="1979-05-01" CPIAUCSL_19940217="71.4"/>
+<observation date="1979-06-01" CPIAUCSL_19940217="72.2"/>
+<observation date="1979-07-01" CPIAUCSL_19940217="73.0"/>
+<observation date="1979-08-01" CPIAUCSL_19940217="73.7"/>
+<observation date="1979-09-01" CPIAUCSL_19940217="74.4"/>
+<observation date="1979-10-01" CPIAUCSL_19940217="75.2"/>
+<observation date="1979-11-01" CPIAUCSL_19940217="76.0"/>
+<observation date="1979-12-01" CPIAUCSL_19940217="76.9"/>
+<observation date="1980-01-01" CPIAUCSL_19940217="78.0"/>
+<observation date="1980-02-01" CPIAUCSL_19940217="79.0"/>
+<observation date="1980-03-01" CPIAUCSL_19940217="80.1"/>
+<observation date="1980-04-01" CPIAUCSL_19940217="80.9"/>
+<observation date="1980-05-01" CPIAUCSL_19940217="81.7"/>
+<observation date="1980-06-01" CPIAUCSL_19940217="82.5"/>
+<observation date="1980-07-01" CPIAUCSL_19940217="82.6"/>
+<observation date="1980-08-01" CPIAUCSL_19940217="83.2"/>
+<observation date="1980-09-01" CPIAUCSL_19940217="83.9"/>
+<observation date="1980-10-01" CPIAUCSL_19940217="84.7"/>
+<observation date="1980-11-01" CPIAUCSL_19940217="85.6"/>
+<observation date="1980-12-01" CPIAUCSL_19940217="86.4"/>
+<observation date="1981-01-01" CPIAUCSL_19940217="87.2"/>
+<observation date="1981-02-01" CPIAUCSL_19940217="88.0"/>
+<observation date="1981-03-01" CPIAUCSL_19940217="88.6"/>
+<observation date="1981-04-01" CPIAUCSL_19940217="89.1"/>
+<observation date="1981-05-01" CPIAUCSL_19940217="89.7"/>
+<observation date="1981-06-01" CPIAUCSL_19940217="90.5"/>
+<observation date="1981-07-01" CPIAUCSL_19940217="91.5"/>
+<observation date="1981-08-01" CPIAUCSL_19940217="92.2"/>
+<observation date="1981-09-01" CPIAUCSL_19940217="93.1"/>
+<observation date="1981-10-01" CPIAUCSL_19940217="93.4"/>
+<observation date="1981-11-01" CPIAUCSL_19940217="93.8"/>
+<observation date="1981-12-01" CPIAUCSL_19940217="94.1"/>
+<observation date="1982-01-01" CPIAUCSL_19940217="94.4"/>
+<observation date="1982-02-01" CPIAUCSL_19940217="94.7"/>
+<observation date="1982-03-01" CPIAUCSL_19940217="94.7"/>
+<observation date="1982-04-01" CPIAUCSL_19940217="95.0"/>
+<observation date="1982-05-01" CPIAUCSL_19940217="95.9"/>
+<observation date="1982-06-01" CPIAUCSL_19940217="97.0"/>
+<observation date="1982-07-01" CPIAUCSL_19940217="97.5"/>
+<observation date="1982-08-01" CPIAUCSL_19940217="97.7"/>
+<observation date="1982-09-01" CPIAUCSL_19940217="97.7"/>
+<observation date="1982-10-01" CPIAUCSL_19940217="98.1"/>
+<observation date="1982-11-01" CPIAUCSL_19940217="98.0"/>
+<observation date="1982-12-01" CPIAUCSL_19940217="97.7"/>
+<observation date="1983-01-01" CPIAUCSL_19940217="97.9"/>
+<observation date="1983-02-01" CPIAUCSL_19940217="98.0"/>
+<observation date="1983-03-01" CPIAUCSL_19940217="98.1"/>
+<observation date="1983-04-01" CPIAUCSL_19940217="98.8"/>
+<observation date="1983-05-01" CPIAUCSL_19940217="99.2"/>
+<observation date="1983-06-01" CPIAUCSL_19940217="99.4"/>
+<observation date="1983-07-01" CPIAUCSL_19940217="99.8"/>
+<observation date="1983-08-01" CPIAUCSL_19940217="100.1"/>
+<observation date="1983-09-01" CPIAUCSL_19940217="100.4"/>
+<observation date="1983-10-01" CPIAUCSL_19940217="100.8"/>
+<observation date="1983-11-01" CPIAUCSL_19940217="101.1"/>
+<observation date="1983-12-01" CPIAUCSL_19940217="101.4"/>
+<observation date="1984-01-01" CPIAUCSL_19940217="102.1"/>
+<observation date="1984-02-01" CPIAUCSL_19940217="102.6"/>
+<observation date="1984-03-01" CPIAUCSL_19940217="102.9"/>
+<observation date="1984-04-01" CPIAUCSL_19940217="103.3"/>
+<observation date="1984-05-01" CPIAUCSL_19940217="103.5"/>
+<observation date="1984-06-01" CPIAUCSL_19940217="103.7"/>
+<observation date="1984-07-01" CPIAUCSL_19940217="104.1"/>
+<observation date="1984-08-01" CPIAUCSL_19940217="104.4"/>
+<observation date="1984-09-01" CPIAUCSL_19940217="104.7"/>
+<observation date="1984-10-01" CPIAUCSL_19940217="105.1"/>
+<observation date="1984-11-01" CPIAUCSL_19940217="105.3"/>
+<observation date="1984-12-01" CPIAUCSL_19940217="105.5"/>
+<observation date="1985-01-01" CPIAUCSL_19940217="105.7"/>
+<observation date="1985-02-01" CPIAUCSL_19940217="106.3"/>
+<observation date="1985-03-01" CPIAUCSL_19940217="106.8"/>
+<observation date="1985-04-01" CPIAUCSL_19940217="107.0"/>
+<observation date="1985-05-01" CPIAUCSL_19940217="107.2"/>
+<observation date="1985-06-01" CPIAUCSL_19940217="107.5"/>
+<observation date="1985-07-01" CPIAUCSL_19940217="107.7"/>
+<observation date="1985-08-01" CPIAUCSL_19940217="107.9"/>
+<observation date="1985-09-01" CPIAUCSL_19940217="108.1"/>
+<observation date="1985-10-01" CPIAUCSL_19940217="108.5"/>
+<observation date="1985-11-01" CPIAUCSL_19940217="109.0"/>
+<observation date="1985-12-01" CPIAUCSL_19940217="109.5"/>
+<observation date="1986-01-01" CPIAUCSL_19940217="109.9"/>
+<observation date="1986-02-01" CPIAUCSL_19940217="109.7"/>
+<observation date="1986-03-01" CPIAUCSL_19940217="109.1"/>
+<observation date="1986-04-01" CPIAUCSL_19940217="108.7"/>
+<observation date="1986-05-01" CPIAUCSL_19940217="109.0"/>
+<observation date="1986-06-01" CPIAUCSL_19940217="109.4"/>
+<observation date="1986-07-01" CPIAUCSL_19940217="109.5"/>
+<observation date="1986-08-01" CPIAUCSL_19940217="109.6"/>
+<observation date="1986-09-01" CPIAUCSL_19940217="110.0"/>
+<observation date="1986-10-01" CPIAUCSL_19940217="110.2"/>
+<observation date="1986-11-01" CPIAUCSL_19940217="110.4"/>
+<observation date="1986-12-01" CPIAUCSL_19940217="110.8"/>
+<observation date="1987-01-01" CPIAUCSL_19940217="111.5"/>
+<observation date="1987-02-01" CPIAUCSL_19940217="111.9"/>
+<observation date="1987-03-01" CPIAUCSL_19940217="112.3"/>
+<observation date="1987-04-01" CPIAUCSL_19940217="112.8"/>
+<observation date="1987-05-01" CPIAUCSL_19940217="113.1"/>
+<observation date="1987-06-01" CPIAUCSL_19940217="113.6"/>
+<observation date="1987-07-01" CPIAUCSL_19940217="113.9"/>
+<observation date="1987-08-01" CPIAUCSL_19940217="114.4"/>
+<observation date="1987-09-01" CPIAUCSL_19940217="114.8"/>
+<observation date="1987-10-01" CPIAUCSL_19940217="115.1"/>
+<observation date="1987-11-01" CPIAUCSL_19940217="115.5"/>
+<observation date="1987-12-01" CPIAUCSL_19940217="115.7"/>
+<observation date="1988-01-01" CPIAUCSL_19940217="116.1"/>
+<observation date="1988-02-01" CPIAUCSL_19940217="116.2"/>
+<observation date="1988-03-01" CPIAUCSL_19940217="116.6"/>
+<observation date="1988-04-01" CPIAUCSL_19940217="117.2"/>
+<observation date="1988-05-01" CPIAUCSL_19940217="117.6"/>
+<observation date="1988-06-01" CPIAUCSL_19940217="118.1"/>
+<observation date="1988-07-01" CPIAUCSL_19940217="118.6"/>
+<observation date="1988-08-01" CPIAUCSL_19940217="119.0"/>
+<observation date="1988-09-01" CPIAUCSL_19940217="119.6"/>
+<observation date="1988-10-01" CPIAUCSL_19940217="120.0"/>
+<observation date="1988-11-01" CPIAUCSL_19940217="120.4"/>
+<observation date="1988-12-01" CPIAUCSL_19940217="120.8"/>
+<observation date="1989-01-01" CPIAUCSL_19940217="121.3"/>
+<observation date="1989-02-01" CPIAUCSL_19940217="121.7"/>
+<observation date="1989-03-01" CPIAUCSL_19940217="122.3"/>
+<observation date="1989-04-01" CPIAUCSL_19940217="123.2"/>
+<observation date="1989-05-01" CPIAUCSL_19940217="123.8"/>
+<observation date="1989-06-01" CPIAUCSL_19940217="124.1"/>
+<observation date="1989-07-01" CPIAUCSL_19940217="124.6"/>
+<observation date="1989-08-01" CPIAUCSL_19940217="124.6"/>
+<observation date="1989-09-01" CPIAUCSL_19940217="124.9"/>
+<observation date="1989-10-01" CPIAUCSL_19940217="125.5"/>
+<observation date="1989-11-01" CPIAUCSL_19940217="125.9"/>
+<observation date="1989-12-01" CPIAUCSL_19940217="126.4"/>
+<observation date="1990-01-01" CPIAUCSL_19940217="127.5" CPIAUCSL_19950215="127.6"/>
+<observation date="1990-02-01" CPIAUCSL_19940217="128.0" CPIAUCSL_19950215="128.1"/>
+<observation date="1990-03-01" CPIAUCSL_19940217="128.7" CPIAUCSL_19950215="128.6"/>
+<observation date="1990-04-01" CPIAUCSL_19940217="129.0"/>
+<observation date="1990-05-01" CPIAUCSL_19940217="129.2"/>
+<observation date="1990-06-01" CPIAUCSL_19940217="130.0"/>
+<observation date="1990-07-01" CPIAUCSL_19940217="130.6"/>
+<observation date="1990-08-01" CPIAUCSL_19940217="131.7"/>
+<observation date="1990-09-01" CPIAUCSL_19940217="132.6"/>
+<observation date="1990-10-01" CPIAUCSL_19940217="133.4" CPIAUCSL_19950215="133.5"/>
+<observation date="1990-11-01" CPIAUCSL_19940217="133.9" CPIAUCSL_19950215="133.8"/>
+<observation date="1990-12-01" CPIAUCSL_19940217="134.3"/>
+<observation date="1991-01-01" CPIAUCSL_19940217="134.8"/>
+<observation date="1991-02-01" CPIAUCSL_19940217="134.9"/>
+<observation date="1991-03-01" CPIAUCSL_19940217="135.0" CPIAUCSL_19960228="134.9"/>
+<observation date="1991-04-01" CPIAUCSL_19940217="135.3" CPIAUCSL_19960228="135.2"/>
+<observation date="1991-05-01" CPIAUCSL_19940217="135.7"/>
+<observation date="1991-06-01" CPIAUCSL_19940217="136.0" CPIAUCSL_19960228="136.1"/>
+<observation date="1991-07-01" CPIAUCSL_19940217="136.4" CPIAUCSL_19960228="136.3"/>
+<observation date="1991-08-01" CPIAUCSL_19940217="136.7"/>
+<observation date="1991-09-01" CPIAUCSL_19930513="." CPIAUCSL_19940217="137.1"/>
+<observation date="1991-10-01" CPIAUCSL_19930615="." CPIAUCSL_19940217="137.3"/>
+<observation date="1991-11-01" CPIAUCSL_19930714="." CPIAUCSL_19940217="137.9"/>
+<observation date="1991-12-01" CPIAUCSL_19930813="." CPIAUCSL_19940217="138.3"/>
+<observation date="1992-01-01" CPIAUCSL_19930914="." CPIAUCSL_19940217="138.4"/>
+<observation date="1992-02-01" CPIAUCSL_19931015="." CPIAUCSL_19940217="138.6" CPIAUCSL_19970219="138.7"/>
+<observation date="1992-03-01" CPIAUCSL_19931110="." CPIAUCSL_19940217="139.2"/>
+<observation date="1992-04-01" CPIAUCSL_19931210="." CPIAUCSL_19940217="139.5"/>
+<observation date="1992-05-01" CPIAUCSL_19940113="." CPIAUCSL_19940217="139.8"/>
+<observation date="1992-06-01" CPIAUCSL_19940217="140.3" CPIAUCSL_19970219="140.2"/>
+<observation date="1992-07-01"/>
+<observation date="1992-08-01" CPIAUCSL_19940217="141.0" CPIAUCSL_19960228="140.9"/>
+<observation date="1992-09-01" CPIAUCSL_19940217="141.2"/>
+<observation date="1992-10-01" CPIAUCSL_19960228="141.8"/>
+<observation date="1992-11-01" CPIAUCSL_19940217="142.1" CPIAUCSL_19960228="142.2"/>
+<observation date="1992-12-01" CPIAUCSL_19940217="142.4"/>
+<observation date="1993-01-01" CPIAUCSL_19940217="142.7" CPIAUCSL_19960228="142.8"/>
+<observation date="1993-02-01" CPIAUCSL_19940217="143.2"/>
+<observation date="1993-03-01" CPIAUCSL_19940217="143.5"/>
+<observation date="1993-04-01" CPIAUCSL_19930513="144.2" CPIAUCSL_19940217="144.0" CPIAUCSL_19960228="143.9"/>
+<observation date="1993-05-01" CPIAUCSL_19930615="144.4" CPIAUCSL_19940217="144.3"/>
+<observation date="1993-06-01" CPIAUCSL_19930714="144.4"/>
+<observation date="1993-07-01" CPIAUCSL_19930813="144.5" CPIAUCSL_19940217="144.6"/>
+<observation date="1993-08-01" CPIAUCSL_19930914="144.9" CPIAUCSL_19940217="145.0" CPIAUCSL_19950215="144.9"/>
+<observation date="1993-09-01" CPIAUCSL_19931015="144.9" CPIAUCSL_19940217="145.1" CPIAUCSL_19950215="145.0" CPIAUCSL_19960228="145.1"/>
+<observation date="1993-10-01" CPIAUCSL_19931110="145.5" CPIAUCSL_19940217="145.6" CPIAUCSL_19950215="145.7"/>
+<observation date="1993-11-01" CPIAUCSL_19931210="145.8" CPIAUCSL_19940217="146.0"/>
+<observation date="1993-12-01" CPIAUCSL_19940113="146.1" CPIAUCSL_19940217="146.3" CPIAUCSL_19970219="146.4"/>
+<observation date="1994-01-01" CPIAUCSL_19940217="146.3" CPIAUCSL_19950215="146.4"/>
+<observation date="1994-02-01" CPIAUCSL_19940316="146.7" CPIAUCSL_19950215="146.8" CPIAUCSL_19960228="146.7" CPIAUCSL_19970219="146.8"/>
+<observation date="1994-03-01" CPIAUCSL_19940413="147.2" CPIAUCSL_19950215="147.1"/>
+<observation date="1994-04-01" CPIAUCSL_19940513="147.4" CPIAUCSL_19960228="147.3"/>
+<observation date="1994-05-01" CPIAUCSL_19940614="147.7" CPIAUCSL_19950215="147.6"/>
+<observation date="1994-06-01" CPIAUCSL_19940713="148.1" CPIAUCSL_19970219="148"/>
+<observation date="1994-07-01" CPIAUCSL_19940812="148.6" CPIAUCSL_19950215="148.5" CPIAUCSL_19960228="148.6" CPIAUCSL_19970219="148.5"/>
+<observation date="1994-08-01" CPIAUCSL_19940913="149.1"/>
+<observation date="1994-09-01" CPIAUCSL_19941014="149.4"/>
+<observation date="1994-10-01" CPIAUCSL_19941116="149.5" CPIAUCSL_19950215="149.6" CPIAUCSL_19960228="149.5" CPIAUCSL_19970219="149.6"/>
+<observation date="1994-11-01" CPIAUCSL_19941214="149.9" CPIAUCSL_19950215="149.8" CPIAUCSL_19960228="149.9"/>
+<observation date="1994-12-01" CPIAUCSL_19950111="150.2" CPIAUCSL_19950215="150.1" CPIAUCSL_19960228="150.2" CPIAUCSL_19970219="150.3"/>
+<observation date="1995-01-01" CPIAUCSL_19950215="150.6"/>
+<observation date="1995-02-01" CPIAUCSL_19950316="151.0" CPIAUCSL_19960228="150.9" CPIAUCSL_19970219="151"/>
+<observation date="1995-03-01" CPIAUCSL_19950412="151.3"/>
+<observation date="1995-04-01" CPIAUCSL_19950512="151.9" CPIAUCSL_19960228="151.8"/>
+<observation date="1995-05-01" CPIAUCSL_19950613="152.3" CPIAUCSL_19960228="152.2" CPIAUCSL_19970219="152.1"/>
+<observation date="1995-06-01" CPIAUCSL_19950714="152.5" CPIAUCSL_19960228="152.6" CPIAUCSL_19970219="152.5"/>
+<observation date="1995-07-01" CPIAUCSL_19950811="152.8" CPIAUCSL_19960228="152.7" CPIAUCSL_19970219="152.6"/>
+<observation date="1995-08-01" CPIAUCSL_19950913="153.0"/>
+<observation date="1995-09-01" CPIAUCSL_19951013="153.2"/>
+<observation date="1995-10-01" CPIAUCSL_19951115="153.7"/>
+<observation date="1995-11-01" CPIAUCSL_19951214="153.7" CPIAUCSL_19960228="153.8"/>
+<observation date="1995-12-01" CPIAUCSL_19960201="154.0" CPIAUCSL_19960228="154.1"/>
+<observation date="1996-01-01" CPIAUCSL_19960228="154.7"/>
+<observation date="1996-02-01" CPIAUCSL_19960315="155.0" CPIAUCSL_19970219="155.1"/>
+<observation date="1996-03-01" CPIAUCSL_19960412="155.6"/>
+<observation date="1996-04-01" CPIAUCSL_19960514="156.2" CPIAUCSL_19970219="156.1"/>
+<observation date="1996-05-01" CPIAUCSL_19960612="156.7" CPIAUCSL_19970219="156.5"/>
+<observation date="1996-06-01" CPIAUCSL_19960716="156.8" CPIAUCSL_19970219="156.7"/>
+<observation date="1996-07-01" CPIAUCSL_19960813="157.2" CPIAUCSL_19970219="157.1"/>
+<observation date="1996-08-01" CPIAUCSL_19960913="157.4"/>
+<observation date="1996-09-01" CPIAUCSL_19961016="157.8" CPIAUCSL_19970219="157.9"/>
+<observation date="1996-10-01" CPIAUCSL_19961114="158.3"/>
+<observation date="1996-11-01" CPIAUCSL_19961212="158.7" CPIAUCSL_19970219="158.8"/>
+<observation date="1996-12-01" CPIAUCSL_19970114="159.1" CPIAUCSL_19970219="159.2"/>
+<observation date="1997-01-01" CPIAUCSL_19970219="159.4"/>
+<observation date="1997-02-01" CPIAUCSL_19970319="159.8"/>
+<observation date="1997-03-01" CPIAUCSL_19970415="159.9"/>
+<observation date="1997-04-01" CPIAUCSL_19970515="160.0"/>
+<observation date="1997-05-01" CPIAUCSL_19970617="160.1"/>
+</observations>
