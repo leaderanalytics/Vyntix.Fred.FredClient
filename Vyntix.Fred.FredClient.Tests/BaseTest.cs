@@ -7,6 +7,7 @@ public abstract class BaseTest
     protected IFredClient FredClient;
     protected readonly FredFileType CurrentFileType;
     protected bool IsZeroString(string s) => String.IsNullOrEmpty(s) || s == "0";
+    protected const string DOES_NOT_EXIST = "DOES_NOT_EXIST"; // Arbitrary invalid identifier
 
     public BaseTest(FredFileType fileType)
     {

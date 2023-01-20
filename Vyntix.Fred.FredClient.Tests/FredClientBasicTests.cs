@@ -4,7 +4,7 @@
 [TestFixture(FredFileType.XML)]
 public class FredClientBasicTests : BaseTest
 {
-    private const string DOES_NOT_EXIST = "DOES_NOT_EXIST"; // Arbitrary invalid identifier
+    
 
     public FredClientBasicTests(FredFileType fileType) : base(fileType)
     {
@@ -51,61 +51,7 @@ public class FredClientBasicTests : BaseTest
         Assert.IsNull(data);
     }
 
-    [Test]
-    public async Task GetObservationsTest()
-    {
-        List<Observation> data = await FredClient.GetObservations("GNPCA");
-        Assert.IsNotNull(data);
-        
-        Assert.ThrowsAsync<Exception>(()  =>  FredClient.GetObservations(DOES_NOT_EXIST));
-    }
-
-    [Test]
-    public async Task GetObservationsTest2()
-    {
-        List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse);
-        Assert.IsNotNull(data);
-
-        Assert.ThrowsAsync<Exception>(() => FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse));
-    }
-
-    [Test]
-    public async Task GetObservationsTest3()
-    {
-        List<DateTime> vintateDates = new List<DateTime>(10)
-            {
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1),
-                new DateTime(2020, 1, 1)
-            };
-        List<Observation> data = await FredClient.GetObservations("GNPCA", vintateDates, DataDensity.Sparse);
-        Assert.IsNotNull(data);
-
-        // We don't throw on a bad symbol because we don't know when a symbol is bad.  We only throw if the symbol or vintage dates are null/empty.
-        var obs = await FredClient.GetObservations(DOES_NOT_EXIST, vintateDates, DataDensity.Sparse);
-        Assert.IsNotNull(obs);
-    }
-
-    [Test]
-    public async Task GetObservationUpdatesTest()
-    {
-        List<Observation> data = await FredClient.GetObservations("GNPCA", new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse);
-        Assert.IsNotNull(data);
-
-
-        // Throws because we can't get vintage dates for bad symbol
-        Assert.ThrowsAsync<Exception>(() => FredClient.GetObservations(DOES_NOT_EXIST, new DateTime(2020, 1, 1), new DateTime(2020, 12, 31), DataDensity.Sparse));
-        
-    }
-
-
+  
     [Test]
     public async Task GetRelatedCategoriesTest()
     {

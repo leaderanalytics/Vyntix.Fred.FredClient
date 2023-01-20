@@ -1,7 +1,4 @@
-﻿using LeaderAnalytics.Vyntix.Fred.Domain;
-using LeaderAnalytics.Vyntix.Fred.Model;
-
-namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
+﻿namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
 
 [TestFixture(FredFileType.JSON)]
 [TestFixture(FredFileType.XML)]
@@ -13,12 +10,12 @@ public class FredClientThrottlingTests : BaseTest
 
     }
 
-    [Test()]
+    [Test]
     public async Task Download_five_symbols()
     {
         string[] symbols = new string[] { "LEU0252881600Q", "CPIAUCSL", "GDP", "M2V", "BAA10Y" };
-        DateTime startDate = new DateTime(2000, 1, 1);
-        DateTime endDate = new DateTime(2000, 12, 31);
+        DateTime startDate = new DateTime(2020, 1, 1);
+        DateTime endDate = new DateTime(2020, 12, 31);
         ConcurrentBag<Observation> observations = new ConcurrentBag<Observation>();
         Task[] tasks = new Task[symbols.Length];
 
@@ -33,7 +30,7 @@ public class FredClientThrottlingTests : BaseTest
     }
 
 
-    [Test()]
+    [Test]
     public async Task EnduranceTest()
     {
         for (int i = 0; i < 10; i++)
