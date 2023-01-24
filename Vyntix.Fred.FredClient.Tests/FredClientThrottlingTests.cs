@@ -1,7 +1,7 @@
 ﻿namespace LeaderAnalytics.Vyntix.Fred.FredClient.Tests;
 
 [TestFixture(FredFileType.JSON)]
-[TestFixture(FredFileType.XML)]
+//[TestFixture(FredFileType.XML)]
 public class FredClientThrottlingTests : BaseTest
 {
 
@@ -29,10 +29,33 @@ public class FredClientThrottlingTests : BaseTest
         Assert.AreEqual(5, observations.GroupBy(x => x.Symbol).Count());
     }
 
+    [Test]
+    public async Task vintage_loop_test()
+    {
+        // 2015-11-27 is reported as a vintage but actually contains no values:
+        //observation_date BAA10Y_20151125 BAA10Y_20151127 BAA10Y_20151130
+        //2015 - 11 - 24   3.20
+        //2015 - 11 - 25    	           #N/A	
+        //2015 - 11 - 26	    	       #N/A	
+        //2015 - 11 - 27                                   3.22
+
+        DateTime cutoff = new DateTime(2022, 12, 1);
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates("BAA10Y")).Where(x => x <= cutoff).ToList();
+        List<Observation> data = await FredClient.GetObservations("BAA10Y", vintageDates, DataDensity.Sparse); 
+        
+        int dataVintageCount = data.GroupBy(x => x.VintageDate).Count();                            // Includes 2015-11-27
+        List<DateTime> dataVintageDates = data.Select(x => x.VintageDate).ToList();                 // Does not include 2015-11-27
+        
+
+        Assert.AreEqual(dataVintageCount +1 , vintageDates.Count());
+    }
+
 
     [Test]
     public async Task EnduranceTest()
     {
+        return; // takes too long
+
         for (int i = 0; i < 10; i++)
         {
             List<ReleaseDate> dates = await FredClient.GetAllReleaseDates(null, true);

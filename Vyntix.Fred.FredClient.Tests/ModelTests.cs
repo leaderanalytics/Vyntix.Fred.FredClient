@@ -87,7 +87,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task VintageTest()
     {
-        Vintage data = (await FredClient.GetVintages("GNPCA", new DateTime(2020, 1, 1), null)).FirstOrDefault();
+        Vintage data = (await FredClient.GetVintages("GNPCA", null)).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);

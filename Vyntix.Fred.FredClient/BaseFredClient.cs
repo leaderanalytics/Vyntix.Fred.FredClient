@@ -28,7 +28,6 @@ By using this software you agree to be bound by the FRED® API Terms of Use foun
 
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
-
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
 public abstract class BaseFredClient : IFredClient
@@ -347,21 +346,49 @@ public abstract class BaseFredClient : IFredClient
     public virtual async Task<List<Observation>> GetObservations(string symbol) =>
         await GetObservations(symbol, DataDensity.Sparse);
 
-
     public virtual async Task<List<Observation>> GetObservations(string symbol, DataDensity density) => 
         await GetObservations(symbol, await GetVintageDates(symbol), density);
-    
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol, DateTime? RTStart, DateTime? RTEnd, DataDensity density) =>
-        await GetObservations(symbol, await GetVintageDates(symbol, RTStart, RTEnd), density);
+    public async Task<List<Observation>> GetObservations(string symbol, DateTime obsPeriod,  DateTime? RTStart, DateTime? RTEnd, DataDensity density)
+    {
+        List<Observation> allObservations = await GetObservations(symbol, obsPeriod, obsPeriod, density);
+        
+        if (!allObservations?.Any() ?? false)
+            return allObservations;
+        else if (RTStart is null && RTEnd is null) 
+            return allObservations;
+        else if(RTStart is null)
+            return allObservations.Where(x => x.VintageDate <= RTEnd.Value).ToList();
 
+        allObservations = allObservations.OrderBy(x => x.VintageDate).ToList(); 
 
-    public async Task<List<Observation>> GetObservations(string symbol, DateTime? RTStart, DateTime? RTEnd, DateTime? obsStart, DateTime? obsEnd,  DataDensity density) =>
-        await GetObservations(symbol, await GetVintageDates(symbol, RTStart, RTEnd), obsStart, obsEnd, density);
+        // find the first vintage that is greater than the realtime start and get the value
+        // get the value of the vintage before it.  Keep looking at previous vintages till we find the first one with that value.
+
+        // Find the the largest date that is less than or equal to the real-time start
+        Observation startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).Last();
+
+        // Search backwards through vintages while the observation value is the same as startVintage.Value.  
+        // The real startVintage is the first vintage that has the same Observation.Value
+        // startVintage = allObservations.OrderByDescending(x => x.VintageDate).Where(x => x.VintageDate <=startVintage.VintageDate && x.Value == startVintage.Value).Last();
+
+        for (int i = allObservations.IndexOf(startVintage); i > 0; i--)
+        {
+            if (allObservations[i - 1].Value == startVintage.Value)
+                startVintage = allObservations[i - 1];
+            else
+                break;
+        }
+
+        List<Observation> result = allObservations.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
+        return result;
+    }
+
+    public async Task<List<Observation>> GetObservations(string symbol, DateTime? obsStart, DateTime? obsEnd, DataDensity density) =>
+        await GetObservations(symbol, await GetVintageDates(symbol), obsStart, obsEnd, density);
 
     public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
         await GetObservations(symbol, vintageDates, null, null, density);
-
 
     public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
@@ -376,6 +403,7 @@ public abstract class BaseFredClient : IFredClient
         int skip = 0;
         int take = 50;
         DataDensity tmpDensity = density;
+        List<Task<List<Observation>>> tasks = new List<Task<List<Observation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)
         {
@@ -389,14 +417,21 @@ public abstract class BaseFredClient : IFredClient
             if (obsEnd.HasValue)
                 uri += $"&observation_end={obsEnd.Value.ToString(FRED_DATE_FORMAT)}";
 
-            obs = (await ParseObservations(symbol, uri))?.Where(x => x.Value != ".").ToList(); 
-
-            if (obs is not null)
-                result.AddRange(obs);
-             
+            tasks.Add(ParseObservations(symbol, uri)); 
             skip += take;
         }
+        
+        await Task.WhenAll(tasks).ConfigureAwait(false);
 
+        foreach (Task<List<Observation>> t in tasks)
+        {
+            if (t.IsFaulted)
+                throw (new Exception("Error downloading vintages.  See inner exception.", t.Exception));
+
+            if (t.Result is not null)
+                result.AddRange(t.Result.Where(x => x.Value != "."));
+        }
+        
         return result;
     }
 
@@ -417,23 +452,27 @@ public abstract class BaseFredClient : IFredClient
 
     #region Vintages -----------------------------------------
 
-
-    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    
+    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTEnd = null)
     {
         List<Vintage> result = new(150);
 
-        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTStart, RTEnd)))
+        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTEnd)))
             result.Add(new Vintage { Symbol = symbol, VintageDate = vintageDate });
 
         return result;
     }
+    
 
-    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTEnd = null)
     {
         string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
-        if (RTStart.HasValue)
-            uri += $"&realtime_start={RTStart.Value.Date.ToString(FRED_DATE_FORMAT)}";
+        // The question "What vintage dates were valid during some historical real-time period?" is invalid.
+        // It is invalid because different vintages can be valid for different observations during the real-time period.
+        // The question can only be asked when a single observation period is specified.
+        // The correct question is: "What vintage dates were valid for a specific observation period during some historical real-time period?"
+        
 
         if (RTEnd.HasValue)
             uri += $"&realtime_end={RTEnd.Value.Date.ToString(FRED_DATE_FORMAT)}";
@@ -457,6 +496,7 @@ public abstract class BaseFredClient : IFredClient
 
             doIt = vintages.Count == 5000;
         }
+        
         return result;
     }
     #endregion

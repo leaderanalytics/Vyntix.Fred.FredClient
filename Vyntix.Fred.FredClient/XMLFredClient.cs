@@ -34,10 +34,10 @@ public class XMLFredClient : BaseFredClient
                 XmlDocument doc = new();
                 doc.Load(stream);
              
-                // traverse rows
+                // Traverse rows
                 foreach(XmlNode node in doc.DocumentElement.ChildNodes)
                 {
-                    // traverse columns.  Missing columns are common: CPIAUCSL <observation date="1992-07-01"/> has no observations.
+                    // Traverse columns.  Missing columns are common: CPIAUCSL <observation date="1992-07-01"/> has no observations.
                     for (int i = 1; i < node.Attributes.Count; i++)
                     {
                         string stringVal = node.Attributes[i].Value;

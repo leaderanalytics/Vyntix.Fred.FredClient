@@ -33,32 +33,45 @@ public class JsonFredClient : BaseFredClient
 
     protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
     {
-        // Raw data:  { "date":"2017-01-01","GDP_20220929":"19148.194"},
+        // Raw data:  {"date":"2022-12-01","BAA10Y_20221202":"2.3","BAA10Y_20221206":"2.09"},
 
         List<Observation> observations = new(2000);
         string json = await GetJson(uri, "observations");
 
         if (json is null)
             return null;
-
-        using (JsonDocument doc = JsonDocument.Parse(json))
+        
+        try
         {
-            foreach (JsonElement obs in doc.RootElement.EnumerateArray())
+            using (JsonDocument doc = JsonDocument.Parse(json))
             {
-                JsonProperty[] properties = obs.EnumerateObject().ToArray();
-                string stringVal = properties[1].Value.GetString();
-
-                if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
+                // Traverse rows
+                foreach (JsonElement obs in doc.RootElement.EnumerateArray())
                 {
-                    observations.Add(new Observation
+                    JsonProperty[] properties = obs.EnumerateObject().ToArray();
+
+                    // Traverse columns.  Missing columns are common.
+                    for (int i = 1; i < properties.Length; i++)
                     {
-                        Symbol = symbol,
-                        ObsDate = properties[0].Value.GetDateTime(),
-                        VintageDate = DateTime.ParseExact(properties[1].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
-                        Value = stringVal
-                    });
+                        string stringVal = properties[i].Value.GetString();
+
+                        if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
+                        {
+                            observations.Add(new Observation
+                            {
+                                Symbol = symbol,
+                                ObsDate = properties[0].Value.GetDateTime(),
+                                VintageDate = DateTime.ParseExact(properties[i].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
+                                Value = stringVal
+                            });
+                        }
+                    }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"JSONFredClient encountered an error in ParseObservations. URI is {uri}, symbol is {symbol}, json is {json}.  See the inner exception for more detail.", ex);
         }
         return observations;
     }

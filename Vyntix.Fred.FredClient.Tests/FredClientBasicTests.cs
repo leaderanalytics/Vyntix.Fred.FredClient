@@ -152,10 +152,10 @@ public class FredClientBasicTests : BaseTest
     [Test]
     public async Task GetVintgeDatesTest()
     {
-        List<Vintage> data = await FredClient.GetVintages("GNPCA", new DateTime(2020, 1, 1), null);
+        List<Vintage> data = await FredClient.GetVintages("GNPCA", null);
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetVintages(DOES_NOT_EXIST, new DateTime(2020, 1, 1), null);
+        data = await FredClient.GetVintages(DOES_NOT_EXIST,  null);
         Assert.IsNotNull(data);
     }
 }
