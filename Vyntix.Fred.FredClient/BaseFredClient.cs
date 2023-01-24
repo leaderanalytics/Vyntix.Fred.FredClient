@@ -431,7 +431,10 @@ public abstract class BaseFredClient : IFredClient
             if (t.Result is not null)
                 result.AddRange(t.Result.Where(x => x.Value != "."));
         }
-        
+
+        if (density == DataDensity.Sparse)
+            return composer.MakeSparse(result.Cast<IObservation>().ToList()).Cast<Observation>().ToList();
+
         return result;
     }
 

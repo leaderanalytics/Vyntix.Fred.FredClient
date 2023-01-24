@@ -24,7 +24,7 @@ public class VintageComposerSymbolTests : BaseTest
     [Test]
     public async Task CPIAUCSL_Test()
     {
-        /* CPIAUCSL repeats an unchanged value accross vintages:
+        /* ALFRED spreadsheet for CPIAUCSL repeats an unchanged value accross vintages:
          * Steps to reproduce
          * Download CPIAUCSL from here https://alfred.stlouisfed.org/series/downloaddata?seid=CPIAUCSL
          * Select all vintage dates, output type Observations by vintage date new and changed only.
@@ -36,7 +36,7 @@ public class VintageComposerSymbolTests : BaseTest
          * the two vintages with an unchanged value.
          */
 
-
+        IVintageComposer composer = new VintageComposer();
         string symbol = "CPIAUCSL";
         DateTime endDate = new DateTime(2021, 3, 6);
         List<Vintage> vintageDates = (await FredClient.GetVintages(symbol)).Where(x => x.VintageDate <= endDate).ToList();
@@ -44,9 +44,8 @@ public class VintageComposerSymbolTests : BaseTest
             .Where(x => x.ObsDate <= endDate).ToList();
 
         Assert.AreEqual(600, vintageDates.Count);
-        Assert.AreEqual(2738, sparse.Count);
-        var junk = new VintageComposer().MakeSparse(sparse.Cast<IObservation>().ToList()).ToList();
-        Assert.AreEqual(2737, sparse.Count);
+        Assert.AreEqual(2713, sparse.Count);
+        
         // Group sparse observations into vintages
         var vintages = sparse.GroupBy(x => x.VintageDate).ToList();
 
@@ -55,6 +54,9 @@ public class VintageComposerSymbolTests : BaseTest
 
         // Make sure every date in the original list is included in the output
         var missingInVintages = vintageDates.Where(vd => !vintages.Any(v => v.Key == vd.VintageDate)).ToList();
+
+        List<IObservation> doubleSparse = composer.MakeSparse(sparse.Cast<IObservation>().ToList()).ToList();
+        Assert.AreEqual(sparse.Count, doubleSparse.Count);
     }
 
     [Test]
@@ -66,12 +68,12 @@ public class VintageComposerSymbolTests : BaseTest
         List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
             .Where(x => x.ObsDate <= endDate).ToList();
 
-        Assert.AreEqual(1662, vintageDates.Count);
+        Assert.AreEqual(3676, vintageDates.Count);
         Assert.AreEqual(4503, sparse.Count);
 
         // Group sparse observations into vintages
         var vintages = sparse.GroupBy(x => x.VintageDate).ToList();
-        Assert.AreEqual(1662, vintages.Count);
+        Assert.AreEqual(3676, vintages.Count);
 
         // Make sure we did not wind up with more vintage dates than was in our original list of vintage dates.
         var missingInVintageDates = vintages.Where(v => !vintageDates.Any(vd => vd.VintageDate == v.Key)).ToList();
