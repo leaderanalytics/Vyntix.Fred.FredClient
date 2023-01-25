@@ -37,50 +37,77 @@ public class VintageComposerSymbolTests : BaseTest
          */
 
         IVintageComposer composer = new VintageComposer();
-        string symbol = "CPIAUCSL";
-        DateTime endDate = new DateTime(2021, 3, 6);
-        List<Vintage> vintageDates = (await FredClient.GetVintages(symbol)).Where(x => x.VintageDate <= endDate).ToList();
-        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
-            .Where(x => x.ObsDate <= endDate).ToList();
+        string symbol = "GDPC1";
+        DateTime startDate = new DateTime(2019, 1, 1);
+        DateTime endDate = new DateTime(2019, 12, 31);
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, endDate)).Where(x => x >= startDate).ToList();
+        // Observations as returned by FRED 
+        List<Observation> sparseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, startDate, endDate, DataDensity.Sparse));
+        // Afer MakeSparse is called 
+        List<Observation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, startDate, endDate, DataDensity.Sparse));
 
-        Assert.AreEqual(600, vintageDates.Count);
-        Assert.AreEqual(2713, sparse.Count);
+        
+        Assert.AreEqual(11, vintageDates.Count);
+        Assert.AreEqual(sparseNative.Count, sparseComposed.Count);
         
         // Group sparse observations into vintages
-        var vintages = sparse.GroupBy(x => x.VintageDate).ToList();
+        var vintages = sparseComposed.GroupBy(x => x.VintageDate).ToList();
 
         // Make sure we did not wind up with more vintage dates than was in our original list of vintage dates.
-        var missingInVintageDates = vintages.Where(v => !vintageDates.Any(vd => vd.VintageDate == v.Key)).ToList();
+        var missingInVintageDates = vintages.Where(v => !vintageDates.Any(vd => vd == v.Key));
+        Assert.AreEqual(0, missingInVintageDates.Count());
 
         // Make sure every date in the original list is included in the output
-        var missingInVintages = vintageDates.Where(vd => !vintages.Any(v => v.Key == vd.VintageDate)).ToList();
+        var missingInVintages = vintageDates.Where(vd => !vintages.Any(v => v.Key == vd));
+        Assert.AreEqual(2, missingInVintages.Count()); // Two vintages are returned which have no observations within start / end dates
 
-        List<IObservation> doubleSparse = composer.MakeSparse(sparse.Cast<IObservation>().ToList()).ToList();
-        Assert.AreEqual(sparse.Count, doubleSparse.Count);
+        List<IObservation> doubleSparse = composer.MakeSparse(sparseComposed.Cast<IObservation>().ToList()).ToList();
+        Assert.AreEqual(sparseComposed.Count, doubleSparse.Count);
+
+        // convert sparse to dense using VintageComposer
+        List<IObservation> denseComposed = composer.MakeDense(sparseComposed.Cast<IObservation>().ToList()).ToList();
+
+        // Get a list of dense observations natively from FRED
+        List<Observation> denseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, startDate, endDate, DataDensity.Dense)).ToList();
+
+        Assert.AreEqual(denseNative.Count, denseComposed.Count);
     }
 
     [Test]
     public async Task DFII10_Test()
     {
         string symbol = "DFII10";
+        IVintageComposer composer = new VintageComposer();
         DateTime endDate = new DateTime(2020, 12, 31);
-        List<Vintage> vintageDates = (await FredClient.GetVintages(symbol)).Where(x => x.VintageDate <= endDate).ToList();
-        List<Observation> sparse = (await FredClient.GetObservations(symbol, vintageDates.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
-            .Where(x => x.ObsDate <= endDate).ToList();
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, endDate)).ToList();
+        
+        // Observations as returned by FRED
+        List<Observation> sparseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, null, endDate, DataDensity.Sparse)).ToList();
+        // Afer MakeSparse is called
+        List<Observation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, null, endDate, DataDensity.Sparse)).ToList();
 
         Assert.AreEqual(3676, vintageDates.Count);
-        Assert.AreEqual(4503, sparse.Count);
+        Assert.AreEqual(sparseNative.Count, sparseComposed.Count);
 
         // Group sparse observations into vintages
-        var vintages = sparse.GroupBy(x => x.VintageDate).ToList();
+        var vintages = sparseComposed.GroupBy(x => x.VintageDate).ToList();
         Assert.AreEqual(3676, vintages.Count);
 
         // Make sure we did not wind up with more vintage dates than was in our original list of vintage dates.
-        var missingInVintageDates = vintages.Where(v => !vintageDates.Any(vd => vd.VintageDate == v.Key)).ToList();
+        var missingInVintageDates = vintages.Where(v => !vintageDates.Any(vd => vd == v.Key)).ToList();
         Assert.AreEqual(0, missingInVintageDates.Count);
 
         // Make sure every date in the original list is included in the output
-        var missingInVintages = vintageDates.Where(vd => !vintages.Any(v => v.Key == vd.VintageDate)).ToList();
+        var missingInVintages = vintageDates.Where(vd => !vintages.Any(v => v.Key == vd)).ToList();
         Assert.AreEqual(0, missingInVintages.Count);
+        
+        // convert sparse to dense using VintageComposer
+        List<IObservation> denseComposed = composer.MakeDense(sparseComposed.Cast<IObservation>().ToList()).ToList();
+        
+        // Get a list of dense observations natively from FRED
+        List<Observation> denseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, null, endDate, DataDensity.Dense)).ToList();
+        
+        Assert.AreEqual(denseNative.Count, denseComposed.Count);
+
     }
 }

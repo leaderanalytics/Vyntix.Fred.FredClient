@@ -28,6 +28,8 @@ By using this software you agree to be bound by the FRED® API Terms of Use foun
 
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/http-ratelimiter
 
+[assembly: InternalsVisibleTo("LeaderAnalytics.Vyntix.Fred.FredClient.Tests")]
+
 namespace LeaderAnalytics.Vyntix.Fred.FredClient;
 
 public abstract class BaseFredClient : IFredClient
@@ -370,7 +372,6 @@ public abstract class BaseFredClient : IFredClient
 
         // Search backwards through vintages while the observation value is the same as startVintage.Value.  
         // The real startVintage is the first vintage that has the same Observation.Value
-        // startVintage = allObservations.OrderByDescending(x => x.VintageDate).Where(x => x.VintageDate <=startVintage.VintageDate && x.Value == startVintage.Value).Last();
 
         for (int i = allObservations.IndexOf(startVintage); i > 0; i--)
         {
@@ -379,7 +380,6 @@ public abstract class BaseFredClient : IFredClient
             else
                 break;
         }
-
         List<Observation> result = allObservations.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
         return result;
     }
@@ -392,10 +392,23 @@ public abstract class BaseFredClient : IFredClient
 
     public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
+        List<Observation> result = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
+
+        if (density == DataDensity.Sparse)
+            return composer.MakeSparse(result.Cast<IObservation>().ToList()).Cast<Observation>().ToList();
+
+        return result;
+    }
+
+    /// <summary>
+    /// This method is for unit testing a download without calling MakeSparse on the result.
+    /// </summary>
+    internal async Task<List<Observation>> GetObservationsInternal(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
+    {
         if (string.IsNullOrEmpty(symbol))
             throw new ArgumentNullException(nameof(symbol));
 
-        if (!(vintageDates?.Any()?? false))
+        if (!(vintageDates?.Any() ?? false))
             throw new Exception("vintageDates argument can not be null and must contain at least one vintage date.  Make sure symbol is valid.");
 
         List<Observation> result = new List<Observation>(10000);
@@ -410,17 +423,17 @@ public abstract class BaseFredClient : IFredClient
             string[] dates = vintageDates.Skip(skip).Take(take).Select(x => x.ToString(FRED_DATE_FORMAT)).ToArray();
             string sdates = String.Join(",", dates);
             string uri = $"series/observations?series_id={symbol}&vintage_dates={sdates}&output_type={(density == DataDensity.Dense ? "2" : "3")}";
-            
+
             if (obsStart.HasValue)
                 uri += $"&observation_start={obsStart.Value.ToString(FRED_DATE_FORMAT)}";
 
             if (obsEnd.HasValue)
                 uri += $"&observation_end={obsEnd.Value.ToString(FRED_DATE_FORMAT)}";
 
-            tasks.Add(ParseObservations(symbol, uri)); 
+            tasks.Add(ParseObservations(symbol, uri));
             skip += take;
         }
-        
+
         await Task.WhenAll(tasks).ConfigureAwait(false);
 
         foreach (Task<List<Observation>> t in tasks)
@@ -432,11 +445,10 @@ public abstract class BaseFredClient : IFredClient
                 result.AddRange(t.Result.Where(x => x.Value != "."));
         }
 
-        if (density == DataDensity.Sparse)
-            return composer.MakeSparse(result.Cast<IObservation>().ToList()).Cast<Observation>().ToList();
-
         return result;
     }
+
+
 
     private IEnumerable<Observation> UpdateSymbol(IEnumerable<Observation> obs, string symbol)
     {
