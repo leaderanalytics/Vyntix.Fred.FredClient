@@ -67,74 +67,21 @@ public class VintageComposer : IVintageComposer
     public List<IObservation> MakeSparse(List<IObservation> dense)
     {
         if (!(dense?.Any() ?? false))
-            return new List<IObservation>();
+            throw new ArgumentNullException(nameof(dense));
 
-        List<IObservation> sparse = new List<IObservation>(dense.Count);
+        List<IObservation> sparse = new(dense.Count);
+        string lastSymbol = null;
+        DateTime lastObsDate = DateTime.MinValue;
+        string lastValue = null;
 
-        foreach (var grp in dense.GroupBy(x => x.Symbol))
+        foreach (var obs in dense.OrderBy(x => x.Symbol).ThenBy(x => x.ObsDate).ThenBy(x => x.VintageDate))
         {
-            int lastVintageCount = -1;  // number of observations in left side vintage.  Minus 1 if current vintage is first.
-            int thisVintageCount = -1;   // number of observations in right side (current) vintage
-            int missingObservations = 0;
-            DateTime lastVintageDate = DateTime.MinValue;
-            DateTime thisVintageDate = DateTime.MinValue;
-            List<IObservation> denseGrp = grp.OrderBy(x => x.VintageDate).ThenBy(x => x.ObsDate).ToList();
+            if (obs.Symbol != lastSymbol || obs.ObsDate != lastObsDate || obs.Value != lastValue)
+                sparse.Add(obs);
 
-            for (int i = 0; i < denseGrp.Count; i++)
-            {
-                if (denseGrp[i].VintageDate != thisVintageDate)
-                {
-                    lastVintageDate = thisVintageDate;
-                    thisVintageDate = denseGrp[i].VintageDate;
-                    lastVintageCount = thisVintageCount;
-                    thisVintageCount = 0;
-                    missingObservations = 0;
-                }
-
-                int lastIndex = i - missingObservations - lastVintageCount;
-                thisVintageCount++;
-
-                if (thisVintageCount - missingObservations > lastVintageCount)
-                {
-                    sparse.Add(denseGrp[i]);
-                    continue;
-                }
-                DateTime thisObsDate = denseGrp[i].ObsDate;
-                DateTime lastObsDate = denseGrp[lastIndex].ObsDate;
-                string thisValue = denseGrp[i].Value;
-                string lastValue = denseGrp[lastIndex].Value;
-                bool forceAdd = false;
-
-                if (thisObsDate != lastObsDate)
-                {
-                    if (thisObsDate < lastObsDate)
-                    {
-                        // there is an extra observation in this vintage that does not exist in last vintage
-                        missingObservations++;
-                        forceAdd = true;
-                    }
-                    else
-                    {
-                        // there is an extra observation in the last vintage that does not exist in this vintage
-                        DateTime tmpVintagedate = thisVintageDate;
-
-                        while (thisObsDate > lastObsDate && tmpVintagedate == thisVintageDate)
-                        {
-                            missingObservations--;
-                            lastIndex = i - missingObservations - lastVintageCount;
-                            lastObsDate = denseGrp[lastIndex].ObsDate;
-                            lastValue = denseGrp[lastIndex].Value;
-                            tmpVintagedate = denseGrp[i].VintageDate;
-                        }
-
-                        if (tmpVintagedate != thisVintageDate)
-                            continue;
-                    }
-                }
-
-                if (thisValue != lastValue || forceAdd)
-                    sparse.Add(denseGrp[i]);
-            }
+            lastSymbol= obs.Symbol;
+            lastObsDate = obs.ObsDate;
+            lastValue = obs.Value;
         }
         return sparse;
     }
