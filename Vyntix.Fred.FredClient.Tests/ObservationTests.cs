@@ -156,5 +156,30 @@ public class ObservationTests : BaseTest
         Assert.IsNotNull(vintages);
         Assert.AreEqual(vintages.Count, 6);
     }
+
+    [Test]
+    public async Task no_observatons_returned_when_no_vintages_exist_within_realtime_period()
+    {
+        // The first vintage for gdp is 1991-12-04.  No vintages existed 
+        // within the realtime period specified.
+        DateTime realTimeStart = new DateTime(1970, 1, 1);
+        DateTime realTimeEnd = new DateTime(1979, 12, 31);
+        DateTime observationPeriodStart = new DateTime(1975, 4, 1);  
+        List<Observation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
+        Assert.AreEqual(observations.Count, 0);
+    }
+
+
+    [Test]
+    public async Task earliest_vintage_before_realtime_end_is_returned_when_no_vintage_before_realtime_start_exists()
+    {
+        // The first vintage for gdp is 1991-12-04 which is after the real time start.
+        DateTime realTimeStart = new DateTime(1990, 1, 1);
+        DateTime realTimeEnd = new DateTime(1999, 12, 31);
+        DateTime observationPeriodStart = new DateTime(1975, 4, 1);
+        List<Observation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
+        Assert.GreaterOrEqual(observations.Count, 97);
+        Assert.AreEqual(observations.First().VintageDate, new DateTime(1991, 12, 4));
+    }
 }
 

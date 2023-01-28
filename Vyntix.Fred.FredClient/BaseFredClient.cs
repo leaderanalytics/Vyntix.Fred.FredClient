@@ -367,8 +367,18 @@ public abstract class BaseFredClient : IFredClient
         // find the first vintage that is greater than the realtime start and get the value
         // get the value of the vintage before it.  Keep looking at previous vintages till we find the first one with that value.
 
-        // Find the the largest date that is less than or equal to the real-time start
-        Observation startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).Last();
+        // Find the the largest vintage date that is less than or equal to the real-time start
+        Observation? startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).LastOrDefault();
+
+        if (startVintage is null)
+        {
+            // No vintages exist prior to the real time start.  Find the earliest vintage that exists prior to the real time end.
+            // Here we are looking for a vintage that begins after the real time start but before the real time end.
+            startVintage = allObservations.Where(x => x.VintageDate <= RTEnd.Value).FirstOrDefault();
+        }
+
+        if (startVintage is null)
+            return new List<Observation>(); // No vintages exist within the real time period.
 
         // Search backwards through vintages while the observation value is the same as startVintage.Value.  
         // The real startVintage is the first vintage that has the same Observation.Value
