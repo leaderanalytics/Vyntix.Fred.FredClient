@@ -72,9 +72,11 @@ public class ObservationTests : BaseTest
         Assert.AreEqual(3, vintageDates.Count);
         Assert.AreEqual(3, data.Count);
         Assert.AreEqual(new DateTime(2015, 07, 30).Date, data[0].VintageDate.Date);
+        Assert.AreEqual("15562.1", data[0].Value);
         Assert.AreEqual(new DateTime(2017, 10, 27).Date, data[1].VintageDate.Date);
+        Assert.AreEqual("15562.122", data[1].Value);
         Assert.AreEqual(new DateTime(2018, 07, 27).Date, data[2].VintageDate.Date);
-        
+        Assert.AreEqual("16429.308", data[2].Value);
     }
 
     [Test]
@@ -114,6 +116,11 @@ public class ObservationTests : BaseTest
         Assert.AreEqual(new DateTime(2018, 07, 27).Date, data[7].VintageDate.Date);
 
     }
+
+
+    
+
+
 
     [Test]
     public async Task gdp_returns_sparse_data_for_selected_vintage_dates()
