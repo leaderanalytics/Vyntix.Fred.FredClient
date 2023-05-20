@@ -478,18 +478,18 @@ public abstract class BaseFredClient : IFredClient
     #region Vintages -----------------------------------------
 
     
-    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTEnd = null)
+    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
         List<Vintage> result = new(150);
 
-        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTEnd)))
+        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTStart, RTEnd)))
             result.Add(new Vintage { Symbol = symbol, VintageDate = vintageDate });
 
         return result;
     }
     
 
-    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTEnd = null)
+    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
         string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
@@ -497,7 +497,9 @@ public abstract class BaseFredClient : IFredClient
         // It is invalid because different vintages can be valid for different observations during the real-time period.
         // The question can only be asked when a single observation period is specified.
         // The correct question is: "What vintage dates were valid for a specific observation period during some historical real-time period?"
-        
+
+        if (RTStart.HasValue)
+            uri += $"&realtime_start={RTStart.Value.Date.ToString(FRED_DATE_FORMAT)}";
 
         if (RTEnd.HasValue)
             uri += $"&realtime_end={RTEnd.Value.Date.ToString(FRED_DATE_FORMAT)}";

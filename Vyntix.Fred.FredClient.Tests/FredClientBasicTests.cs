@@ -155,6 +155,16 @@ public class FredClientBasicTests : BaseTest
         List<Vintage> data = await FredClient.GetVintages("GNPCA", null);
         Assert.IsNotNull(data);
 
+        data = await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), null);
+        Assert.AreEqual(new DateTime(1959, 2, 19), data.First().VintageDate);
+
+        data = await FredClient.GetVintages("GNPCA", null, new DateTime(1961, 7, 19));
+        Assert.AreEqual(new DateTime(1961, 7, 19), data.Last().VintageDate);
+
+
+        data = await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), new DateTime(1959, 7, 19));
+        Assert.AreEqual(2, data.Count);
+
         data = await FredClient.GetVintages(DOES_NOT_EXIST,  null);
         Assert.IsNotNull(data);
     }
