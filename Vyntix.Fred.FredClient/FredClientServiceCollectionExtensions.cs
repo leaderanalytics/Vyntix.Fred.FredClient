@@ -7,7 +7,7 @@ public static class FredClientServiceCollectionExtensions
     public static RegistrationValues AddFredClient(this IServiceCollection services)
     {
         RegistrationValues = new RegistrationValues(services);
-        return RegistrationValues;
+        return RegistrationValues; 
     }
 }
 
