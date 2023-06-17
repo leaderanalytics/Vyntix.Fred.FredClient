@@ -31,11 +31,11 @@ public class JsonFredClient : BaseFredClient
         }
     }
 
-    protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
+    protected override async Task<List<FredObservation>> ParseObservations(string symbol, string uri)
     {
         // Raw data:  {"date":"2022-12-01","BAA10Y_20221202":"2.3","BAA10Y_20221206":"2.09"},
 
-        List<Observation> observations = new(2000);
+        List<FredObservation> observations = new(2000);
         string json = await GetJson(uri, "observations");
 
         if (json is null)
@@ -57,7 +57,7 @@ public class JsonFredClient : BaseFredClient
 
                         if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
                         {
-                            observations.Add(new Observation
+                            observations.Add(new FredObservation
                             {
                                 Symbol = symbol,
                                 ObsDate = properties[0].Value.GetDateTime(),

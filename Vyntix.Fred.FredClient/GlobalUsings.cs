@@ -2,6 +2,7 @@
 global using LeaderAnalytics.Core.Threading;
 global using LeaderAnalytics.Vyntix.Fred.Domain;
 global using LeaderAnalytics.Vyntix.Fred.Model;
+global using LeaderAnalytics.FF.Vintages.Domain;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using System.Net;

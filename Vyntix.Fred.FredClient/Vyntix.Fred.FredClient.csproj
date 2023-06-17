@@ -29,8 +29,6 @@
   <ItemGroup>
     <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="2.0.34" />
     <PackageReference Include="LeaderAnalytics.Core.Threading" Version="2.0.5" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="1.1.0" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="1.0.19-beta.3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
@@ -39,5 +37,10 @@
   <ItemGroup>
     <None Include="..\VyntixLogo.png" Pack="true" PackagePath="\" />
     <None Include="..\LICENSE.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Vyntix.Fred.Domain\Vyntix.Fred.Domain\Vyntix.Fred.Domain.csproj" />
+    <ProjectReference Include="..\..\Vyntix.Fred.Model\Vyntix.Fred.Model\Vyntix.Fred.Model.csproj" />
   </ItemGroup>
 </Project>
