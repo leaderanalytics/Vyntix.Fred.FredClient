@@ -12,7 +12,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetAllReleasesTest()
     {
-        List<Release> data = await FredClient.GetAllReleases();
+        List<FredRelease> data = await FredClient.GetAllReleases();
         Assert.IsNotNull(data);
         Assert.IsTrue(data.Any());
     }
@@ -20,7 +20,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetAllReleaseDatesTest()
     {
-        List<ReleaseDate> data = await FredClient.GetAllReleaseDates(null, true);
+        List<FredReleaseDate> data = await FredClient.GetAllReleaseDates(null, true);
         Assert.IsNotNull(data);
         Assert.IsTrue(data.Any());
 
@@ -32,7 +32,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetReleaseTest()
     {
-        Release data = await FredClient.GetRelease("53");
+        FredRelease data = await FredClient.GetRelease("53");
         Assert.IsNotNull(data);
     }
 
@@ -40,7 +40,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetReleaseDatesForReleaseTest1()
     {
-        ReleaseDate data = (await FredClient.GetReleaseDates("82", 0)).FirstOrDefault();
+        FredReleaseDate data = (await FredClient.GetReleaseDates("82", 0)).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(IsZeroString(data.ReleaseID));
         Assert.AreNotEqual(DateTime.MinValue, data.DateReleased);
@@ -49,21 +49,21 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetReleaseDatesForReleaseTest2()
     {
-        List<ReleaseDate>  data = await FredClient.GetReleaseDatesForRelease("82", DateTime.Now.AddMonths(-1), true);
+        List<FredReleaseDate>  data = await FredClient.GetReleaseDatesForRelease("82", DateTime.Now.AddMonths(-1), true);
         Assert.IsNotNull(data);
     }
 
     [Test]
     public async Task GetSeriesForReleaseTest()
     {
-        List<Series> data = await FredClient.GetSeriesForRelease("51");
+        List<FredSeries> data = await FredClient.GetSeriesForRelease("51");
         Assert.IsNotNull(data);
     }
 
     [Test]
     public async Task GetReleasesForSourceTest()
     {
-        Release data = (await FredClient.GetReleasesForSource("1")).FirstOrDefault();
+        FredRelease data = (await FredClient.GetReleasesForSource("1")).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(IsZeroString(data.NativeID));
         Assert.IsFalse(String.IsNullOrEmpty(data.Name));
@@ -73,7 +73,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetReleaseForSeriesTest()
     {
-        Release data = (await FredClient.GetReleaseForSeries("IRA"));
+        FredRelease data = (await FredClient.GetReleaseForSeries("IRA"));
         Assert.IsNotNull(data);
         Assert.IsFalse(IsZeroString(data.NativeID));
         Assert.IsFalse(String.IsNullOrEmpty(data.Name));
@@ -82,7 +82,7 @@ public class ReleasesTests : BaseTest
     [Test]
     public async Task GetSourcesForReleaseTest()
     {
-        List<Source> data = await FredClient.GetSourcesForRelease("51");
+        List<FredSource> data = await FredClient.GetSourcesForRelease("51");
         Assert.IsNotNull(data);
     }
 }

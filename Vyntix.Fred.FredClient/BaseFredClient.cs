@@ -61,7 +61,7 @@ public abstract class BaseFredClient : IFredClient
 
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         concurrentRequestThrottle = new SemaphoreSlim(config.MaxConcurrentDownloads, config.MaxConcurrentDownloads);
-        batchThrottle = new BatchThrottleAsync(120, 60000); // block when we reach the per-minute request limit.
+        batchThrottle = new BatchThrottleAsync(config.MaxRequestsPerMinute, 60000); // block when we reach the per-minute request limit.
     }
 
     protected virtual async Task<Stream> Download(string uri)
@@ -85,6 +85,8 @@ public abstract class BaseFredClient : IFredClient
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     stream = await response.Content.ReadAsStreamAsync();
+                    int.TryParse(response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining").Value.First() ?? "0", out int remainingRequests);
+
                     success = true;
                     break;
                 }
@@ -170,10 +172,10 @@ public abstract class BaseFredClient : IFredClient
         return (await Parse<List<FredCategory>>(uri, "categories"))?.ToList();
     }
 
-    public virtual async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
+    public virtual async Task<List<FredRelatedCategory>> GetRelatedCategories(string parentID)
     {
         string uri = "category/related?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
-        List<RelatedCategory> related = await Parse<List<RelatedCategory>>(uri, "categories");
+        List<FredRelatedCategory> related = await Parse<List<FredRelatedCategory>>(uri, "categories");
 
         if (related?.Any() ?? false)
             related.ForEach(x => x.CategoryID = parentID);
@@ -187,10 +189,10 @@ public abstract class BaseFredClient : IFredClient
         return (await Parse<List<FredCategory>>(uri, "categories"));
     }
 
-    public virtual async Task<List<CategoryTag>> GetCategoryTags(string categoryID)
+    public virtual async Task<List<FredCategoryTag>> GetCategoryTags(string categoryID)
     {
         string uri = "category/tags?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
-        List<CategoryTag> tags = (await Parse<List<CategoryTag>>(uri, "tags"));
+        List<FredCategoryTag> tags = (await Parse<List<FredCategoryTag>>(uri, "tags"));
 
         if (tags?.Any() ?? false)
             tags.ForEach(x => x.CategoryID = categoryID);
@@ -233,10 +235,10 @@ public abstract class BaseFredClient : IFredClient
         return (await Parse<List<FredSeries>>(uri, "seriess"))?.FirstOrDefault();
     }
 
-    public virtual async Task<List<SeriesTag>> GetSeriesTags(string symbol)
+    public virtual async Task<List<FredSeriesTag>> GetSeriesTags(string symbol)
     {
         string uri = "series/tags?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        List<SeriesTag> tags = (await Parse<List<SeriesTag>>(uri, "tags"));
+        List<FredSeriesTag> tags = (await Parse<List<FredSeriesTag>>(uri, "tags"));
 
         if (tags != null)
             tags.ForEach(x => x.Symbol = symbol);
@@ -335,9 +337,13 @@ public abstract class BaseFredClient : IFredClient
     private List<FredRelease> UpdateSourceNativeID(List<FredRelease> releases, string nativeSourceID)
     {
         if (releases?.Any() ?? false)
+        {
             foreach (FredRelease release in releases)
+            {
                 release.SourceReleases = new List<FredSourceRelease> { new FredSourceRelease { SourceNativeID = nativeSourceID, ReleaseNativeID = release.NativeID } };
-        
+                release.SourceNativeID = nativeSourceID;
+            }
+        }
         return releases;
     }
 

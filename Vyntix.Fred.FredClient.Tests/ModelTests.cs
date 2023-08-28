@@ -13,7 +13,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task CategoryTest()
     {
-        Category data = await FredClient.GetCategory("125");
+        FredCategory data = await FredClient.GetCategory("125");
         Assert.IsNotNull(data);
         Assert.IsFalse(IsZeroString(data.NativeID));
         Assert.IsFalse(String.IsNullOrEmpty(data.Name));
@@ -23,7 +23,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task ObservationTest()
     {
-        Observation data = (await FredClient.GetObservations("GNPCA")).FirstOrDefault();
+        FredObservation data = (await FredClient.GetObservations("GNPCA")).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.IsFalse(String.IsNullOrEmpty(data.Value));
@@ -34,7 +34,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task RelatedCategoryTest()
     {
-        RelatedCategory data = (await FredClient.GetRelatedCategories("32073")).FirstOrDefault();
+        FredRelatedCategory data = (await FredClient.GetRelatedCategories("32073")).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(IsZeroString(data.CategoryID));
         Assert.IsFalse(IsZeroString(data.RelatedCategoryID));
@@ -45,7 +45,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task SeriesTest()
     {
-        Series data = (await FredClient.GetSeries("GNPCA"));
+        FredSeries data = (await FredClient.GetSeries("GNPCA"));
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.IsFalse(String.IsNullOrEmpty(data.Title));
@@ -57,7 +57,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task SeriesCategoryTest()
     {
-        Series data = (await FredClient.GetSeriesForCategory("125", false)).FirstOrDefault();
+        FredSeries data = (await FredClient.GetSeriesForCategory("125", false)).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
     }
@@ -65,7 +65,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task SeriesTagTest()
     {
-        SeriesTag data = (await FredClient.GetSeriesTags("STLFSI")).FirstOrDefault();
+        FredSeriesTag data = (await FredClient.GetSeriesTags("STLFSI")).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.IsFalse(String.IsNullOrEmpty(data.Name));
@@ -77,7 +77,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task SourceTest()
     {
-        Source data = (await FredClient.GetSources()).FirstOrDefault();
+        FredSource data = (await FredClient.GetSources()).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.NativeID));
         Assert.IsFalse(String.IsNullOrEmpty(data.Name));
@@ -87,7 +87,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task VintageTest()
     {
-        Vintage data = (await FredClient.GetVintages("GNPCA", null)).FirstOrDefault();
+        FredVintage data = (await FredClient.GetVintages("GNPCA", null)).FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);

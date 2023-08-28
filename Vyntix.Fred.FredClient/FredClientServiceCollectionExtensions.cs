@@ -56,6 +56,7 @@ public class RegistrationValues
     private IServiceCollection Build()
     {
         services.AddSingleton<FredClientConfig>();
+        services.AddSingleton<IVintageComposer, VintageComposer>();
         UseFileType(FredFileType.JSON);
         UseVintageComposer(x => x.GetService<IVintageComposer>());
         UseHttpClient(x =>
