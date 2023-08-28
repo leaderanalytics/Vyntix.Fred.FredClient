@@ -20,9 +20,9 @@ public class XMLFredClient : BaseFredClient
         }
     }
 
-    protected override async Task<List<Observation>> ParseObservations(string symbol, string uri)
+    protected override async Task<List<FredObservation>> ParseObservations(string symbol, string uri)
     {
-        List<Observation> observations = new(2000);
+        List<FredObservation> observations = new(2000);
 
         try
         {
@@ -44,7 +44,7 @@ public class XMLFredClient : BaseFredClient
 
                         if (!string.IsNullOrEmpty(stringVal) && stringVal != ".")
                         {
-                            observations.Add(new Observation
+                            observations.Add(new FredObservation
                             {
                                 Symbol = symbol,
                                 ObsDate = DateTime.ParseExact(node.Attributes[0].Value, "yyyy-MM-dd", CultureInfo.InvariantCulture),

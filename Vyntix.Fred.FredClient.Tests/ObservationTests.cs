@@ -16,7 +16,7 @@ public class ObservationTests : BaseTest
     [Test]
     public async Task gnpca_gets_all_observations()
     {
-        List<Observation> data = await FredClient.GetObservations("GNPCA");
+        List<FredObservation> data = await FredClient.GetObservations("GNPCA");
         Assert.IsNotNull(data);
     }
 
@@ -35,7 +35,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeEnd = new DateTime(2020, 5, 1);
         DateTime obsPeriod = new DateTime(2018, 1, 1);
 
-        List<Observation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse);
+        List<FredObservation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse);
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
         Assert.IsNotNull(data);
         Assert.AreEqual(2, vintageDates.Count);
@@ -66,7 +66,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeEnd = new DateTime(2018, 8, 20);
         DateTime obsPeriod = new DateTime(2012, 1, 1);
         
-        List<Observation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse);
+        List<FredObservation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse);
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
         Assert.IsNotNull(data);
         Assert.AreEqual(3, vintageDates.Count);
@@ -101,7 +101,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeEnd = new DateTime(2018, 8, 20);
         DateTime obsPeriod = new DateTime(2012, 1, 1);
 
-        List<Observation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Dense);
+        List<FredObservation> data = await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Dense);
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
         Assert.IsNotNull(data);
         Assert.AreEqual(8, vintageDates.Count);
@@ -127,7 +127,7 @@ public class ObservationTests : BaseTest
     {
         string symbol = "gdp";
         List<DateTime> vintagedates = new List<DateTime> { DateTime.Parse("2022-08-25"), DateTime.Parse("2022-09-29"), DateTime.Parse("2022-10-27"), DateTime.Parse("2022-11-30"), DateTime.Parse("2022-12-22") };
-        List<Observation> observations = await FredClient.GetObservations(symbol, vintagedates, DataDensity.Sparse);
+        List<FredObservation> observations = await FredClient.GetObservations(symbol, vintagedates, DataDensity.Sparse);
         Assert.AreEqual(26, observations.Count);
     }
 
@@ -136,14 +136,14 @@ public class ObservationTests : BaseTest
     {
         string symbol = "gdp";
         List<DateTime> vintagedates = new List<DateTime> { DateTime.Parse("2022-08-25"), DateTime.Parse("2022 -09-29"), DateTime.Parse("2022 -10-27"), DateTime.Parse("2022 -11-30"), DateTime.Parse("2022 -12-22") };
-        List<Observation> observations = await FredClient.GetObservations(symbol, vintagedates, DataDensity.Dense);
+        List<FredObservation> observations = await FredClient.GetObservations(symbol, vintagedates, DataDensity.Dense);
         Assert.AreEqual(1513, observations.Count);
     }
 
     [Test]
     public async Task gdp_vintage_test_gets_all_vintages()
     {
-        List<Vintage> vintages = await FredClient.GetVintages("gdp");
+        List<FredVintage> vintages = await FredClient.GetVintages("gdp");
         Assert.IsNotNull(vintages); 
         Assert.Greater(vintages.Count, 10);
     }
@@ -159,7 +159,7 @@ public class ObservationTests : BaseTest
         // 1992-03-26
         // 1992-04-28
 
-        List<Vintage> vintages = await FredClient.GetVintages("gdp",  DateTime.Parse("1992-04-28"));
+        List<FredVintage> vintages = await FredClient.GetVintages("gdp", DateTime.Parse("1991-12-04"),  DateTime.Parse("1992-04-28"));
         Assert.IsNotNull(vintages);
         Assert.AreEqual(vintages.Count, 6);
     }
@@ -172,7 +172,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeStart = new DateTime(1970, 1, 1);
         DateTime realTimeEnd = new DateTime(1979, 12, 31);
         DateTime observationPeriodStart = new DateTime(1975, 4, 1);  
-        List<Observation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
+        List<FredObservation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
         Assert.AreEqual(observations.Count, 0);
     }
 
@@ -184,7 +184,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeStart = new DateTime(1990, 1, 1);
         DateTime realTimeEnd = new DateTime(1999, 12, 31);
         DateTime observationPeriodStart = new DateTime(1975, 4, 1);
-        List<Observation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
+        List<FredObservation> observations = await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense);
         Assert.GreaterOrEqual(observations.Count, 97);
         Assert.AreEqual(observations.First().VintageDate, new DateTime(1991, 12, 4));
     }

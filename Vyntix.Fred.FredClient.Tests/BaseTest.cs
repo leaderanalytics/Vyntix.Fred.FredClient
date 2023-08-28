@@ -21,15 +21,19 @@ public abstract class BaseTest
             .CreateLogger();
 
         Log.Information("Logging has been configured.");
+        BuildFredClient();
+    }
+
+    [SetUp]
+    public void Setup() 
+    {
     }
 
     
-
-    [SetUp]
-    public void Setup()
+    private void BuildFredClient()
     {
         HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
-        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 3 }; // MaxDownloadRetries should be greater than 1
+        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 3, ErrorDelay = 2000, MaxRequestsPerMinute = 60 }; // MaxDownloadRetries should be greater than 1
         ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog();
         ILogger<IFredClient> logger = loggerFactory.CreateLogger<IFredClient>();
 

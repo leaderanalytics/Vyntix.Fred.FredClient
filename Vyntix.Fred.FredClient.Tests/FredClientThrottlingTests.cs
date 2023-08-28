@@ -16,7 +16,7 @@ public class FredClientThrottlingTests : BaseTest
         string[] symbols = new string[] { "LEU0252881600Q", "CPIAUCSL", "GDP", "M2V", "BAA10Y" };
         DateTime startDate = new DateTime(2020, 1, 1);
         DateTime endDate = new DateTime(2020, 12, 31);
-        ConcurrentBag<Observation> observations = new ConcurrentBag<Observation>();
+        ConcurrentBag<FredObservation> observations = new ConcurrentBag<FredObservation>();
         Task[] tasks = new Task[symbols.Length];
 
         for (int i = 0; i < symbols.Length; i++)
@@ -40,8 +40,8 @@ public class FredClientThrottlingTests : BaseTest
         //2015 - 11 - 27                                   3.22
 
         DateTime cutoff = new DateTime(2022, 12, 1);
-        List<DateTime> vintageDates = (await FredClient.GetVintageDates("BAA10Y")).Where(x => x <= cutoff).ToList();
-        List<Observation> data = await FredClient.GetObservations("BAA10Y", vintageDates, DataDensity.Sparse); 
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates("BAA10Y", null, cutoff)).ToList();
+        List<FredObservation> data = await FredClient.GetObservations("BAA10Y", vintageDates, DataDensity.Sparse); 
         
         int dataVintageCount = data.GroupBy(x => x.VintageDate).Count();                            // Includes 2015-11-27
         List<DateTime> dataVintageDates = data.Select(x => x.VintageDate).ToList();                 // Does not include 2015-11-27
@@ -58,7 +58,7 @@ public class FredClientThrottlingTests : BaseTest
 
         for (int i = 0; i < 10; i++)
         {
-            List<ReleaseDate> dates = await FredClient.GetAllReleaseDates(null, true);
+            List<FredReleaseDate> dates = await FredClient.GetAllReleaseDates(null, true);
 
             if (dates is null)
                 throw new Exception("dates is null");
@@ -68,7 +68,7 @@ public class FredClientThrottlingTests : BaseTest
             {
                 foreach (var grp in dates.GroupBy(x => x.ReleaseID))
                 {
-                    Release? release = await FredClient.GetRelease(grp.Key);
+                    FredRelease? release = await FredClient.GetRelease(grp.Key);
 
                     if (release is null)
                         throw new Exception("release is null");

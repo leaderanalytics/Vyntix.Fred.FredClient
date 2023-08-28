@@ -61,7 +61,7 @@ public abstract class BaseFredClient : IFredClient
 
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         concurrentRequestThrottle = new SemaphoreSlim(config.MaxConcurrentDownloads, config.MaxConcurrentDownloads);
-        batchThrottle = new BatchThrottleAsync(120, 60000); // block when we reach the per-minute request limit.
+        batchThrottle = new BatchThrottleAsync(config.MaxRequestsPerMinute, 60000); // block when we reach the per-minute request limit.
     }
 
     protected virtual async Task<Stream> Download(string uri)
@@ -85,6 +85,8 @@ public abstract class BaseFredClient : IFredClient
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     stream = await response.Content.ReadAsStreamAsync();
+                    int.TryParse(response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining").Value.First() ?? "0", out int remainingRequests);
+
                     success = true;
                     break;
                 }
@@ -129,7 +131,7 @@ public abstract class BaseFredClient : IFredClient
 
     protected abstract Task<T> Parse<T>(string uri, string root) where T : class, new();
     
-    protected abstract Task<List<Observation>> ParseObservations(string symbol, string uri);
+    protected abstract Task<List<FredObservation>> ParseObservations(string symbol, string uri);
 
     protected abstract Task<List<DateTime>> ParseVintageDates(string uri, string root);
 
@@ -158,22 +160,22 @@ public abstract class BaseFredClient : IFredClient
 
     #region Categories ------------------------
 
-    public virtual async Task<Category> GetCategory(string categoryID)
+    public virtual async Task<FredCategory> GetCategory(string categoryID)
     {
         string uri = "category?category_id=" + categoryID;
-        return (await Parse<List<Category>>(uri, "categories"))?.FirstOrDefault();
+        return (await Parse<List<FredCategory>>(uri, "categories"))?.FirstOrDefault();
     }
 
-    public virtual async Task<List<Category>> GetCategoryChildren(string parentID)
+    public virtual async Task<List<FredCategory>> GetCategoryChildren(string parentID)
     {
         string uri = "category/children?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
-        return (await Parse<List<Category>>(uri, "categories"))?.ToList();
+        return (await Parse<List<FredCategory>>(uri, "categories"))?.ToList();
     }
 
-    public virtual async Task<List<RelatedCategory>> GetRelatedCategories(string parentID)
+    public virtual async Task<List<FredRelatedCategory>> GetRelatedCategories(string parentID)
     {
         string uri = "category/related?category_id=" + (parentID ?? throw new ArgumentNullException(nameof(parentID)));
-        List<RelatedCategory> related = await Parse<List<RelatedCategory>>(uri, "categories");
+        List<FredRelatedCategory> related = await Parse<List<FredRelatedCategory>>(uri, "categories");
 
         if (related?.Any() ?? false)
             related.ForEach(x => x.CategoryID = parentID);
@@ -181,16 +183,16 @@ public abstract class BaseFredClient : IFredClient
         return related;
     }
 
-    public virtual async Task<List<Category>> GetCategoriesForSeries(string symbol)
+    public virtual async Task<List<FredCategory>> GetCategoriesForSeries(string symbol)
     {
         string uri = "series/categories?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        return (await Parse<List<Category>>(uri, "categories"));
+        return (await Parse<List<FredCategory>>(uri, "categories"));
     }
 
-    public virtual async Task<List<CategoryTag>> GetCategoryTags(string categoryID)
+    public virtual async Task<List<FredCategoryTag>> GetCategoryTags(string categoryID)
     {
         string uri = "category/tags?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
-        List<CategoryTag> tags = (await Parse<List<CategoryTag>>(uri, "tags"));
+        List<FredCategoryTag> tags = (await Parse<List<FredCategoryTag>>(uri, "tags"));
 
         if (tags?.Any() ?? false)
             tags.ForEach(x => x.CategoryID = categoryID);
@@ -203,12 +205,12 @@ public abstract class BaseFredClient : IFredClient
     #region Series -----------------------------------
 
 
-    public virtual async Task<List<Series>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
+    public virtual async Task<List<FredSeries>> GetSeriesForCategory(string categoryID, bool includeDiscontinued)
     {
         string uri = "category/series?category_id=" + (categoryID ?? throw new ArgumentNullException(nameof(categoryID)));
         bool doIt = true;
         int offset = -1000;
-        List<Series> result = new List<Series>(5000);
+        List<FredSeries> result = new List<FredSeries>(5000);
 
         while (doIt)
         {
@@ -216,7 +218,7 @@ public abstract class BaseFredClient : IFredClient
 
             offset += 1000;
             newUri = uri + "&offset=" + offset.ToString();
-            List<Series> list = await Parse<List<Series>>(newUri, "seriess");
+            List<FredSeries> list = await Parse<List<FredSeries>>(newUri, "seriess");
 
             if (list != null)
                 result.AddRange(list.Where(x => includeDiscontinued || !(x.Title?.Contains("DISCONTINUED") ?? false)));
@@ -227,16 +229,16 @@ public abstract class BaseFredClient : IFredClient
         return result.Any() ? result : null;
     }
 
-    public virtual async Task<Series> GetSeries(string symbol)
+    public virtual async Task<FredSeries> GetSeries(string symbol)
     {
         string uri = "series?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        return (await Parse<List<Series>>(uri, "seriess"))?.FirstOrDefault();
+        return (await Parse<List<FredSeries>>(uri, "seriess"))?.FirstOrDefault();
     }
 
-    public virtual async Task<List<SeriesTag>> GetSeriesTags(string symbol)
+    public virtual async Task<List<FredSeriesTag>> GetSeriesTags(string symbol)
     {
         string uri = "series/tags?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        List<SeriesTag> tags = (await Parse<List<SeriesTag>>(uri, "tags"));
+        List<FredSeriesTag> tags = (await Parse<List<FredSeriesTag>>(uri, "tags"));
 
         if (tags != null)
             tags.ForEach(x => x.Symbol = symbol);
@@ -248,96 +250,100 @@ public abstract class BaseFredClient : IFredClient
 
     #region Releases ----------------------------
 
-    public virtual async Task<List<Release>> GetAllReleases()
+    public virtual async Task<List<FredRelease>> GetAllReleases()
     {
         string uri = "releases";
-        List<Release> releases = await Take<Release>(uri, "releases");
+        List<FredRelease> releases = await Take<FredRelease>(uri, "releases");
         return releases;
     }
 
-    public virtual async Task<List<ReleaseDate>> GetAllReleaseDates(DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
+    public virtual async Task<List<FredReleaseDate>> GetAllReleaseDates(DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
     {
         string uri = $"releases/dates?{(realtimeStart.HasValue ? "realtime_start=" + realtimeStart.Value.ToString(FRED_DATE_FORMAT) + "&" : null)}include_release_dates_with_no_data={(includeReleaseDatesWithNoData ? "true" : "false")}";
-        List<ReleaseDate> releases = await Take<ReleaseDate>(uri, "release_dates");
+        List<FredReleaseDate> releases = await Take<FredReleaseDate>(uri, "release_dates");
         return releases;
     }
 
-    public virtual async Task<Release> GetRelease(string nativeID)
+    public virtual async Task<FredRelease> GetRelease(string nativeID)
     {
         ArgumentNullException.ThrowIfNull(nativeID);
         string uri = $"release?release_id={nativeID}";
-        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        List<FredRelease> releases = await Parse<List<FredRelease>>(uri, "releases");
         return releases?.FirstOrDefault();
     }
 
-    public virtual async Task<List<ReleaseDate>> GetReleaseDatesForRelease(string releaseNativeID, DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
+    public virtual async Task<List<FredReleaseDate>> GetReleaseDatesForRelease(string releaseNativeID, DateTime? realtimeStart, bool includeReleaseDatesWithNoData)
     {
         ArgumentNullException.ThrowIfNull(releaseNativeID);
         string uri = $"release/dates?release_id={releaseNativeID}&{(realtimeStart.HasValue ? "realtime_start=" + realtimeStart.Value.ToString(FRED_DATE_FORMAT) + "&" : null)}include_release_dates_with_no_data={(includeReleaseDatesWithNoData ? "true" : "false")}";
-        List<ReleaseDate> releases = await Take<ReleaseDate>(uri, "release_dates");
+        List<FredReleaseDate> releases = await Take<FredReleaseDate>(uri, "release_dates");
         return releases;
     }
 
-    public virtual async Task<List<ReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
+    public virtual async Task<List<FredReleaseDate>> GetReleaseDates(string nativeReleaseID, int offset)
     {
         string uri = $"release/dates?release_id={(nativeReleaseID ?? throw new ArgumentNullException(nameof(nativeReleaseID)))}&include_release_dates_with_no_data=true&offset={offset}&sort_order=asc";
-        List<ReleaseDate> releaseDates = await Parse<List<ReleaseDate>>(uri, "release_dates");
+        List<FredReleaseDate> releaseDates = await Parse<List<FredReleaseDate>>(uri, "release_dates");
         return releaseDates?.ToList();
     }
 
-    public virtual async Task<List<Source>> GetSourcesForRelease(string releaseNativeID)
+    public virtual async Task<List<FredSource>> GetSourcesForRelease(string releaseNativeID)
     {
         ArgumentNullException.ThrowIfNull(releaseNativeID);
         string uri = $"release/sources?release_id={releaseNativeID}";
-        List<Source> sources = await Take<Source>(uri, "sources");
+        List<FredSource> sources = await Take<FredSource>(uri, "sources");
 
         if (sources?.Any() ?? false)
-            foreach (Source source in sources)
-                source.SourceReleases = new List<SourceRelease> { new SourceRelease { SourceNativeID = source.NativeID, ReleaseNativeID = releaseNativeID } };
+            foreach (FredSource source in sources)
+                source.SourceReleases = new List<FredSourceRelease> { new FredSourceRelease { SourceNativeID = source.NativeID, ReleaseNativeID = releaseNativeID } };
         
         return sources;
     }
 
-    public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID)
+    public virtual async Task<List<FredRelease>> GetReleasesForSource(string nativeSourceID)
     {
         string uri = "source/releases?source_id=" + (nativeSourceID ?? throw new ArgumentNullException(nameof(nativeSourceID)));
-        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        List<FredRelease> releases = await Parse<List<FredRelease>>(uri, "releases");
         return UpdateSourceNativeID(releases, nativeSourceID);
     }
 
-    public virtual async Task<Release> GetReleaseForSeries(string symbol)
+    public virtual async Task<FredRelease> GetReleaseForSeries(string symbol)
     {
         string uri = "series/release?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
-        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        List<FredRelease> releases = await Parse<List<FredRelease>>(uri, "releases");
         return releases.FirstOrDefault();
     }
 
-    public virtual async Task<List<Release>> GetReleasesForSource(string nativeSourceID, DateTime RTStart, DateTime RTEnd)
+    public virtual async Task<List<FredRelease>> GetReleasesForSource(string nativeSourceID, DateTime RTStart, DateTime RTEnd)
     {
         string uri = "source/releases?source_id="
             + (nativeSourceID ?? throw new ArgumentNullException(nameof(nativeSourceID)))
             + "&realtime_start=" + RTStart.Date.ToString(FRED_DATE_FORMAT)
             + "&realtime_end=" + RTEnd.Date.ToString(FRED_DATE_FORMAT);
-        List<Release> releases = await Parse<List<Release>>(uri, "releases");
+        List<FredRelease> releases = await Parse<List<FredRelease>>(uri, "releases");
         return UpdateSourceNativeID(releases, nativeSourceID);
     }
     
-    public virtual async Task<List<Series>> GetSeriesForRelease(string releaseNativeID)
+    public virtual async Task<List<FredSeries>> GetSeriesForRelease(string releaseNativeID)
     {
         ArgumentNullException.ThrowIfNull(releaseNativeID);
         string uri = $"release/series?release_id={releaseNativeID}";
-        List<Series> result = await Take<Series>(uri, "seriess");
+        List<FredSeries> result = await Take<FredSeries>(uri, "seriess");
         
         result?.ForEach(x => x.ReleaseID = releaseNativeID);
         return result;
     }
 
-    private List<Release> UpdateSourceNativeID(List<Release> releases, string nativeSourceID)
+    private List<FredRelease> UpdateSourceNativeID(List<FredRelease> releases, string nativeSourceID)
     {
         if (releases?.Any() ?? false)
-            foreach (Release release in releases)
-                release.SourceReleases = new List<SourceRelease> { new SourceRelease { SourceNativeID = nativeSourceID, ReleaseNativeID = release.NativeID } };
-        
+        {
+            foreach (FredRelease release in releases)
+            {
+                release.SourceReleases = new List<FredSourceRelease> { new FredSourceRelease { SourceNativeID = nativeSourceID, ReleaseNativeID = release.NativeID } };
+                release.SourceNativeID = nativeSourceID;
+            }
+        }
         return releases;
     }
 
@@ -345,15 +351,15 @@ public abstract class BaseFredClient : IFredClient
 
     #region Observations -------------------------------------------------
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol) =>
+    public virtual async Task<List<FredObservation>> GetObservations(string symbol) =>
         await GetObservations(symbol, DataDensity.Sparse);
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol, DataDensity density) => 
+    public virtual async Task<List<FredObservation>> GetObservations(string symbol, DataDensity density) => 
         await GetObservations(symbol, await GetVintageDates(symbol), density);
 
-    public async Task<List<Observation>> GetObservations(string symbol, DateTime obsPeriod,  DateTime? RTStart, DateTime? RTEnd, DataDensity density)
+    public async Task<List<FredObservation>> GetObservations(string symbol, DateTime obsPeriod,  DateTime? RTStart, DateTime? RTEnd, DataDensity density)
     {
-        List<Observation> allObservations = await GetObservations(symbol, obsPeriod, obsPeriod, density);
+        List<FredObservation> allObservations = await GetObservations(symbol, obsPeriod, obsPeriod, density);
         
         if (!allObservations?.Any() ?? false)
             return allObservations;
@@ -368,7 +374,7 @@ public abstract class BaseFredClient : IFredClient
         // get the value of the vintage before it.  Keep looking at previous vintages till we find the first one with that value.
 
         // Find the the largest vintage date that is less than or equal to the real-time start
-        Observation? startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).LastOrDefault();
+        FredObservation? startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).LastOrDefault();
 
         if (startVintage is null)
         {
@@ -378,7 +384,7 @@ public abstract class BaseFredClient : IFredClient
         }
 
         if (startVintage is null)
-            return new List<Observation>(); // No vintages exist within the real time period.
+            return new List<FredObservation>(); // No vintages exist within the real time period.
 
         // Search backwards through vintages while the observation value is the same as startVintage.Value.  
         // The real startVintage is the first vintage that has the same Observation.Value
@@ -390,22 +396,22 @@ public abstract class BaseFredClient : IFredClient
             else
                 break;
         }
-        List<Observation> result = allObservations.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
+        List<FredObservation> result = allObservations.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
         return result;
     }
 
-    public async Task<List<Observation>> GetObservations(string symbol, DateTime? obsStart, DateTime? obsEnd, DataDensity density) =>
+    public async Task<List<FredObservation>> GetObservations(string symbol, DateTime? obsStart, DateTime? obsEnd, DataDensity density) =>
         await GetObservations(symbol, await GetVintageDates(symbol), obsStart, obsEnd, density);
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
+    public virtual async Task<List<FredObservation>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
         await GetObservations(symbol, vintageDates, null, null, density);
 
-    public virtual async Task<List<Observation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
+    public virtual async Task<List<FredObservation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
-        List<Observation> result = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
+        List<FredObservation> result = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
 
         if (density == DataDensity.Sparse)
-            return composer.MakeSparse(result.Cast<IObservation>().ToList()).Cast<Observation>().ToList();
+            return composer.MakeSparse(result.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
 
         return result;
     }
@@ -413,7 +419,7 @@ public abstract class BaseFredClient : IFredClient
     /// <summary>
     /// This method is for unit testing a download without calling MakeSparse on the result.
     /// </summary>
-    internal async Task<List<Observation>> GetObservationsInternal(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
+    internal async Task<List<FredObservation>> GetObservationsInternal(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
         if (string.IsNullOrEmpty(symbol))
             throw new ArgumentNullException(nameof(symbol));
@@ -421,12 +427,12 @@ public abstract class BaseFredClient : IFredClient
         if (!(vintageDates?.Any() ?? false))
             throw new Exception("vintageDates argument can not be null and must contain at least one vintage date.  Make sure symbol is valid.");
 
-        List<Observation> result = new List<Observation>(10000);
-        List<Observation> obs;
+        List<FredObservation> result = new List<FredObservation>(10000);
+        List<FredObservation> obs;
         int skip = 0;
         int take = 50;
         DataDensity tmpDensity = density;
-        List<Task<List<Observation>>> tasks = new List<Task<List<Observation>>>(vintageDates.Count / take);
+        List<Task<List<FredObservation>>> tasks = new List<Task<List<FredObservation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)
         {
@@ -446,7 +452,7 @@ public abstract class BaseFredClient : IFredClient
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
 
-        foreach (Task<List<Observation>> t in tasks)
+        foreach (Task<List<FredObservation>> t in tasks)
         {
             if (t.IsFaulted)
                 throw (new Exception("Error downloading vintages.  See inner exception.", t.Exception));
@@ -460,7 +466,7 @@ public abstract class BaseFredClient : IFredClient
 
 
 
-    private IEnumerable<Observation> UpdateSymbol(IEnumerable<Observation> obs, string symbol)
+    private IEnumerable<FredObservation> UpdateSymbol(IEnumerable<FredObservation> obs, string symbol)
     {
         if (string.IsNullOrEmpty(symbol))
             throw new ArgumentNullException(nameof(symbol));
@@ -468,7 +474,7 @@ public abstract class BaseFredClient : IFredClient
         if (obs == null)
             return null;
 
-        foreach (IObservation x in obs)
+        foreach (IFredObservation x in obs)
             x.Symbol = symbol;
 
         return obs;
@@ -478,12 +484,12 @@ public abstract class BaseFredClient : IFredClient
     #region Vintages -----------------------------------------
 
     
-    public virtual async Task<List<Vintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    public virtual async Task<List<FredVintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
-        List<Vintage> result = new(150);
+        List<FredVintage> result = new(150);
 
         foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTStart, RTEnd)))
-            result.Add(new Vintage { Symbol = symbol, VintageDate = vintageDate });
+            result.Add(new FredVintage { Symbol = symbol, VintageDate = vintageDate });
 
         return result;
     }
@@ -530,25 +536,25 @@ public abstract class BaseFredClient : IFredClient
 
     #region Sources ----------------------------------------------------------------------
 
-    public virtual async Task<Source> GetSource(string sourceID)
+    public virtual async Task<FredSource> GetSource(string sourceID)
     { 
         ArgumentNullException.ThrowIfNull(nameof(sourceID));
         string uri = $"source?source_id={sourceID}";
-        return (await Parse<List<Source>>(uri, "sources")).FirstOrDefault();
+        return (await Parse<List<FredSource>>(uri, "sources")).FirstOrDefault();
     }
 
-    public virtual async Task<List<Source>> GetSources()
+    public virtual async Task<List<FredSource>> GetSources()
     {
         string uri = "sources";
-        return (await Parse<List<Source>>(uri, "sources")).ToList();
+        return (await Parse<List<FredSource>>(uri, "sources")).ToList();
     }
 
-    public virtual async Task<List<Source>> GetSources(DateTime RTStart, DateTime RTEnd)
+    public virtual async Task<List<FredSource>> GetSources(DateTime RTStart, DateTime RTEnd)
     {
         string rtStart = RTStart.Date.ToString(FRED_DATE_FORMAT);
         string rtEnd = RTEnd.Date.ToString(FRED_DATE_FORMAT);
         string uri = "sources" + "?realtime_start=" + rtStart + "&realtime_end=" + rtEnd;
-        return (await Parse<List<Source>>(uri, "sources")).ToList();
+        return (await Parse<List<FredSource>>(uri, "sources")).ToList();
     }
 
     #endregion
