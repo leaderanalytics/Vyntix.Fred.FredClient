@@ -341,7 +341,6 @@ public abstract class BaseFredClient : IFredClient
             foreach (FredRelease release in releases)
             {
                 release.SourceReleases = new List<FredSourceRelease> { new FredSourceRelease { SourceNativeID = nativeSourceID, ReleaseNativeID = release.NativeID } };
-                release.SourceNativeID = nativeSourceID;
             }
         }
         return releases;
