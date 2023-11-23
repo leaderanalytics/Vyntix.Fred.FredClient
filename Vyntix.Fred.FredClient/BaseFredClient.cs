@@ -415,9 +415,6 @@ public abstract class BaseFredClient : IFredClient
         return result;
     }
 
-    /// <summary>
-    /// This method is for unit testing a download without calling MakeSparse on the result.
-    /// </summary>
     internal async Task<List<FredObservation>> GetObservationsInternal(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
         if (string.IsNullOrEmpty(symbol))
@@ -430,7 +427,6 @@ public abstract class BaseFredClient : IFredClient
         List<FredObservation> obs;
         int skip = 0;
         int take = 50;
-        DataDensity tmpDensity = density;
         List<Task<List<FredObservation>>> tasks = new List<Task<List<FredObservation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)
