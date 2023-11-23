@@ -95,6 +95,16 @@ public abstract class BaseFredClient : IFredClient
                     Logger.LogError("HttpStatusCode 404 received when accessing url: {uri}", uri);
                     break;
                 }
+                else if (response.StatusCode == HttpStatusCode.BadRequest) // 400
+                {
+                    // This is the fallacy of REST - app errors are reported at the transport level.
+                    // REST is a leaky abstraction.  We don't know if we have actually sent a bad request
+                    // or if the request we have made is unsupported at the app level.
+                    // FRED will report a 400 error when a request is made for vintage dates for a series
+                    // that does not support vintages.
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    throw new BadRequestException(responseContent);
+                }
                 else
                 {
                     int intCode = Convert.ToInt32(response.StatusCode);
@@ -107,6 +117,11 @@ public abstract class BaseFredClient : IFredClient
                         wait = true;
                     }
                 }
+            }
+            catch (BadRequestException)
+            {
+                // let it propagate up
+                throw;
             }
             catch (Exception ex)
             {
@@ -515,8 +530,16 @@ public abstract class BaseFredClient : IFredClient
             string newUri;
             offset += 5000;
             newUri = uri + "&offset=" + offset.ToString();
-            vintages = (await ParseVintageDates(newUri, "vintage_dates"))?.ToList();
-
+           
+            try
+            {
+                vintages = (await ParseVintageDates(newUri, "vintage_dates"))?.ToList();
+            }
+            catch (BadRequestException)
+            {
+                string x = "x";            
+            }
+            
             if (vintages != null)
                 result.AddRange(vintages);
             else

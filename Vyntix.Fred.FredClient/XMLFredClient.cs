@@ -80,8 +80,12 @@ public class XMLFredClient : BaseFredClient
 
                 foreach (XmlNode node in doc.DocumentElement.ChildNodes)
                     dates.Add(DateTime.ParseExact(node.InnerText, "yyyy-MM-dd", CultureInfo.InvariantCulture));
-                
+
             }
+        }
+        catch (BadRequestException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

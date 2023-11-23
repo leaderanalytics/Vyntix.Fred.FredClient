@@ -12,7 +12,7 @@ public abstract class BaseTest
     public BaseTest(FredFileType fileType)
     {
         CurrentFileType = fileType;
-        string path = "C:\\Users\\sam\\OneDrive\\LeaderAnalytics\\Config\\Vyntix.Fred.FredClient\\apiKey.txt";
+        string path = "O:\\LeaderAnalytics\\Config\\Vyntix.Fred.FredClient\\apiKey.txt";
         apiKey = System.IO.File.ReadAllText(path);
 
         Log.Logger = new LoggerConfiguration()

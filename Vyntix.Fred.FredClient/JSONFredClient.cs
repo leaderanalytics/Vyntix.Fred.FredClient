@@ -19,11 +19,15 @@ public class JsonFredClient : BaseFredClient
         try
         {
             string json = await GetJson(uri, root);
-            
-            if(json is null)
+
+            if (json is null)
                 return default(T);
-            
+
             return JsonSerializer.Deserialize<T>(json);
+        }
+        catch (BadRequestException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -76,8 +80,6 @@ public class JsonFredClient : BaseFredClient
         return observations;
     }
 
-
-
     private async Task<string> GetJson(string uri, string root)
     {
         try
@@ -95,6 +97,10 @@ public class JsonFredClient : BaseFredClient
                     return document.RootElement.GetProperty(root).GetRawText();
                 }
             }
+        }
+        catch (BadRequestException)
+        {
+            throw;
         }
         catch (Exception ex)
         {
