@@ -152,20 +152,20 @@ public class FredClientBasicTests : BaseTest
     [Test]
     public async Task GetVintgeDatesTest()
     {
-        List<FredVintage> data = await FredClient.GetVintages("GNPCA", null);
+        List<FredVintage> data = (await FredClient.GetVintages("GNPCA", null)).Data;
         Assert.IsNotNull(data);
 
-        data = await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), null);
+        data = (await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), null)).Data;
         Assert.AreEqual(new DateTime(1959, 2, 19), data.First().VintageDate);
 
-        data = await FredClient.GetVintages("GNPCA", null, new DateTime(1961, 7, 19));
+        data = (await FredClient.GetVintages("GNPCA", null, new DateTime(1961, 7, 19))).Data;
         Assert.AreEqual(new DateTime(1961, 7, 19), data.Last().VintageDate);
 
 
-        data = await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), new DateTime(1959, 7, 19));
+        data = (await FredClient.GetVintages("GNPCA", new DateTime(1959, 2, 19), new DateTime(1959, 7, 19))).Data;
         Assert.AreEqual(2, data.Count);
 
-        data = await FredClient.GetVintages(DOES_NOT_EXIST,  null);
+        data = (await FredClient.GetVintages(DOES_NOT_EXIST, null)).Data;
         Assert.IsNotNull(data);
     }
 }

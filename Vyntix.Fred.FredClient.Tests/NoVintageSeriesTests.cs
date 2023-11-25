@@ -12,6 +12,6 @@ public class NoVintageSeriesTests : BaseTest
     [Test]
     public async Task GetVintagesTest()
     {
-        List<FredVintage> vintages = await FredClient.GetVintages("SP500");
+        List<FredObservation> obs = await FredClient.GetNonVintageObservations("SP500");
     }
 }

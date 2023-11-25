@@ -13,8 +13,8 @@ public class VintageComposerSymbolTests : BaseTest
     {
         string symbol = "NROU";
         DateTime endDate = new DateTime(2021, 3, 6);
-        List<FredVintage> vintages = (await FredClient.GetVintages(symbol, null, endDate)).ToList();
-        List<FredObservation> obs = (await FredClient.GetObservations(symbol, vintages.Select(x => x.VintageDate).ToList(), DataDensity.Sparse))
+        List<FredVintage> vintages = (await FredClient.GetVintages(symbol, null, endDate)).Data;
+        List<FredObservation> obs = (await FredClient.GetObservations(symbol, vintages.Select(x => x.VintageDate).ToList(), DataDensity.Sparse)).Data
             .Where(x => x.ObsDate <= endDate).ToList();
 
         Assert.AreEqual(18, vintages.Count);
@@ -40,11 +40,11 @@ public class VintageComposerSymbolTests : BaseTest
         string symbol = "GDPC1";
         DateTime startDate = new DateTime(2019, 1, 1);
         DateTime endDate = new DateTime(2019, 12, 31);
-        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, startDate, endDate)).ToList();
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, startDate, endDate)).Data;
         // Observations as returned by FRED 
         List<FredObservation> sparseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, startDate, endDate, DataDensity.Sparse));
         // Afer MakeSparse is called 
-        List<FredObservation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, startDate, endDate, DataDensity.Sparse));
+        List<FredObservation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, startDate, endDate, DataDensity.Sparse)).Data;
 
         
         Assert.AreEqual(11, vintageDates.Count);
@@ -79,12 +79,12 @@ public class VintageComposerSymbolTests : BaseTest
         string symbol = "DFII10";
         IVintageComposer composer = new VintageComposer();
         DateTime endDate = new DateTime(2020, 12, 31);
-        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, null, endDate)).ToList();
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates(symbol, null, endDate)).Data;
         
         // Observations as returned by FRED
         List<FredObservation> sparseNative = (await ((BaseFredClient)FredClient).GetObservationsInternal(symbol, vintageDates, null, endDate, DataDensity.Sparse)).ToList();
         // Afer MakeSparse is called
-        List<FredObservation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, null, endDate, DataDensity.Sparse)).ToList();
+        List<FredObservation> sparseComposed = (await FredClient.GetObservations(symbol, vintageDates, null, endDate, DataDensity.Sparse)).Data;
 
         Assert.AreEqual(3676, vintageDates.Count);
         Assert.AreEqual(sparseNative.Count, sparseComposed.Count);

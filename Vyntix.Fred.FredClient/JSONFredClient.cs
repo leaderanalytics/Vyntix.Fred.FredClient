@@ -27,7 +27,7 @@ public class JsonFredClient : BaseFredClient
         }
         catch (BadRequestException)
         {
-            throw;
+            throw; // No vintage dates for this series
         }
         catch (Exception ex)
         {
