@@ -23,7 +23,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task ObservationTest()
     {
-        FredObservation data = (await FredClient.GetObservations("GNPCA")).FirstOrDefault();
+        FredObservation data = (await FredClient.GetObservations("GNPCA")).Data.FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.IsFalse(String.IsNullOrEmpty(data.Value));
@@ -87,7 +87,7 @@ public class ModelTests : BaseTest
     [Test]
     public async Task VintageTest()
     {
-        FredVintage data = (await FredClient.GetVintages("GNPCA", null)).FirstOrDefault();
+        FredVintage data = (await FredClient.GetVintages("GNPCA", null)).Data.FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
         Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);

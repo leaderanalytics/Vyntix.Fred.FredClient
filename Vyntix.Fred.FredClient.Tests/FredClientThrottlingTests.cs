@@ -21,7 +21,7 @@ public class FredClientThrottlingTests : BaseTest
 
         for (int i = 0; i < symbols.Length; i++)
             tasks[i] = FredClient.GetObservations(symbols[i], startDate, endDate, DataDensity.Dense)
-                .ContinueWith(x => x.Result.ForEach(o => observations.Add(o)));
+                .ContinueWith(x => x.Result.Data.ForEach(o => observations.Add(o)));
 
         Task result = Task.WhenAll(tasks);
         await result;
@@ -40,8 +40,8 @@ public class FredClientThrottlingTests : BaseTest
         //2015 - 11 - 27                                   3.22
 
         DateTime cutoff = new DateTime(2022, 12, 1);
-        List<DateTime> vintageDates = (await FredClient.GetVintageDates("BAA10Y", null, cutoff)).ToList();
-        List<FredObservation> data = await FredClient.GetObservations("BAA10Y", vintageDates, DataDensity.Sparse); 
+        List<DateTime> vintageDates = (await FredClient.GetVintageDates("BAA10Y", null, cutoff)).Data;
+        List<FredObservation> data = (await FredClient.GetObservations("BAA10Y", vintageDates, DataDensity.Sparse)).Data; 
         
         int dataVintageCount = data.GroupBy(x => x.VintageDate).Count();                            // Includes 2015-11-27
         List<DateTime> dataVintageDates = data.Select(x => x.VintageDate).ToList();                 // Does not include 2015-11-27

@@ -95,6 +95,16 @@ public abstract class BaseFredClient : IFredClient
                     Logger.LogError("HttpStatusCode 404 received when accessing url: {uri}", uri);
                     break;
                 }
+                else if (response.StatusCode == HttpStatusCode.BadRequest) // 400
+                {
+                    // This is the fallacy of REST - app errors are reported at the transport level.
+                    // REST is a leaky abstraction.  We don't know if we have actually sent a bad request
+                    // or if the request we have made is unsupported at the app level.
+                    // FRED will report a 400 error when a request is made for vintage dates for a series
+                    // that does not support vintages.
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    throw new BadRequestException(responseContent);
+                }
                 else
                 {
                     int intCode = Convert.ToInt32(response.StatusCode);
@@ -107,6 +117,11 @@ public abstract class BaseFredClient : IFredClient
                         wait = true;
                     }
                 }
+            }
+            catch (BadRequestException)
+            {
+                // let it propagate up
+                throw;
             }
             catch (Exception ex)
             {
@@ -350,74 +365,117 @@ public abstract class BaseFredClient : IFredClient
 
     #region Observations -------------------------------------------------
 
-    public virtual async Task<List<FredObservation>> GetObservations(string symbol) =>
+    public virtual async Task<APIResult<List<FredObservation>>> GetObservations(string symbol) =>
         await GetObservations(symbol, DataDensity.Sparse);
 
-    public virtual async Task<List<FredObservation>> GetObservations(string symbol, DataDensity density) => 
-        await GetObservations(symbol, await GetVintageDates(symbol), density);
-
-    public async Task<List<FredObservation>> GetObservations(string symbol, DateTime obsPeriod,  DateTime? RTStart, DateTime? RTEnd, DataDensity density)
+    public virtual async Task<APIResult<List<FredObservation>>> GetObservations(string symbol, DataDensity density)
     {
-        List<FredObservation> allObservations = await GetObservations(symbol, obsPeriod, obsPeriod, density);
-        
-        if (!allObservations?.Any() ?? false)
-            return allObservations;
-        else if (RTStart is null && RTEnd is null) 
-            return allObservations;
-        else if(RTStart is null)
-            return allObservations.Where(x => x.VintageDate <= RTEnd.Value).ToList();
+        APIResult<List<FredObservation>> result = new();
+        APIResult<List<DateTime>> vintageResult = await GetVintageDates(symbol);
+        result.Success = vintageResult.Success;
+        result.Message = vintageResult.Message;
 
-        allObservations = allObservations.OrderBy(x => x.VintageDate).ToList(); 
+        if (!result.Success)
+            return result;
+
+        return await GetObservations(symbol, vintageResult.Data , density);
+
+    }
+    public async Task<APIResult<List<FredObservation>>> GetObservations(string symbol, DateTime obsPeriod,  DateTime? RTStart, DateTime? RTEnd, DataDensity density)
+    {
+        APIResult<List<FredObservation>> allObservations = await GetObservations(symbol, obsPeriod, obsPeriod, density);
+
+        if ((!allObservations.Success) || (!allObservations.Data?.Any() ?? false))
+            return allObservations;
+        else if (RTStart is null && RTEnd is null)
+            return allObservations;
+        else if (RTStart is null)
+        {
+            allObservations.Data = allObservations.Data.Where(x => x.VintageDate <= RTEnd.Value).ToList();
+            return allObservations;
+        }
+        allObservations.Data = allObservations.Data.OrderBy(x => x.VintageDate).ToList(); 
 
         // find the first vintage that is greater than the realtime start and get the value
         // get the value of the vintage before it.  Keep looking at previous vintages till we find the first one with that value.
 
         // Find the the largest vintage date that is less than or equal to the real-time start
-        FredObservation? startVintage = allObservations.Where(x => x.VintageDate <= RTStart.Value).LastOrDefault();
+        FredObservation? startVintage = allObservations.Data.Where(x => x.VintageDate <= RTStart.Value).LastOrDefault();
 
         if (startVintage is null)
         {
             // No vintages exist prior to the real time start.  Find the earliest vintage that exists prior to the real time end.
             // Here we are looking for a vintage that begins after the real time start but before the real time end.
-            startVintage = allObservations.Where(x => x.VintageDate <= RTEnd.Value).FirstOrDefault();
+            startVintage = allObservations.Data.Where(x => x.VintageDate <= RTEnd.Value).FirstOrDefault();
         }
 
         if (startVintage is null)
-            return new List<FredObservation>(); // No vintages exist within the real time period.
+            return new APIResult<List<FredObservation>>(); // No vintages exist within the real time period.
 
         // Search backwards through vintages while the observation value is the same as startVintage.Value.  
         // The real startVintage is the first vintage that has the same Observation.Value
 
-        for (int i = allObservations.IndexOf(startVintage); i > 0; i--)
+        for (int i = allObservations.Data.IndexOf(startVintage); i > 0; i--)
         {
-            if (allObservations[i - 1].Value == startVintage.Value)
-                startVintage = allObservations[i - 1];
+            if (allObservations.Data[i - 1].Value == startVintage.Value)
+                startVintage = allObservations.Data[i - 1];
             else
                 break;
         }
-        List<FredObservation> result = allObservations.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
-        return result;
+        allObservations.Data = allObservations.Data.Where(x => x.VintageDate >= startVintage.VintageDate && x.VintageDate <= RTEnd.Value).ToList();
+        return allObservations;
     }
 
-    public async Task<List<FredObservation>> GetObservations(string symbol, DateTime? obsStart, DateTime? obsEnd, DataDensity density) =>
-        await GetObservations(symbol, await GetVintageDates(symbol), obsStart, obsEnd, density);
+    public async Task<APIResult<List<FredObservation>>> GetObservations(string symbol, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
+    {
+        APIResult<List<FredObservation>> result = new();
+        APIResult<List<DateTime>> vintageResult = await GetVintageDates(symbol);
+        result.Success = vintageResult.Success;
+        result.Message = vintageResult.Message;
 
-    public virtual async Task<List<FredObservation>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
+        if (!result.Success)
+            return result;
+
+        return await GetObservations(symbol, vintageResult.Data, obsStart, obsEnd, density);
+    }
+
+    public virtual async Task<APIResult<List<FredObservation>>> GetObservations(string symbol, IList<DateTime> vintageDates, DataDensity density) =>
         await GetObservations(symbol, vintageDates, null, null, density);
 
-    public virtual async Task<List<FredObservation>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
+    public virtual async Task<APIResult<List<FredObservation>>> GetObservations(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
-        List<FredObservation> result = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
+        APIResult<List<FredObservation>> result = new();
+        result.Data = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
 
         if (density == DataDensity.Sparse)
-            return composer.MakeSparse(result.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
+            result.Data = composer.MakeSparse(result.Data.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
 
         return result;
     }
 
-    /// <summary>
-    /// This method is for unit testing a download without calling MakeSparse on the result.
-    /// </summary>
+    public virtual async Task<List<FredObservation>> GetNonVintageObservations(string symbol, DateTime? obsStart = null, DateTime? obsEnd = null)
+    {
+        string uri = $"series/observations?series_id={symbol}&output_type=2";
+
+        if (obsStart.HasValue)
+            uri += $"&observation_start={obsStart.Value.ToString(FRED_DATE_FORMAT)}";
+
+        if (obsEnd.HasValue)
+            uri += $"&observation_end={obsEnd.Value.ToString(FRED_DATE_FORMAT)}";
+
+        List<FredObservation> result = await ParseObservations(symbol, uri);
+
+        // FRED incorrectly sets the vintage date to todays date.
+        // Set the vintage date to the observation date.
+
+        if (result?.Any() ?? false)
+            foreach (FredObservation f in result)
+                f.VintageDate = f.ObsDate;
+
+
+        return result;
+    }
+    
     internal async Task<List<FredObservation>> GetObservationsInternal(string symbol, IList<DateTime> vintageDates, DateTime? obsStart, DateTime? obsEnd, DataDensity density)
     {
         if (string.IsNullOrEmpty(symbol))
@@ -429,8 +487,7 @@ public abstract class BaseFredClient : IFredClient
         List<FredObservation> result = new List<FredObservation>(10000);
         List<FredObservation> obs;
         int skip = 0;
-        int take = 50;
-        DataDensity tmpDensity = density;
+        int take = 200;
         List<Task<List<FredObservation>>> tasks = new List<Task<List<FredObservation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)
@@ -463,8 +520,6 @@ public abstract class BaseFredClient : IFredClient
         return result;
     }
 
-
-
     private IEnumerable<FredObservation> UpdateSymbol(IEnumerable<FredObservation> obs, string symbol)
     {
         if (string.IsNullOrEmpty(symbol))
@@ -483,18 +538,26 @@ public abstract class BaseFredClient : IFredClient
     #region Vintages -----------------------------------------
 
     
-    public virtual async Task<List<FredVintage>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    public virtual async Task<APIResult<List<FredVintage>>> GetVintages(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
-        List<FredVintage> result = new(150);
+        APIResult<List<FredVintage>> result = new();
+        result.Data = new(150);
 
-        foreach (DateTime vintageDate in (await GetVintageDates(symbol, RTStart, RTEnd)))
-            result.Add(new FredVintage { Symbol = symbol, VintageDate = vintageDate });
+        APIResult<List<DateTime>> dateResult = await GetVintageDates(symbol, RTStart, RTEnd);
+        result.Success = dateResult.Success;
+        result.Message = dateResult.Message;
+
+        if (!result.Success)
+            return result;
+
+        foreach (DateTime vintageDate in (dateResult.Data))
+            result.Data.Add(new FredVintage { Symbol = symbol, VintageDate = vintageDate });
 
         return result;
     }
     
 
-    public virtual async Task<List<DateTime>> GetVintageDates(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
+    public virtual async Task<APIResult<List<DateTime>>> GetVintageDates(string symbol, DateTime? RTStart = null, DateTime? RTEnd = null)
     {
         string uri = "series/vintagedates?series_id=" + (symbol ?? throw new ArgumentNullException(nameof(symbol)));
 
@@ -511,7 +574,9 @@ public abstract class BaseFredClient : IFredClient
 
         int offset = -5000;
         bool doIt = true;
-        List<DateTime> result = new(150);
+        APIResult<List<DateTime>> result = new();
+        result.Data = new(150);
+        result.Success = true;
         List<DateTime> vintages = null;
 
         while (doIt)
@@ -519,10 +584,20 @@ public abstract class BaseFredClient : IFredClient
             string newUri;
             offset += 5000;
             newUri = uri + "&offset=" + offset.ToString();
-            vintages = (await ParseVintageDates(newUri, "vintage_dates"))?.ToList();
-
-            if (vintages != null)
-                result.AddRange(vintages);
+           
+            try
+            {
+                vintages = (await ParseVintageDates(newUri, "vintage_dates"))?.ToList();
+            }
+            catch (BadRequestException ex)
+            {
+                // If we get here FRED does not maintain vintage dates for the requested series i.e. SP500.
+                result.Success = false;
+                result.Message = ex.Message;
+            }
+            
+            if (vintages != null && result.Success)
+                result.Data.AddRange(vintages);
             else
                 break;
 
