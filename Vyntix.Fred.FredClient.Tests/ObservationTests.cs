@@ -21,11 +21,10 @@ public class ObservationTests : BaseTest
     }
 
     [Test]
-    public async Task invalid_symbol_thows()
+    public async Task invalid_symbol_fails()
     {
-        // We don't throw because the symbol is invalid - we throw because there are no vintage dates passed
-        // to GetObservations.  
-        Assert.ThrowsAsync<Exception>(() => FredClient.GetObservations(DOES_NOT_EXIST));
+        APIResult<List<FredObservation>> response = await FredClient.GetObservations(DOES_NOT_EXIST);
+        Assert.IsFalse(response.Success);
     }
 
     [Test]

@@ -95,8 +95,12 @@ public abstract class BaseFredClient : IFredClient
                     Logger.LogError("HttpStatusCode 404 received when accessing url: {uri}", uri);
                     break;
                 }
-                else if (response.StatusCode == HttpStatusCode.BadRequest) // 400
+                else if (uri.Contains("series/vintagedates") && response.StatusCode == HttpStatusCode.BadRequest) // 400
                 {
+                    // We only propagate a 400 error when we request vintage dates and FRED does not maintain
+                    // vintage dates for the requested series.  We do this so we can inform the user and/or set
+                    // HasVintages on the Series object to false.
+
                     // This is the fallacy of REST - app errors are reported at the transport level.
                     // REST is a leaky abstraction.  We don't know if we have actually sent a bad request
                     // or if the request we have made is unsupported at the app level.
@@ -410,7 +414,7 @@ public abstract class BaseFredClient : IFredClient
         }
 
         if (startVintage is null)
-            return new APIResult<List<FredObservation>>(); // No vintages exist within the real time period.
+            return new APIResult<List<FredObservation>> { Data = new() }; // No vintages exist within the real time period.
 
         // Search backwards through vintages while the observation value is the same as startVintage.Value.  
         // The real startVintage is the first vintage that has the same Observation.Value
@@ -449,7 +453,8 @@ public abstract class BaseFredClient : IFredClient
 
         if (density == DataDensity.Sparse)
             result.Data = composer.MakeSparse(result.Data.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
-
+        
+        result.Success = true;
         return result;
     }
 

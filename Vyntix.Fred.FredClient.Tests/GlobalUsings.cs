@@ -13,3 +13,4 @@ global using System.Linq;
 global using System.Net.Http;
 global using System.Threading.Tasks;
 global using Vyntix.Fred.FredClient.Tests;
+global using LeaderAnalytics.Vyntix.Elements;
