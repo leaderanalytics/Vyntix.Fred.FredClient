@@ -49,7 +49,7 @@ public class XMLFredClient : BaseFredClient
                                 Symbol = symbol,
                                 ObsDate = DateTime.ParseExact(node.Attributes[0].Value, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                                 VintageDate = DateTime.ParseExact(node.Attributes[i].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
-                                Value = stringVal
+                                Value = Convert.ToDecimal(stringVal)
 
                             });
                         }

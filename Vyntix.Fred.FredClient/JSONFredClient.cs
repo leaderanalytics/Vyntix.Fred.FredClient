@@ -66,7 +66,7 @@ public class JsonFredClient : BaseFredClient
                                 Symbol = symbol,
                                 ObsDate = properties[0].Value.GetDateTime(),
                                 VintageDate = DateTime.ParseExact(properties[i].Name.Split("_")[1], "yyyyMMdd", CultureInfo.InvariantCulture),
-                                Value = stringVal
+                                Value = Convert.ToDecimal(stringVal)
                             });
                         }
                     }

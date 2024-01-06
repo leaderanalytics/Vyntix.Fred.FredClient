@@ -26,7 +26,7 @@ public class ModelTests : BaseTest
         FredObservation data = (await FredClient.GetObservations("GNPCA")).Data.FirstOrDefault();
         Assert.IsNotNull(data);
         Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Value));
+        Assert.IsTrue(data.Value.HasValue);
         Assert.AreNotEqual(DateTime.MinValue, data.ObsDate);
         Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);
     }

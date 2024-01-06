@@ -72,7 +72,7 @@ public class VintageComposer : IVintageComposer
         List<IFredObservation> sparse = new(dense.Count);
         string lastSymbol = null;
         DateTime lastObsDate = DateTime.MinValue;
-        string lastValue = null;
+        decimal? lastValue = null;
 
         foreach (var obs in dense.OrderBy(x => x.Symbol).ThenBy(x => x.ObsDate).ThenBy(x => x.VintageDate))
         {

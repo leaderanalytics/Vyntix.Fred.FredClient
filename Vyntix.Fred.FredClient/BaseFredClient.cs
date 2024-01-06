@@ -519,7 +519,7 @@ public abstract class BaseFredClient : IFredClient
                 throw (new Exception("Error downloading vintages.  See inner exception.", t.Exception));
 
             if (t.Result is not null)
-                result.AddRange(t.Result.Where(x => x.Value != "."));
+                result.AddRange(t.Result.Where(x => x.Value.HasValue));
         }
 
         return result;
