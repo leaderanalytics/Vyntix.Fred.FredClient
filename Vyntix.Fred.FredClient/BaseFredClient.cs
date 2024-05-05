@@ -637,4 +637,13 @@ public abstract class BaseFredClient : IFredClient
     }
 
     #endregion
+
+    public async Task<bool> IsAPI_KeyValid()
+    {
+        // As of this writing 2024-05-05 FRED returns bad request when API key is invalid vs unauthorized.
+        string url = $"series?series_id=NROU&file_type=json&{API_key}";
+        HttpResponseMessage response = await httpClient.GetAsync(url);
+        bool success = response.StatusCode != HttpStatusCode.BadRequest;
+        return success;
+    }
 }

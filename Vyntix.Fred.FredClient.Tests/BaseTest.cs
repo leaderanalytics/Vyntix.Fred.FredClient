@@ -21,16 +21,17 @@ public abstract class BaseTest
             .CreateLogger();
 
         Log.Information("Logging has been configured.");
-        BuildFredClient();
+        
     }
 
     [SetUp]
     public void Setup() 
     {
+        BuildFredClient(apiKey);
     }
 
     
-    private void BuildFredClient()
+    protected void BuildFredClient(string apiKey)
     {
         HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
         FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 3, ErrorDelay = 2000, MaxRequestsPerMinute = 60 }; // MaxDownloadRetries should be greater than 1
