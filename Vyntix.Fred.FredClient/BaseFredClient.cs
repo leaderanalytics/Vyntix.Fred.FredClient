@@ -85,7 +85,10 @@ public abstract class BaseFredClient : IFredClient
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     stream = await response.Content.ReadAsStreamAsync();
-                    int.TryParse(response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining").Value.First() ?? "0", out int remainingRequests);
+                    KeyValuePair<string, IEnumerable<string>> responseHeader = response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining");
+                    
+                    if((! string.IsNullOrEmpty(responseHeader.Key)) && (responseHeader.Value?.Any() ?? false))
+                        int.TryParse(responseHeader.Value.First() ?? "0", out int remainingRequests);
 
                     success = true;
                     break;
