@@ -139,6 +139,16 @@ public class ObservationTests : BaseTest
         Assert.AreEqual(1513, observations.Count);
     }
 
+
+    [Test]
+    public async Task payems_returns_dense_data_for_selected_vintage_dates()
+    {
+        string symbol = "payems";
+        List<DateTime> vintagedates = (await FredClient.GetVintageDates(symbol)).Data;
+        List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, DataDensity.Dense)).Data;
+        Assert.IsTrue(observations.Any());
+    }
+
     [Test]
     public async Task gdp_vintage_test_gets_all_vintages()
     {

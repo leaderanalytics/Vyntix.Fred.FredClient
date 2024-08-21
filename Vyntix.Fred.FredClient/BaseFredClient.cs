@@ -132,7 +132,7 @@ public abstract class BaseFredClient : IFredClient
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Exception while downloading url: {uri}", uri);
+                Logger.LogError(ex, "Exception while downloading url: {uri}.  Error msg is: {msg}", uri, ex.ToString());
                 wait = true;
             }
             finally
