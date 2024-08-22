@@ -145,7 +145,7 @@ public class ObservationTests : BaseTest
     {
         string symbol = "payems";
         List<DateTime> vintagedates = (await FredClient.GetVintageDates(symbol)).Data;
-        List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, DataDensity.Dense)).Data;
+        List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, null, null, DataDensity.Sparse)).Data;
         Assert.IsTrue(observations.Any());
     }
 

@@ -495,7 +495,7 @@ public abstract class BaseFredClient : IFredClient
         List<FredObservation> result = new List<FredObservation>(10000);
         List<FredObservation> obs;
         int skip = 0;
-        int take = 200;
+        int take = config.VintageChunkSize;
         List<Task<List<FredObservation>>> tasks = new List<Task<List<FredObservation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)
