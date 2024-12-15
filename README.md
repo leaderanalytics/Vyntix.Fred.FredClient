@@ -24,3 +24,6 @@ Before using this software you must [request an API key from FRED®](https://fred
 
 
  ---
+ Release Notes:
+ Version 1.x   .Net 6
+ Version 2.x   .Net 9

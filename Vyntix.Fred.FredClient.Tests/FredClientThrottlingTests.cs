@@ -25,8 +25,8 @@ public class FredClientThrottlingTests : BaseTest
 
         Task result = Task.WhenAll(tasks);
         await result;
-        Assert.IsFalse(result.IsFaulted);
-        Assert.AreEqual(5, observations.GroupBy(x => x.Symbol).Count());
+        Assert.That(result.IsFaulted, Is.False);
+        Assert.That(5, Is.EqualTo(observations.GroupBy(x => x.Symbol).Count()));
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class FredClientThrottlingTests : BaseTest
         List<DateTime> dataVintageDates = data.Select(x => x.VintageDate).ToList();                 // Does not include 2015-11-27
         
 
-        Assert.AreEqual(dataVintageCount +1 , vintageDates.Count());
+        Assert.That(dataVintageCount + 1, Is.EqualTo(vintageDates.Count()));
     }
 
 

@@ -23,7 +23,7 @@ public class ServiceCollectionTests
         container.AddFredClient().UseAPIKey(apiKey);
         IServiceProvider services = container.BuildServiceProvider();
         IFredClient fredClient = services.GetService<IFredClient>();
-        Assert.IsTrue(fredClient is JsonFredClient);
+        Assert.That(fredClient is JsonFredClient, Is.True);
     }
 
     [Test]
@@ -35,7 +35,7 @@ public class ServiceCollectionTests
         container.AddLogging(builder => builder.AddSerilog());
         IServiceProvider services = container.BuildServiceProvider();
         IFredClient fredClient = services.GetService<IFredClient>();
-        Assert.IsTrue(fredClient is XMLFredClient);
+        Assert.That(fredClient is XMLFredClient, Is.True);
     }
 
     [Test]
@@ -48,10 +48,10 @@ public class ServiceCollectionTests
         container.AddFredClient().UseAPIKey(apiKey).UseConfig(x => new FredClientConfig { BaseURL = localhost });
         IServiceProvider services = container.BuildServiceProvider();
         IFredClient fredClient = services.GetService<IFredClient>();
-        Assert.IsTrue(fredClient is JsonFredClient);
+        Assert.That(fredClient is JsonFredClient, Is.True);
         Func<IServiceProvider, HttpClient> httpClientFactory = services.GetService<Func<IServiceProvider, HttpClient>>();
         HttpClient httpClient = httpClientFactory(services);
-        Assert.AreEqual(localhost, httpClient.BaseAddress.AbsoluteUri);
+        Assert.That(localhost, Is.EqualTo(httpClient.BaseAddress.AbsoluteUri));
     }
 
     [Test]
@@ -64,10 +64,10 @@ public class ServiceCollectionTests
         container.AddFredClient().UseAPIKey(apiKey).UseVintageComposer(x => composerMock);
         IServiceProvider services = container.BuildServiceProvider();
         IFredClient fredClient = services.GetService<IFredClient>();
-        Assert.IsTrue(fredClient is JsonFredClient);
+        Assert.That(fredClient is JsonFredClient, Is.True);
         Func<IServiceProvider, IVintageComposer> composerFactory = services.GetService<Func<IServiceProvider, IVintageComposer>>();
         IVintageComposer composer = composerFactory(services);
-        Assert.IsTrue(composer.GetType().FullName == "Castle.Proxies.IVintageComposerProxy");
+        Assert.That(composer.GetType().FullName, Is.EqualTo("Castle.Proxies.IVintageComposerProxy"));
     }
 
     [Test]
@@ -80,6 +80,6 @@ public class ServiceCollectionTests
         IServiceProvider services = container.BuildServiceProvider();
         IFredClient fredClient_1 = services.GetService<IFredClient>();
         IFredClient fredClient_2 = services.GetService<IFredClient>();
-        Assert.AreNotEqual(fredClient_1, fredClient_2);
+        Assert.That(fredClient_1, Is.Not.EqualTo(fredClient_2));
     }
 }

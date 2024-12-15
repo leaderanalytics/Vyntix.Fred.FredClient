@@ -17,14 +17,14 @@ public class ObservationTests : BaseTest
     public async Task gnpca_gets_all_observations()
     {
         List<FredObservation> data = (await FredClient.GetObservations("GNPCA")).Data;
-        Assert.IsNotNull(data);
+        Assert.That(data, Is.Not.Null);
     }
 
     [Test]
     public async Task invalid_symbol_fails()
     {
         APIResult<List<FredObservation>> response = await FredClient.GetObservations(DOES_NOT_EXIST);
-        Assert.IsFalse(response.Success);
+        Assert.That(response.Success, Is.False);
     }
 
     [Test]
@@ -36,11 +36,11 @@ public class ObservationTests : BaseTest
 
         List<FredObservation> data = (await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse)).Data;
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
-        Assert.IsNotNull(data);
-        Assert.AreEqual(2, vintageDates.Count);
-        Assert.AreEqual(2, data.Count);
-        Assert.AreEqual(new DateTime(2019,03,28).Date, data[0].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2019, 07, 26).Date, data[1].VintageDate.Date);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(2, Is.EqualTo(vintageDates.Count));
+        Assert.That(2, Is.EqualTo(data.Count));
+        Assert.That(new DateTime(2019,03,28).Date,Is.EqualTo(data[0].VintageDate.Date));
+        Assert.That(new DateTime(2019, 07, 26).Date, Is.EqualTo(data[1].VintageDate.Date));
     }
 
     [Test]
@@ -67,15 +67,15 @@ public class ObservationTests : BaseTest
         
         List<FredObservation> data = (await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Sparse)).Data;
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
-        Assert.IsNotNull(data);
-        Assert.AreEqual(3, vintageDates.Count);
-        Assert.AreEqual(3, data.Count);
-        Assert.AreEqual(new DateTime(2015, 07, 30).Date, data[0].VintageDate.Date);
-        Assert.AreEqual(15562.1m, data[0].Value);
-        Assert.AreEqual(new DateTime(2017, 10, 27).Date, data[1].VintageDate.Date);
-        Assert.AreEqual(15562.122m, data[1].Value);
-        Assert.AreEqual(new DateTime(2018, 07, 27).Date, data[2].VintageDate.Date);
-        Assert.AreEqual(16429.308m, data[2].Value);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(3, Is.EqualTo(vintageDates.Count));
+        Assert.That(3, Is.EqualTo(data.Count));
+        Assert.That(new DateTime(2015, 07, 30).Date, Is.EqualTo(data[0].VintageDate.Date));
+        Assert.That(15562.1m, Is.EqualTo(data[0].Value));
+        Assert.That(new DateTime(2017, 10, 27).Date, Is.EqualTo(data[1].VintageDate.Date));
+        Assert.That(15562.122m, Is.EqualTo(data[1].Value));
+        Assert.That(new DateTime(2018, 07, 27).Date, Is.EqualTo(data[2].VintageDate.Date));
+        Assert.That(16429.308m, Is.EqualTo(data[2].Value));
     }
 
     [Test]
@@ -102,17 +102,17 @@ public class ObservationTests : BaseTest
 
         List<FredObservation> data = (await FredClient.GetObservations("GNPCA", obsPeriod, realTimeStart, realTimeEnd, DataDensity.Dense)).Data;
         List<DateTime> vintageDates = data.GroupBy(x => x.VintageDate).Select(x => x.Key).ToList();
-        Assert.IsNotNull(data);
-        Assert.AreEqual(8, vintageDates.Count);
-        Assert.AreEqual(8, data.Count);
-        Assert.AreEqual(new DateTime(2015, 07, 30).Date, data[0].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2016, 03, 25).Date, data[1].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2016, 07, 29).Date, data[2].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2017, 03, 30).Date, data[3].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2017, 07, 28).Date, data[4].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2017, 10, 27).Date, data[5].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2018, 03, 28).Date, data[6].VintageDate.Date);
-        Assert.AreEqual(new DateTime(2018, 07, 27).Date, data[7].VintageDate.Date);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(8, Is.EqualTo(vintageDates.Count));
+        Assert.That(8, Is.EqualTo(data.Count));
+        Assert.That(new DateTime(2015, 07, 30).Date, Is.EqualTo(data[0].VintageDate.Date));
+        Assert.That(new DateTime(2016, 03, 25).Date, Is.EqualTo(data[1].VintageDate.Date));
+        Assert.That(new DateTime(2016, 07, 29).Date, Is.EqualTo(data[2].VintageDate.Date));
+        Assert.That(new DateTime(2017, 03, 30).Date, Is.EqualTo(data[3].VintageDate.Date));
+        Assert.That(new DateTime(2017, 07, 28).Date, Is.EqualTo(data[4].VintageDate.Date));
+        Assert.That(new DateTime(2017, 10, 27).Date, Is.EqualTo(data[5].VintageDate.Date));
+        Assert.That(new DateTime(2018, 03, 28).Date, Is.EqualTo(data[6].VintageDate.Date));
+        Assert.That(new DateTime(2018, 07, 27).Date, Is.EqualTo(data[7].VintageDate.Date));
 
     }
 
@@ -127,7 +127,7 @@ public class ObservationTests : BaseTest
         string symbol = "gdp";
         List<DateTime> vintagedates = new List<DateTime> { DateTime.Parse("2022-08-25"), DateTime.Parse("2022-09-29"), DateTime.Parse("2022-10-27"), DateTime.Parse("2022-11-30"), DateTime.Parse("2022-12-22") };
         List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, DataDensity.Sparse)).Data;
-        Assert.AreEqual(26, observations.Count);
+        Assert.That(26, Is.EqualTo(observations.Count));
     }
 
     [Test]
@@ -136,7 +136,7 @@ public class ObservationTests : BaseTest
         string symbol = "gdp";
         List<DateTime> vintagedates = new List<DateTime> { DateTime.Parse("2022-08-25"), DateTime.Parse("2022 -09-29"), DateTime.Parse("2022 -10-27"), DateTime.Parse("2022 -11-30"), DateTime.Parse("2022 -12-22") };
         List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, DataDensity.Dense)).Data;
-        Assert.AreEqual(1513, observations.Count);
+        Assert.That(1513, Is.EqualTo(observations.Count));
     }
 
 
@@ -146,15 +146,15 @@ public class ObservationTests : BaseTest
         string symbol = "payems";
         List<DateTime> vintagedates = (await FredClient.GetVintageDates(symbol)).Data;
         List<FredObservation> observations = (await FredClient.GetObservations(symbol, vintagedates, null, null, DataDensity.Sparse)).Data;
-        Assert.IsTrue(observations.Any());
+        Assert.That(observations.Any(), Is.True);
     }
 
     [Test]
     public async Task gdp_vintage_test_gets_all_vintages()
     {
         List<FredVintage> vintages = (await FredClient.GetVintages("gdp")).Data;
-        Assert.IsNotNull(vintages); 
-        Assert.Greater(vintages.Count, 10);
+        Assert.That(vintages, Is.Not.Null); 
+        Assert.That(vintages.Count, Is.GreaterThan(10));
     }
 
     [Test]
@@ -169,8 +169,8 @@ public class ObservationTests : BaseTest
         // 1992-04-28
 
         List<FredVintage> vintages = (await FredClient.GetVintages("gdp", DateTime.Parse("1991-12-04"), DateTime.Parse("1992-04-28"))).Data;
-        Assert.IsNotNull(vintages);
-        Assert.AreEqual(vintages.Count, 6);
+        Assert.That(vintages, Is.Not.Null);
+        Assert.That(vintages.Count, Is.EqualTo(6));
     }
 
     [Test]
@@ -182,7 +182,7 @@ public class ObservationTests : BaseTest
         DateTime realTimeEnd = new DateTime(1979, 12, 31);
         DateTime observationPeriodStart = new DateTime(1975, 4, 1);  
         List<FredObservation> observations = (await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense)).Data;
-        Assert.AreEqual(observations.Count, 0);
+        Assert.That(observations.Count, Is.EqualTo(0));
     }
 
 
@@ -194,8 +194,8 @@ public class ObservationTests : BaseTest
         DateTime realTimeEnd = new DateTime(1999, 12, 31);
         DateTime observationPeriodStart = new DateTime(1975, 4, 1);
         List<FredObservation> observations = (await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense)).Data;
-        Assert.GreaterOrEqual(observations.Count, 97);
-        Assert.AreEqual(observations.First().VintageDate, new DateTime(1991, 12, 4));
+        Assert.That(observations.Count, Is.GreaterThanOrEqualTo(97));
+        Assert.That(observations.First().VintageDate, Is.EqualTo(new DateTime(1991, 12, 4)));
     }
 }
 

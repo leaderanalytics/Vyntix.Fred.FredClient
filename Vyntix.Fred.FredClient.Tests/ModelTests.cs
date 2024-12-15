@@ -14,30 +14,30 @@ public class ModelTests : BaseTest
     public async Task CategoryTest()
     {
         FredCategory data = await FredClient.GetCategory("125");
-        Assert.IsNotNull(data);
-        Assert.IsFalse(IsZeroString(data.NativeID));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Name));
-        Assert.IsFalse(IsZeroString(data.ParentID));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(IsZeroString(data.NativeID), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Name), Is.False);
+        Assert.That(IsZeroString(data.ParentID), Is.False);
     }
 
     [Test]
     public async Task ObservationTest()
     {
         FredObservation data = (await FredClient.GetObservations("GNPCA")).Data.FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.IsTrue(data.Value.HasValue);
-        Assert.AreNotEqual(DateTime.MinValue, data.ObsDate);
-        Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.Symbol), Is.False);
+        Assert.That(data.Value.HasValue, Is.True);
+        Assert.That(DateTime.MinValue, Is.Not.EqualTo(data.ObsDate));
+        Assert.That(DateTime.MinValue, Is.Not.EqualTo(data.VintageDate));
     }
 
     [Test]
     public async Task RelatedCategoryTest()
     {
         FredRelatedCategory data = (await FredClient.GetRelatedCategories("32073")).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(IsZeroString(data.CategoryID));
-        Assert.IsFalse(IsZeroString(data.RelatedCategoryID));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(IsZeroString(data.CategoryID), Is.False);
+        Assert.That(IsZeroString(data.RelatedCategoryID), Is.False);
     }
 
     
@@ -46,50 +46,50 @@ public class ModelTests : BaseTest
     public async Task SeriesTest()
     {
         FredSeries data = (await FredClient.GetSeries("GNPCA"));
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Title));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Frequency));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Units));
-        Assert.IsFalse(String.IsNullOrEmpty(data.SeasonalAdj));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.Symbol), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Title), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Frequency), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Units), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.SeasonalAdj), Is.False);
     }
 
     [Test]
     public async Task SeriesCategoryTest()
     {
         FredSeries data = (await FredClient.GetSeriesForCategory("125", false)).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.Symbol), Is.False);
     }
 
     [Test]
     public async Task SeriesTagTest()
     {
         FredSeriesTag data = (await FredClient.GetSeriesTags("STLFSI")).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Name));
-        Assert.IsFalse(String.IsNullOrEmpty(data.GroupID));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Notes));
-        Assert.Greater(data.Popularity, 0);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.Symbol), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Name), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.GroupID), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Notes), Is.False);
+        Assert.That(data.Popularity, Is.GreaterThan(0));
     }
 
     [Test]
     public async Task SourceTest()
     {
         FredSource data = (await FredClient.GetSources()).FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.NativeID));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Name));
-        Assert.IsFalse(String.IsNullOrEmpty(data.Link));
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.NativeID), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Name), Is.False);
+        Assert.That(String.IsNullOrEmpty(data.Link), Is.False);
     }
 
     [Test]
     public async Task VintageTest()
     {
         FredVintage data = (await FredClient.GetVintages("GNPCA", null)).Data.FirstOrDefault();
-        Assert.IsNotNull(data);
-        Assert.IsFalse(String.IsNullOrEmpty(data.Symbol));
-        Assert.AreNotEqual(DateTime.MinValue, data.VintageDate);
+        Assert.That(data, Is.Not.Null);
+        Assert.That(String.IsNullOrEmpty(data.Symbol), Is.False);
+        Assert.That(DateTime.MinValue, Is.Not.EqualTo(data.VintageDate));
     }
 }
