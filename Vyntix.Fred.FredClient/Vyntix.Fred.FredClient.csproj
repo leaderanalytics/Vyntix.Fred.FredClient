@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9;net8</TargetFrameworks>
+    <TargetFrameworks>net9</TargetFrameworks>
 	<ImplicitUsings>enable</ImplicitUsings>  
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
@@ -25,17 +25,6 @@
     <RootNamespace>LeaderAnalytics.Vyntix.Fred.FredClient</RootNamespace>
     <AssemblyName>LeaderAnalytics.Vyntix.Fred.FredClient</AssemblyName>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="3.0.2" />
-    <PackageReference Include="LeaderAnalytics.Core.Threading" Version="3.0.2" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Elements" Version="3.0.0" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="3.0.0" />
-    <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\VyntixLogo.png" Pack="true" PackagePath="\" />
@@ -43,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.7.112" />
+    <ProjectReference Include="..\..\Vyntix.Elements\Vyntix.Elements\Vyntix.Elements.csproj" />
+    <ProjectReference Include="..\..\Vyntix.Fred.Domain\Vyntix.Fred.Domain\Vyntix.Fred.Domain.csproj" />
+    <ProjectReference Include="..\..\Vyntix.Fred.Model\Vyntix.Fred.Model\Vyntix.Fred.Model.csproj" />
   </ItemGroup>
 </Project>
