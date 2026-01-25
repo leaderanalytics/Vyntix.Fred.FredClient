@@ -454,7 +454,7 @@ public abstract class BaseFredClient : IFredClient
         APIResult<List<FredObservation>> result = new();
         result.Data = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
 
-        if (density == DataDensity.Sparse)
+        if (density == DataDensity.Sparse && (result.Data?.Any() ?? false))
             result.Data = composer.MakeSparse(result.Data.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
         
         result.Success = true;

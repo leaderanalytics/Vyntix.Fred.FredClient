@@ -116,11 +116,6 @@ public class ObservationTests : BaseTest
 
     }
 
-
-    
-
-
-
     [Test]
     public async Task gdp_returns_sparse_data_for_selected_vintage_dates()
     {
@@ -196,6 +191,26 @@ public class ObservationTests : BaseTest
         List<FredObservation> observations = (await FredClient.GetObservations("gdp", observationPeriodStart, realTimeStart, realTimeEnd, DataDensity.Dense)).Data;
         Assert.That(observations.Count, Is.GreaterThanOrEqualTo(97));
         Assert.That(observations.First().VintageDate, Is.EqualTo(new DateTime(1991, 12, 4)));
+    }
+
+    [Test]
+    public async Task observations_for_non_vintage_series_are_returned()
+    {
+        DateTime realTimeStart = new DateTime(1600, 1, 1);
+        DateTime realTimeEnd = new DateTime(2025, 12, 25);
+        DateTime observationPeriodStart = new DateTime(1600, 1, 1);
+        List<FredObservation> observations = (await FredClient.GetNonVintageObservations("sp500", realTimeStart, realTimeEnd));
+        Assert.That(observations.Count, Is.GreaterThanOrEqualTo(0));
+    }
+
+    [Test]
+    public async Task observations_for_dgs5_are_returned()
+    {
+        DateTime realTimeStart = new DateTime(1600, 1, 1);
+        DateTime realTimeEnd = new DateTime(2025, 12, 25);
+        DateTime observationPeriodStart = new DateTime(1600, 1, 1);
+        List<FredObservation> observations = (await FredClient.GetObservations("DGS5", realTimeStart, realTimeEnd, DataDensity.Dense)).Data;
+        Assert.That(observations.Count, Is.GreaterThanOrEqualTo(0));
     }
 }
 

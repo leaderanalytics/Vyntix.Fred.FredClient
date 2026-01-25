@@ -18,6 +18,7 @@ public abstract class BaseTest
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Debug()
+            .WriteTo.File("logs/.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose)
             .CreateLogger();
 
         Log.Information("Logging has been configured.");
@@ -30,7 +31,13 @@ public abstract class BaseTest
         BuildFredClient(apiKey);
     }
 
-    
+    [TearDown]
+    public void TearDown()
+    {
+        Log.CloseAndFlush();
+    }
+
+
     protected void BuildFredClient(string apiKey)
     {
         HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
