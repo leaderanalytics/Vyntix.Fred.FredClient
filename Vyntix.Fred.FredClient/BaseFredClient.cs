@@ -48,7 +48,7 @@ public abstract class BaseFredClient : IFredClient
     public BaseFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient, ILogger<IFredClient> logger)
     {
 
-        API_key = "api_key=" + apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") ");
+        API_key = "api_key=" + (apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") "));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         this.composer = composer ?? throw new ArgumentNullException(nameof(composer));
