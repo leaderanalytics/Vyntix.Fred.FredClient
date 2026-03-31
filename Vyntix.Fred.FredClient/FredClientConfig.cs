@@ -9,5 +9,5 @@ public class FredClientConfig
     public int MaxConcurrentDownloads { get; init; } = 2;
     public int ErrorDelay { get; init; } = 2000;                            // Number of milliseconds to wait before trying again if we get an error.
     public int MaxRequestsPerMinute { get; init; } = 100;                   // Maximum number of requests per minute their API will allow without a 429 error. 
-    public int VintageChunkSize { get; init; } = 500;
+    public int VintageChunkSize { get; init; } = 100;
 }

@@ -12,12 +12,13 @@ public abstract class BaseTest
     public BaseTest(FredFileType fileType)
     {
         CurrentFileType = fileType;
-        string path = "O:\\LeaderAnalytics\\Config\\Vyntix.Fred.FredClient\\apiKey.txt";
+        string path = "C:\\Users\\sam\\OneDrive\\LeaderAnalytics\\Config\\Vyntix.Fred.FredClient\\apiKey.txt";
         apiKey = System.IO.File.ReadAllText(path);
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .WriteTo.Debug()
+            .WriteTo.File("logs/.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose)
             .CreateLogger();
 
         Log.Information("Logging has been configured.");
@@ -30,11 +31,17 @@ public abstract class BaseTest
         BuildFredClient(apiKey);
     }
 
-    
+    [TearDown]
+    public void TearDown()
+    {
+        Log.CloseAndFlush();
+    }
+
+
     protected void BuildFredClient(string apiKey)
     {
         HttpClient httpClient = new HttpClient() { BaseAddress = new Uri(FredClientConfig.BaseAPIURL) };
-        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 3, ErrorDelay = 2000, MaxRequestsPerMinute = 60 }; // MaxDownloadRetries should be greater than 1
+        FredClientConfig config = new FredClientConfig { MaxDownloadRetries = 2, ErrorDelay = 2000, MaxRequestsPerMinute = 60, VintageChunkSize = 100 }; // MaxDownloadRetries should be greater than 1
         ILoggerFactory loggerFactory = new LoggerFactory().AddSerilog();
         ILogger<IFredClient> logger = loggerFactory.CreateLogger<IFredClient>();
 

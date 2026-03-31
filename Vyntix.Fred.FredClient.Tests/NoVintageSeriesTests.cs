@@ -15,15 +15,15 @@ public class NoVintageSeriesTests : BaseTest
     public async Task GetNonVintagesTest()
     {
         List<FredObservation> obs = await FredClient.GetNonVintageObservations("SP500");
-        Assert.IsNotNull(obs);
-        Assert.IsTrue(obs.All(x => x.VintageDate == x.ObsDate));
+        Assert.That(obs, Is.Not.Null);
+        Assert.That(obs.All(x => x.VintageDate == x.ObsDate), Is.True);
     }
 
     [Test]
     public async Task GetNonVintages_for_invalid_symbol_fails()
     {
         List<FredObservation> obs = await FredClient.GetNonVintageObservations(DOES_NOT_EXIST);
-        Assert.IsNull(obs);
+        Assert.That(obs, Is.Null);
     }
 
     [Test]
@@ -33,8 +33,8 @@ public class NoVintageSeriesTests : BaseTest
         // which should result in Success property of APIResult
         // being set to false.
         APIResult<List<FredVintage>> vintageResult = await FredClient.GetVintages("SP500");
-        Assert.IsFalse(vintageResult.Success);
-        Assert.IsNotNull(vintageResult.Message);
+        Assert.That(vintageResult.Success, Is.False);
+        Assert.That(vintageResult.Message, Is.Not.Null);
     }
     [Test]
     public async Task GetObservationsForNonVintageSeriesFails()
@@ -43,7 +43,7 @@ public class NoVintageSeriesTests : BaseTest
         // which should result in Success property of APIResult
         // being set to false.
         APIResult<List<FredObservation>> obsResult = await FredClient.GetObservations("SP500");
-        Assert.IsFalse(obsResult.Success);
-        Assert.IsNotNull(obsResult.Message);
+        Assert.That(obsResult.Success, Is.False);
+        Assert.That(obsResult.Message, Is.Not.Null);
     }
 }

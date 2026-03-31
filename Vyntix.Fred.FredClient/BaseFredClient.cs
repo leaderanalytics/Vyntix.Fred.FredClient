@@ -48,7 +48,7 @@ public abstract class BaseFredClient : IFredClient
     public BaseFredClient(string apiKey, FredClientConfig config, IVintageComposer composer, HttpClient httpClient, ILogger<IFredClient> logger)
     {
 
-        API_key = "api_key=" + apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") ");
+        API_key = "api_key=" + (apiKey ?? throw new ArgumentNullException($"{nameof(apiKey)} can not be null.  Call UseAPIKey() when calling the FredClient service registration.  For example:  .AddFredClient().UseAPIKey(\"your API key here\") "));
         this.config = config ?? throw new ArgumentNullException(nameof(config));
         this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         this.composer = composer ?? throw new ArgumentNullException(nameof(composer));
@@ -85,7 +85,10 @@ public abstract class BaseFredClient : IFredClient
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     stream = await response.Content.ReadAsStreamAsync();
-                    int.TryParse(response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining").Value.First() ?? "0", out int remainingRequests);
+                    KeyValuePair<string, IEnumerable<string>> responseHeader = response.Headers.FirstOrDefault(x => x.Key == "x-rate-limit-remaining");
+                    
+                    if((! string.IsNullOrEmpty(responseHeader.Key)) && (responseHeader.Value?.Any() ?? false))
+                        int.TryParse(responseHeader.Value.First() ?? "0", out int remainingRequests);
 
                     success = true;
                     break;
@@ -129,7 +132,7 @@ public abstract class BaseFredClient : IFredClient
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Exception while downloading url: {uri}", uri);
+                Logger.LogError(ex, "Exception while downloading url: {uri}.  Error msg is: {msg}", uri, ex.ToString());
                 wait = true;
             }
             finally
@@ -451,7 +454,7 @@ public abstract class BaseFredClient : IFredClient
         APIResult<List<FredObservation>> result = new();
         result.Data = await GetObservationsInternal(symbol, vintageDates, obsStart, obsEnd, density);
 
-        if (density == DataDensity.Sparse)
+        if (density == DataDensity.Sparse && (result.Data?.Any() ?? false))
             result.Data = composer.MakeSparse(result.Data.Cast<IFredObservation>().ToList()).Cast<FredObservation>().ToList();
         
         result.Success = true;
@@ -492,7 +495,7 @@ public abstract class BaseFredClient : IFredClient
         List<FredObservation> result = new List<FredObservation>(10000);
         List<FredObservation> obs;
         int skip = 0;
-        int take = 200;
+        int take = config.VintageChunkSize;
         List<Task<List<FredObservation>>> tasks = new List<Task<List<FredObservation>>>(vintageDates.Count / take);
 
         while (skip < vintageDates.Count)

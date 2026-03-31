@@ -9,16 +9,16 @@ public class VintageComposerStaticDataTests
     {
         IVintageComposer composer = new VintageComposer();
         List<FredVintage> testData = CreateHappyPathDenseData();
-        Assert.AreEqual(3, testData.Count);
-        Assert.AreEqual(3, testData[0].Observations.Count);
-        Assert.AreEqual(4, testData[1].Observations.Count);
-        Assert.AreEqual(5, testData[2].Observations.Count);
+        Assert.That(3, Is.EqualTo(testData.Count));
+        Assert.That(3, Is.EqualTo(testData[0].Observations.Count));
+        Assert.That(4, Is.EqualTo(testData[1].Observations.Count));
+        Assert.That(5, Is.EqualTo(testData[2].Observations.Count));
         List<IFredObservation> dense = testData.SelectMany(x => x.Observations).ToList();
         List<IFredObservation> sparse = composer.MakeSparse(dense);
-        Assert.AreEqual(7, sparse.Count);
+        Assert.That(7, Is.EqualTo(sparse.Count));
         // 
         sparse = composer.MakeSparse(sparse);
-        Assert.AreEqual(7, sparse.Count);
+        Assert.That(7, Is.EqualTo(sparse.Count));
     }
 
 
@@ -26,10 +26,10 @@ public class VintageComposerStaticDataTests
     public void VerifyStaticDataTest()
     {
         List<FredVintage> testData = CreateTestData();
-        Assert.AreEqual(3, testData.Count);
-        Assert.AreEqual(3, testData[0].Observations.Count);
-        Assert.AreEqual(5, testData[1].Observations.Count);
-        Assert.AreEqual(6, testData[2].Observations.Count);
+        Assert.That(3, Is.EqualTo(testData.Count));
+        Assert.That(3, Is.EqualTo(testData[0].Observations.Count));
+        Assert.That(5, Is.EqualTo(testData[1].Observations.Count));
+        Assert.That(6, Is.EqualTo(testData[2].Observations.Count));
     }
     
 
@@ -40,7 +40,7 @@ public class VintageComposerStaticDataTests
         List<FredVintage> testData = CreateTestData();
         List<IFredObservation> dense = testData.SelectMany(x => x.Observations).ToList();
         List<IFredObservation> sparse = composer.MakeSparse(dense);
-        Assert.AreEqual(8, sparse.Count);
+        Assert.That(8, Is.EqualTo(sparse.Count));
     }
 
     [Test]
@@ -51,7 +51,7 @@ public class VintageComposerStaticDataTests
         List<IFredObservation> dense = testData.SelectMany(x => x.Observations).ToList();
         List<IFredObservation> sparse = composer.MakeSparse(dense);
         dense = composer.MakeDense(sparse);
-        Assert.AreEqual(14, dense.Count);
+        Assert.That(14, Is.EqualTo(dense.Count));
     }
 
 
