@@ -3,15 +3,15 @@
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
       <PrivateAssets>all</PrivateAssets>
-      <Version>3.6.132</Version>
+      <Version>3.9.50</Version>
     </PackageReference>
-	  <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="3.0.2" />
-	  <PackageReference Include="LeaderAnalytics.Core.Threading" Version="3.0.2" />
-	  <PackageReference Include="LeaderAnalytics.Vyntix.Elements" Version="3.0.3" />
-	  <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="3.0.2" />
-	  <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="3.0.1" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
-	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	  <PackageReference Include="LeaderAnalytics.Core.Serialization" Version="4.0.0" />
+	  <PackageReference Include="LeaderAnalytics.Core.Threading" Version="4.0.0" />
+	  <PackageReference Include="LeaderAnalytics.Vyntix.Elements" Version="4.0.1" />
+	  <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Domain" Version="4.0.0" />
+	  <PackageReference Include="LeaderAnalytics.Vyntix.Fred.Model" Version="4.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.6" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.6" />
   </ItemGroup>
 </Project>
